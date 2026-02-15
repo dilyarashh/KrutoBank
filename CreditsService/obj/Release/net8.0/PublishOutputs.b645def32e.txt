@@ -1,0 +1,11 @@
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/appsettings.Development.json
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/appsettings.json
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/CreditsService.dll
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/CreditsService.deps.json
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/CreditsService.runtimeconfig.json
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/CreditsService.pdb
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/Microsoft.AspNetCore.OpenApi.dll
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/Microsoft.OpenApi.dll
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/Swashbuckle.AspNetCore.Swagger.dll
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/Swashbuckle.AspNetCore.SwaggerGen.dll
+/Users/dilararasidovna/Desktop/KrutoBankSolution/publish/Swashbuckle.AspNetCore.SwaggerUI.dll

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>UsersService</name>
+    </assembly>
+    <members>
+        <member name="M:UsersService.Controllers.UsersController.Create(UsersService.DTOs.CreateUserRequest)">
+            <summary>
+            Создать пользователя (доступно только сотруднику)
+            </summary>
+        </member>
+        <member name="M:UsersService.Controllers.UsersController.Block(System.Guid)">
+            <summary>
+            Заблокировать пользователя (доступно только сотруднику)
+            </summary>
+        </member>
+        <member name="M:UsersService.Controllers.UsersController.Get(System.Guid)">
+            <summary>
+            Получить информацию о пользователе
+            </summary>
+        </member>
+        <member name="M:UsersService.Controllers.UsersController.GetAll(UsersService.DTOs.PagedRequest)">
+            <summary>
+            Получить информацию о пользователях
+            </summary>
+            <param name="request"></param>
+        </member>
+        <member name="T:UsersService.Migrations.InitialUsers">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.InitialUsers.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.InitialUsers.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.InitialUsers.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:UsersService.Migrations.AddBlackTokens">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.AddBlackTokens.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.AddBlackTokens.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.AddBlackTokens.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
