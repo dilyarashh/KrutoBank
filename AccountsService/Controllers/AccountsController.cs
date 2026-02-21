@@ -1,5 +1,7 @@
 using AccountsService.DTO;
+using AccountsService.Entities;
 using AccountsService.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace AccountsService.Controllers;
 
@@ -16,6 +18,7 @@ public class AccountsController(IAccountService service) : ControllerBase
     /// </summary>
     [Authorize]
     [HttpPost]
+    [ProducesResponseType(typeof(Guid), 200)]
     public async Task<IActionResult> CreateAccount(CreateAccountRequest request)
     {
         var id = await service.CreateAccountAsync(request);
@@ -27,6 +30,7 @@ public class AccountsController(IAccountService service) : ControllerBase
     /// </summary>
     [Authorize]
     [HttpPatch]
+    [ProducesResponseType(typeof(NoContent), 204)]
     public async Task<IActionResult> CloseAccount(Guid id)
     {
         await service.CloseAccountAsync(id);
@@ -38,6 +42,7 @@ public class AccountsController(IAccountService service) : ControllerBase
     /// </summary>
     [Authorize]
     [HttpPost("deposit")]
+    [ProducesResponseType(typeof(NoContent), 204)]
     public async Task<IActionResult> Deposit(MoneyOperationRequest request)
     {
         await service.DepositAsync(request.AccountId, request.Amount);
@@ -49,6 +54,7 @@ public class AccountsController(IAccountService service) : ControllerBase
     /// </summary>
     [Authorize]
     [HttpPost("withdraw")]
+    [ProducesResponseType(typeof(NoContent), 204)]
     public async Task<IActionResult> Withdraw(MoneyOperationRequest request)
     {
         await service.WithdrawAsync(request.AccountId, request.Amount);
@@ -60,6 +66,7 @@ public class AccountsController(IAccountService service) : ControllerBase
     /// </summary>
     [Authorize]
     [HttpGet("{accountId}/my-operations")]
+    [ProducesResponseType(typeof(AccountOperation), 200)]
     public async Task<IActionResult> GetMyAccountHistory(Guid accountId)
     {
         var operations = await service.GetMyAccountHistoryAsync(accountId);
@@ -77,6 +84,7 @@ public class AccountsController(IAccountService service) : ControllerBase
     /// </summary>
     [Authorize(Roles = "Employee")]
     [HttpGet("all-user-accounts")]
+    [ProducesResponseType(typeof(UserAccountDto), 200)]
     public async Task<IActionResult> GetAllUsersAccount(
         [FromQuery] bool? onlyOpened,
         [FromQuery] int page = 1,
@@ -92,6 +100,7 @@ public class AccountsController(IAccountService service) : ControllerBase
     /// </summary>
     [Authorize(Roles = "Employee")]
     [HttpGet("{accountId}/operations")]
+    [ProducesResponseType(typeof(AccountOperation), 200)]
     public async Task<IActionResult> GetAccountHistory(Guid accountId)
     {
         var operations = await service.GetAccountHistoryAsync(accountId);

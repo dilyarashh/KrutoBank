@@ -14,7 +14,8 @@ public class UsersController(IUserService service) : ControllerBase
     /// </summary>
     [Authorize(Roles = "Employee")]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateUserRequest dto)
+    [ProducesResponseType(typeof(Guid), 200)]
+    public async Task<ActionResult<Guid>> Create([FromBody] CreateUserRequest dto)
     {
         var user = await service.CreateUserAsync(dto);
         return Ok(user.Id);
@@ -25,6 +26,7 @@ public class UsersController(IUserService service) : ControllerBase
     /// </summary>
     [Authorize(Roles = "Employee")]
     [HttpPatch("block/{id}")]
+    [ProducesResponseType(204)]
     public async Task<IActionResult> Block(Guid id)
     {
         await service.BlockUserAsync(id);
@@ -36,7 +38,8 @@ public class UsersController(IUserService service) : ControllerBase
     /// </summary>
     [Authorize]
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id)
+    [ProducesResponseType(typeof(UserDto), 200)]
+    public async Task<ActionResult<UserDto>> Get(Guid id)
     {
         var user = await service.GetById(id);
         return Ok(user);
@@ -45,10 +48,10 @@ public class UsersController(IUserService service) : ControllerBase
     /// <summary>
     /// Получить информацию о пользователях
     /// </summary>
-    /// <param name="request"></param>
     [Authorize(Roles = "Employee")]
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] PagedRequest request)
+    [ProducesResponseType(typeof(PagedResponse<UserDto>), 200)]
+    public async Task<ActionResult<PagedResponse<UserDto>>> GetAll([FromQuery] PagedRequest request)
     {
         var result = await service.GetAllAsync(request);
         return Ok(result);
