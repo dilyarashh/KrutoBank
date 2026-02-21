@@ -81,4 +81,92 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         account.ClosedAt = DateTime.UtcNow;
         await _accountRepository.UpdateAsync(account);
     }
+    
+    public async Task<bool> DepositAsync(Guid accountId, decimal amount)
+    {
+        if (amount <= 0)
+            throw new BadRequestException("Сумма должна быть больше нуля");
+
+        var userId = _currentUser.GetUserId();
+
+        var account = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+        if (account == null)
+            throw new NotFoundException("Счет не найден");
+
+        if (account.IsClosed)
+            throw new BadRequestException("Счет закрыт");
+
+        account.Balance += amount;
+
+        await _accountRepository.AddOperationAsync(new AccountOperation
+        {
+            Id = Guid.NewGuid(),
+            AccountId = account.Id,
+            Type = OperationType.Deposit,
+            Amount = amount,
+            CreatedAt = DateTime.UtcNow
+        });
+
+        await _accountRepository.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> WithdrawAsync(Guid accountId, decimal amount)
+    {
+        if (amount <= 0)
+            throw new BadRequestException("Сумма должна быть больше нуля");
+
+        var userId = _currentUser.GetUserId();
+
+        var account = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+        if (account == null)
+            throw new NotFoundException("Счет не найден");
+
+        if (account.IsClosed)
+            throw new BadRequestException("Счет закрыт");
+
+        if (account.Balance < amount)
+            throw new BadRequestException("Недостаточно средств");
+
+        account.Balance -= amount;
+
+        await _accountRepository.AddOperationAsync(new AccountOperation
+        {
+            Id = Guid.NewGuid(),
+            AccountId = account.Id,
+            Type = OperationType.Withdraw,
+            Amount = amount,
+            CreatedAt = DateTime.UtcNow
+        });
+
+        await _accountRepository.SaveChangesAsync();
+        return true;
+    }
+    
+    public async Task<IEnumerable<AccountOperation>> GetMyAccountHistoryAsync(Guid accountId)
+    {
+        var userId = _currentUser.GetUserId();
+
+        var account = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+        if (account == null)
+            throw new NotFoundException("Счет не найден");
+
+        return await _accountRepository.GetAccountOperationsForUserAsync(accountId, userId);
+    }
+
+
+    public async Task<IEnumerable<UserAccount>> GetAllUserAccountsAsync()
+    {
+        return await _accountRepository.GetAllUserAccountsAsync();
+    }
+
+
+    public async Task<IEnumerable<AccountOperation>> GetAccountHistoryAsync(Guid accountId)
+    {
+        var account = await _accountRepository.GetByIdAsync(accountId);
+        if (account == null)
+            throw new NotFoundException("Счет не найден");
+
+        return await _accountRepository.GetAccountOperationsAsync(accountId);
+    }
 }

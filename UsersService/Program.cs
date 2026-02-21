@@ -13,11 +13,6 @@ using UsersService.Services.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(8080);
-});
-
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();

@@ -11,4 +11,9 @@ public interface IAccountRepository
     Task UpdateAsync(Account account);
     Task AddOperationAsync(AccountOperation operation);
     Task AddUserAccountAsync(Guid userId, Guid accountId);
+    Task SaveChangesAsync();
+    Task<IEnumerable<AccountOperation>> GetAccountOperationsForUserAsync(Guid accountId, Guid userId);
+    Task<IEnumerable<UserAccount>> GetAllUserAccountsAsync();
+    Task<IEnumerable<AccountOperation>> GetAccountOperationsAsync(Guid accountId);
+
 }

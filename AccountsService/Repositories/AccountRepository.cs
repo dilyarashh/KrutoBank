@@ -6,11 +6,10 @@ namespace AccountsService.Repositories;
 
 public class AccountRepository(AccountsDbContext db) : IAccountRepository
 {
-    public async Task<Account> AddAsync(Account account)
+    public Task<Account> AddAsync(Account account)
     {
         db.Accounts.Add(account);
-        await db.SaveChangesAsync();
-        return account;
+        return Task.FromResult(account);
     }
 
     public async Task<Account?> GetByIdAsync(Guid accountId)
@@ -36,32 +35,67 @@ public class AccountRepository(AccountsDbContext db) : IAccountRepository
             .Select(ua => ua.AccountId)
             .ToListAsync();
 
-        var accounts = await db.Accounts
+        return await db.Accounts
             .Where(a => accountIds.Contains(a.Id) && !a.IsClosed)
             .ToListAsync();
-
-        return accounts;
     }
 
-    public async Task UpdateAsync(Account account)
+    public Task UpdateAsync(Account account)
     {
         db.Accounts.Update(account);
-        await db.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 
-    public async Task AddOperationAsync(AccountOperation operation)
+    public Task AddOperationAsync(AccountOperation operation)
     {
         db.AccountOperations.Add(operation);
-        await db.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 
-    public async Task AddUserAccountAsync(Guid userId, Guid accountId)
+    public Task AddUserAccountAsync(Guid userId, Guid accountId)
     {
         db.UserAccounts.Add(new UserAccount
         {
             UserId = userId,
             AccountId = accountId
         });
+
+        return Task.CompletedTask;
+    }
+
+    public async Task SaveChangesAsync()
+    {
         await db.SaveChangesAsync();
+    }
+    
+    public async Task<IEnumerable<AccountOperation>> GetAccountOperationsForUserAsync(
+        Guid accountId,
+        Guid userId)
+    {
+        var isOwner = await db.UserAccounts
+            .AnyAsync(ua => ua.AccountId == accountId && ua.UserId == userId);
+
+        if (!isOwner)
+            return [];
+
+        return await db.AccountOperations
+            .Where(o => o.AccountId == accountId)
+            .OrderByDescending(o => o.CreatedAt)
+            .ToListAsync();
+    }
+    
+    public async Task<IEnumerable<UserAccount>> GetAllUserAccountsAsync()
+    {
+        return await db.UserAccounts
+            .AsNoTracking()
+            .ToListAsync();
+    }
+    
+    public async Task<IEnumerable<AccountOperation>> GetAccountOperationsAsync(Guid accountId)
+    {
+        return await db.AccountOperations
+            .Where(o => o.AccountId == accountId)
+            .OrderByDescending(o => o.CreatedAt)
+            .ToListAsync();
     }
 }
