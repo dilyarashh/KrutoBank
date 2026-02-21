@@ -12,6 +12,11 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<UserAccount>()
+            .HasOne(ua => ua.Account)
+            .WithMany()
+            .HasForeignKey(ua => ua.AccountId);
+        
         static DateTime Utc(int y, int m, int d) =>
             new DateTime(y, m, d, 0, 0, 0, DateTimeKind.Utc);
 

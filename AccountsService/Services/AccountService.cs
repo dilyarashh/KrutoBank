@@ -88,10 +88,12 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             throw new BadRequestException("Сумма должна быть больше нуля");
 
         var userId = _currentUser.GetUserId();
-
-        var account = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+        
+        var account = await _accountRepository.GetByIdAsync(accountId);
         if (account == null)
+        {
             throw new NotFoundException("Счет не найден");
+        }
 
         if (account.IsClosed)
             throw new BadRequestException("Счет закрыт");
@@ -118,9 +120,17 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
 
         var userId = _currentUser.GetUserId();
 
-        var account = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+        var account = await _accountRepository.GetByIdAsync(accountId);
         if (account == null)
+        {
             throw new NotFoundException("Счет не найден");
+        }
+        
+        var userIsOwner = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+        if (userIsOwner == null)
+        {
+            throw new BadRequestException("Вы можете снять деньги только со своего счёта");
+        }
 
         if (account.IsClosed)
             throw new BadRequestException("Счет закрыт");
@@ -147,20 +157,34 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
     {
         var userId = _currentUser.GetUserId();
 
-        var account = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+        var account = await _accountRepository.GetByIdAsync(accountId);
         if (account == null)
+        {
             throw new NotFoundException("Счет не найден");
+        }
+        
+        var userIsOwner = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+        if (userIsOwner == null)
+        {
+            throw new BadRequestException("Вы можете получить историю только своего счёта");
+        }
 
         return await _accountRepository.GetAccountOperationsForUserAsync(accountId, userId);
     }
 
 
-    public async Task<IEnumerable<UserAccount>> GetAllUserAccountsAsync()
+    public async Task<PagedResult<UserAccountDto>> GetAllUserAccountsAsync(
+        bool? onlyOpened,
+        int page,
+        int pageSize)
     {
-        return await _accountRepository.GetAllUserAccountsAsync();
+        if (page <= 0) page = 1;
+        if (pageSize <= 0 || pageSize > 100) pageSize = 10;
+
+        return await _accountRepository
+            .GetAllUserAccountsAsync(onlyOpened, page, pageSize);
     }
-
-
+    
     public async Task<IEnumerable<AccountOperation>> GetAccountHistoryAsync(Guid accountId)
     {
         var account = await _accountRepository.GetByIdAsync(accountId);

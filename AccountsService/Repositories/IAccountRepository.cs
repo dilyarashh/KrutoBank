@@ -1,3 +1,4 @@
+using AccountsService.DTO;
 using AccountsService.Entities;
 
 namespace AccountsService.Repositories;
@@ -13,7 +14,10 @@ public interface IAccountRepository
     Task AddUserAccountAsync(Guid userId, Guid accountId);
     Task SaveChangesAsync();
     Task<IEnumerable<AccountOperation>> GetAccountOperationsForUserAsync(Guid accountId, Guid userId);
-    Task<IEnumerable<UserAccount>> GetAllUserAccountsAsync();
+    Task<PagedResult<UserAccountDto>> GetAllUserAccountsAsync(
+        bool? onlyOpened,
+        int page,
+        int pageSize);
     Task<IEnumerable<AccountOperation>> GetAccountOperationsAsync(Guid accountId);
 
 }

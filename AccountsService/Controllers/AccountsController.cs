@@ -77,15 +77,14 @@ public class AccountsController(IAccountService service) : ControllerBase
     /// </summary>
     [Authorize(Roles = "Employee")]
     [HttpGet("all-user-accounts")]
-    public async Task<IActionResult> GetAllUserAccounts()
+    public async Task<IActionResult> GetAllUsersAccount(
+        [FromQuery] bool? onlyOpened,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var result = await service.GetAllUserAccountsAsync();
+        var result = await service.GetAllUserAccountsAsync(onlyOpened, page, pageSize);
 
-        return Ok(result.Select(x => new
-        {
-            x.UserId,
-            x.AccountId
-        }));
+        return Ok(result);
     }
 
     /// <summary>

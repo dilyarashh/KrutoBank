@@ -1,4 +1,5 @@
 using AccountsService.Data;
+using AccountsService.DTO;
 using AccountsService.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -84,11 +85,45 @@ public class AccountRepository(AccountsDbContext db) : IAccountRepository
             .ToListAsync();
     }
     
-    public async Task<IEnumerable<UserAccount>> GetAllUserAccountsAsync()
+    public async Task<PagedResult<UserAccountDto>> GetAllUserAccountsAsync(
+        bool? onlyOpened,
+        int page,
+        int pageSize)
     {
-        return await db.UserAccounts
+        var query = db.UserAccounts
             .AsNoTracking()
+            .Include(x => x.Account)
+            .AsQueryable();
+
+        if (onlyOpened == true)
+            query = query.Where(x => !x.Account.IsClosed);
+
+        if (onlyOpened == false)
+            query = query.Where(x => x.Account.IsClosed);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(x => x.Account.OpenedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(x => new UserAccountDto
+            {
+                UserId = x.UserId,
+                AccountId = x.AccountId,
+                AccountName = x.Account.Name,
+                Balance = x.Account.Balance,
+                IsClosed = x.Account.IsClosed
+            })
             .ToListAsync();
+
+        return new PagedResult<UserAccountDto>
+        {
+            Items = items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
     
     public async Task<IEnumerable<AccountOperation>> GetAccountOperationsAsync(Guid accountId)

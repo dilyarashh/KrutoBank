@@ -10,7 +10,6 @@ public interface IAccountService
     Task<bool> DepositAsync(Guid accountId, decimal amount);
     Task<bool> WithdrawAsync(Guid accountId, decimal amount);
     Task<IEnumerable<AccountOperation>> GetMyAccountHistoryAsync(Guid accountId);
-    Task<IEnumerable<UserAccount>> GetAllUserAccountsAsync();
+    Task<PagedResult<UserAccountDto>> GetAllUserAccountsAsync(bool? onlyOpened, int page, int pageSize);
     Task<IEnumerable<AccountOperation>> GetAccountHistoryAsync(Guid accountId);
-
 }

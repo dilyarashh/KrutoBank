@@ -7,9 +7,11 @@ using AccountsService.Errors.Exceptions;
 using AccountsService.Helper;
 using AccountsService.Repositories;
 using AccountsService.Services;
+using AccountsService.Services.Validators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Polly;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountValidator>();
     
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
