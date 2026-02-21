@@ -90,6 +90,78 @@ namespace UsersService.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Birthday = new DateOnly(1990, 1, 1),
+                            Created = new DateTime(2026, 2, 21, 13, 22, 5, 987, DateTimeKind.Utc).AddTicks(7630),
+                            Email = "employee1@bank.ru",
+                            FirstName = "Ivan",
+                            HashPassword = "hashed_password_1",
+                            IsBlocked = false,
+                            LastName = "Petrov",
+                            MiddleName = "Ivanovich",
+                            Phone = "+79990000001",
+                            Role = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Birthday = new DateOnly(1992, 2, 2),
+                            Created = new DateTime(2026, 2, 21, 13, 22, 5, 987, DateTimeKind.Utc).AddTicks(7630),
+                            Email = "employee2@bank.ru",
+                            FirstName = "Anna",
+                            HashPassword = "hashed_password_2",
+                            IsBlocked = false,
+                            LastName = "Sidorova",
+                            MiddleName = "Petrovna",
+                            Phone = "+79990000002",
+                            Role = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            Birthday = new DateOnly(1995, 3, 3),
+                            Created = new DateTime(2026, 2, 21, 13, 22, 5, 987, DateTimeKind.Utc).AddTicks(7630),
+                            Email = "client1@bank.ru",
+                            FirstName = "Alexey",
+                            HashPassword = "hashed_password_3",
+                            IsBlocked = false,
+                            LastName = "Smirnov",
+                            MiddleName = "Sergeevich",
+                            Phone = "+79990000003",
+                            Role = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
+                            Birthday = new DateOnly(1998, 4, 4),
+                            Created = new DateTime(2026, 2, 21, 13, 22, 5, 987, DateTimeKind.Utc).AddTicks(7630),
+                            Email = "client2@bank.ru",
+                            FirstName = "Maria",
+                            HashPassword = "hashed_password_4",
+                            IsBlocked = false,
+                            LastName = "Ivanova",
+                            MiddleName = "Alexandrovna",
+                            Phone = "+79990000004",
+                            Role = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
+                            Birthday = new DateOnly(2000, 5, 5),
+                            Created = new DateTime(2026, 2, 21, 13, 22, 5, 987, DateTimeKind.Utc).AddTicks(7630),
+                            Email = "client3@bank.ru",
+                            FirstName = "Dmitry",
+                            HashPassword = "hashed_password_5",
+                            IsBlocked = false,
+                            LastName = "Kozlov",
+                            MiddleName = "Igorevich",
+                            Phone = "+79990000005",
+                            Role = 0
+                        });
                 });
 #pragma warning restore 612, 618
         }

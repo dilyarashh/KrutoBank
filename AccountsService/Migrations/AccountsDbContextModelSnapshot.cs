@@ -47,6 +47,56 @@ namespace AccountsService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Accounts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"),
+                            Balance = 150000m,
+                            IsClosed = false,
+                            Name = "Мой счёт",
+                            OpenedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2"),
+                            Balance = 90000m,
+                            IsClosed = false,
+                            Name = "На отдых",
+                            OpenedAt = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3"),
+                            Balance = 25000m,
+                            IsClosed = false,
+                            Name = "Копилка",
+                            OpenedAt = new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4"),
+                            Balance = 78000m,
+                            IsClosed = false,
+                            Name = "На квартиру",
+                            OpenedAt = new DateTime(2024, 2, 5, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5"),
+                            Balance = 12000m,
+                            IsClosed = false,
+                            Name = "Просто счёт",
+                            OpenedAt = new DateTime(2024, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6"),
+                            Balance = 50000m,
+                            IsClosed = false,
+                            Name = "Инвестиционный",
+                            OpenedAt = new DateTime(2024, 3, 10, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("AccountsService.Entities.AccountOperation", b =>
@@ -72,6 +122,48 @@ namespace AccountsService.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("AccountOperations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3"),
+                            Amount = 30000m,
+                            CreatedAt = new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3"),
+                            Amount = -5000m,
+                            CreatedAt = new DateTime(2024, 2, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4"),
+                            Amount = 80000m,
+                            CreatedAt = new DateTime(2024, 2, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb4"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5"),
+                            Amount = 15000m,
+                            CreatedAt = new DateTime(2024, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb5"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6"),
+                            Amount = 50000m,
+                            CreatedAt = new DateTime(2024, 3, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Type = 0
+                        });
                 });
 
             modelBuilder.Entity("AccountsService.Entities.UserAccount", b =>
@@ -85,6 +177,38 @@ namespace AccountsService.Migrations
                     b.HasKey("UserId", "AccountId");
 
                     b.ToTable("UserAccounts");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1")
+                        },
+                        new
+                        {
+                            UserId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2")
+                        },
+                        new
+                        {
+                            UserId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3")
+                        },
+                        new
+                        {
+                            UserId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6")
+                        },
+                        new
+                        {
+                            UserId = new Guid("44444444-4444-4444-4444-444444444444"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4")
+                        },
+                        new
+                        {
+                            UserId = new Guid("55555555-5555-5555-5555-555555555555"),
+                            AccountId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5")
+                        });
                 });
 
             modelBuilder.Entity("AccountsService.Entities.AccountOperation", b =>
