@@ -52,6 +52,23 @@ services:
       timeout: 5s
       retries: 5
 
+  hangfire-db:
+    image: postgres:16
+    container_name: hangfire-db
+    environment:
+      POSTGRES_DB: hangfiredb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "55436:5432"
+    volumes:
+      - hangfire_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   users-api:
     build:
       context: .
@@ -87,7 +104,9 @@ services:
       credits-db:
         condition: service_healthy
     environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Host=credits-db;Port=5432;Database=creditsdb;Username=postgres;Password=postgres"
+      ConnectionStrings__HangfireConnection: "Host=hangfire-db;Port=5432;Database=hangfiredb;Username=postgres;Password=postgres"
     ports:
       - "5003:8080"
 
@@ -95,3 +114,4 @@ volumes:
   users_data:
   accounts_data:
   credits_data:
+  hangfire_data:
