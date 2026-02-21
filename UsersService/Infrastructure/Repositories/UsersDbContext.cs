@@ -28,7 +28,7 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
                 Phone = "+79990000001",
                 Email = "employee1@bank.ru",
                 Birthday = new DateOnly(1990, 1, 1),
-                HashPassword = "12345678",
+                HashPassword = BCrypt.Net.BCrypt.HashPassword("12345678"),
                 Role = UserRole.Employee,
                 IsBlocked = false,
                 Created = now
@@ -42,7 +42,7 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
                 Phone = "+79990000002",
                 Email = "employee2@bank.ru",
                 Birthday = new DateOnly(1992, 2, 2),
-                HashPassword = "12345678",
+                HashPassword = BCrypt.Net.BCrypt.HashPassword("12345678"),
                 Role = UserRole.Employee,
                 IsBlocked = false,
                 Created = now
@@ -58,7 +58,7 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
                 Phone = "+79990000003",
                 Email = "client1@bank.ru",
                 Birthday = new DateOnly(1995, 3, 3),
-                HashPassword = "12345678",
+                HashPassword = BCrypt.Net.BCrypt.HashPassword("12345678"),
                 Role = UserRole.Client,
                 IsBlocked = false,
                 Created = now
@@ -72,7 +72,7 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
                 Phone = "+79990000004",
                 Email = "client2@bank.ru",
                 Birthday = new DateOnly(1998, 4, 4),
-                HashPassword = "12345678",
+                HashPassword = BCrypt.Net.BCrypt.HashPassword("12345678"),
                 Role = UserRole.Client,
                 IsBlocked = false,
                 Created = now
@@ -86,7 +86,7 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
                 Phone = "+79990000005",
                 Email = "client3@bank.ru",
                 Birthday = new DateOnly(2000, 5, 5),
-                HashPassword = "12345678",
+                HashPassword = BCrypt.Net.BCrypt.HashPassword("12345678"),
                 Role = UserRole.Client,
                 IsBlocked = false,
                 Created = now
