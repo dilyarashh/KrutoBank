@@ -49,7 +49,7 @@ public class UsersController(IUserService service) : ControllerBase
     /// Получить информацию о себе
     /// </summary>
     [Authorize]
-    [HttpGet]
+    [HttpGet("myself")]
     [ProducesResponseType(typeof(UserDto), 200)]
     public async Task<ActionResult<UserDto>> GetMyself()
     {
@@ -61,7 +61,7 @@ public class UsersController(IUserService service) : ControllerBase
     /// Получить информацию о пользователях
     /// </summary>
     [Authorize(Roles = "Employee")]
-    [HttpGet]
+    [HttpGet("list")]
     [ProducesResponseType(typeof(PagedResponse<UserDto>), 200)]
     public async Task<ActionResult<PagedResponse<UserDto>>> GetAll([FromQuery] PagedRequest request)
     {
