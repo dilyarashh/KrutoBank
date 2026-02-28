@@ -44,6 +44,18 @@ public class UsersController(IUserService service) : ControllerBase
         var user = await service.GetById(id);
         return Ok(user);
     }
+    
+    /// <summary>
+    /// Получить информацию о себе
+    /// </summary>
+    [Authorize]
+    [HttpGet]
+    [ProducesResponseType(typeof(UserDto), 200)]
+    public async Task<ActionResult<UserDto>> GetMyself()
+    {
+        var user = await service.GetMyself();
+        return Ok(user);
+    }
 
     /// <summary>
     /// Получить информацию о пользователях

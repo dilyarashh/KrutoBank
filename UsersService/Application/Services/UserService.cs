@@ -97,6 +97,13 @@ public class UserService(
         return user.ToDto();
     }
 
+    public async Task<UserDto?> GetMyself()
+    {
+        var userId = _currentUser.GetUserId();
+        var user = await GetById(userId);
+        return user;
+    }
+    
     public async Task<PagedResponse<UserDto>> GetAllAsync(PagedRequest query)
     {
         var validationResult = await _pagedRequestValidator.ValidateAsync(query);
