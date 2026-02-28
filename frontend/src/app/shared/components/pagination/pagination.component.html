@@ -1,0 +1,37 @@
+<nav class="pager" *ngIf="totalPages() > 1" aria-label="Pagination">
+  <button class="nav" type="button" (click)="prev()" [disabled]="page === 1">←</button>
+
+  <button
+    class="num"
+    type="button"
+    (click)="go(1)"
+    [class.active]="page === 1"
+    *ngIf="pagesToShow()[0] !== 1"
+  >
+    1
+  </button>
+  <span class="dots" *ngIf="pagesToShow()[0] > 2">…</span>
+
+  <button
+    class="num"
+    type="button"
+    *ngFor="let p of pagesToShow()"
+    (click)="go(p)"
+    [class.active]="p === page"
+  >
+    {{ p }}
+  </button>
+
+  <span class="dots" *ngIf="pagesToShow()[pagesToShow().length - 1] < totalPages() - 1">…</span>
+  <button
+    class="num"
+    type="button"
+    (click)="go(totalPages())"
+    [class.active]="page === totalPages()"
+    *ngIf="pagesToShow()[pagesToShow().length - 1] !== totalPages()"
+  >
+    {{ totalPages() }}
+  </button>
+
+  <button class="nav" type="button" (click)="next()" [disabled]="page === totalPages()">→</button>
+</nav>
