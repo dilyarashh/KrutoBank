@@ -1,0 +1,155 @@
+<div class="dialog-header" mat-dialog-title>
+  <div class="dialog-title">
+    <mat-icon class="title-icon">person_add</mat-icon>
+    <div class="title-text">
+      <h2>Добавить пользователя</h2>
+    </div>
+  </div>
+
+  <button mat-icon-button type="button" class="close" (click)="close()" aria-label="Закрыть">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<div mat-dialog-content class="dialog-content">
+  <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="grid">
+
+      <label class="field">
+        <span class="label">Фамилия </span>
+
+        <div class="control" [class.invalid]="isInvalid('lastName')">
+          <input class="input" type="text" formControlName="lastName" autocomplete="family-name" placeholder="Иванов" />
+          <mat-icon class="icon" aria-hidden="true">badge</mat-icon>
+        </div>
+
+        <span class="hint error" *ngIf="isInvalid('lastName')">{{ errorText('lastName') }}</span>
+      </label>
+
+      <label class="field">
+        <span class="label">Имя</span>
+
+        <div class="control" [class.invalid]="isInvalid('firstName')">
+          <input class="input" type="text" formControlName="firstName" autocomplete="given-name" placeholder="Иван" />
+          <mat-icon class="icon" aria-hidden="true">person</mat-icon>
+        </div>
+
+        <span class="hint error" *ngIf="isInvalid('firstName')">{{ errorText('firstName') }}</span>
+      </label>
+
+      <label class="field">
+        <span class="label">Отчество</span>
+
+        <div class="control" [class.invalid]="isInvalid('middleName')">
+          <input class="input" type="text" formControlName="middleName" autocomplete="additional-name" placeholder="Иванович" />
+          <mat-icon class="icon" aria-hidden="true">account_circle</mat-icon>
+        </div>
+
+        <span class="hint error" *ngIf="isInvalid('middleName')">{{ errorText('middleName') }}</span>
+      </label>
+
+      <label class="field">
+        <span class="label">Телефон</span>
+
+        <div class="control" [class.invalid]="isInvalid('phone')">
+          <input
+            class="input"
+            type="tel"
+            formControlName="phone"
+            inputmode="tel"
+            autocomplete="tel"
+            placeholder="+79990000000"
+          />
+          <mat-icon class="icon" aria-hidden="true">phone</mat-icon>
+        </div>
+
+        <span class="hint error" *ngIf="isInvalid('phone')">{{ errorText('phone') }}</span>
+      </label>
+
+      <label class="field span-2">
+        <span class="label">Почта (необязательно)</span>
+
+        <div class="control" [class.invalid]="isInvalid('email')">
+          <input class="input" type="email" formControlName="email" autocomplete="email" placeholder="name@example.com" />
+          <mat-icon class="icon" aria-hidden="true">mail</mat-icon>
+        </div>
+
+        <span class="hint error" *ngIf="isInvalid('email')">{{ errorText('email') }}</span>
+      </label>
+
+      <label class="field">
+        <span class="label">Дата рождения</span>
+
+        <div class="control" [class.invalid]="isInvalid('birthday')">
+          <input
+            class="input"
+            matInput
+            [matDatepicker]="picker"
+            formControlName="birthday"
+            placeholder="Выберите дату"
+            autocomplete="bday"
+            readonly
+          />
+
+          <button type="button" class="icon-btn" (click)="picker.open()" aria-label="Открыть календарь">
+            <mat-icon>calendar_month</mat-icon>
+          </button>
+
+          <mat-datepicker #picker [startAt]="maxDate" startView="multi-year"></mat-datepicker>
+        </div>
+
+        <span class="hint error" *ngIf="isInvalid('birthday')">{{ errorText('birthday') }}</span>
+      </label>
+
+      <label class="field">
+        <span class="label">Роль</span>
+
+        <div class="control" [class.invalid]="isInvalid('role')">
+          <select class="select" formControlName="role" aria-label="Роль">
+            <option value="Client">Клиент</option>
+            <option value="Employee">Сотрудник</option>
+          </select>
+
+          <mat-icon class="icon" aria-hidden="true">manage_accounts</mat-icon>
+        </div>
+
+        <span class="hint error" *ngIf="isInvalid('role')">{{ errorText('role') }}</span>
+      </label>
+
+      <label class="field span-2">
+        <span class="label">Пароль</span>
+
+        <div class="control" [class.invalid]="isInvalid('password')">
+          <input
+            class="input"
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            autocomplete="new-password"
+            placeholder="••••••••"
+          />
+
+          <button
+            type="button"
+            class="icon-btn"
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="hidePassword ? 'Показать пароль' : 'Скрыть пароль'"
+          >
+            <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+        </div>
+
+        <span class="hint error" *ngIf="isInvalid('password')">{{ errorText('password') }}</span>
+      </label>
+
+    </div>
+  </form>
+</div>
+
+<div mat-dialog-actions class="dialog-actions" align="end">
+  <button mat-stroked-button type="button" (click)="close()">Отмена</button>
+
+  <button mat-raised-button color="primary" class="primary" type="button" (click)="submit()" [disabled]="form.invalid">
+    <mat-icon class="btn-icon">person_add</mat-icon>
+    Создать
+  </button>
+</div>

@@ -1,0 +1,42 @@
+<mat-card class="card" (click)="onOpen()" role="button" tabindex="0">
+  <div class="row">
+    <div class="avatar" aria-hidden="true">{{ initials }}</div>
+    <div class="name">{{ fullName }}</div>
+    <div class="phone">{{ user.phone || '—' }}</div>
+
+    <div class="role">
+      <mat-chip class="chip"
+        [class.chip-client]="user.role === 'Client'"
+        [class.chip-employee]="user.role === 'Employee'">
+        {{ user.role }}
+      </mat-chip>
+    </div>
+
+    <div class="actions" (click)="$event.stopPropagation()">
+      <button
+        mat-raised-button
+        color="warn"
+        class="btn blocked-btn"
+        type="button"
+        *ngIf="user.isBlocked"
+        disabled
+      >
+        <mat-icon>block</mat-icon>
+        Заблокирован
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        class="btn"
+        type="button"
+        *ngIf="!user.isBlocked"
+        (click)="onToggleBlock()"
+        [disabled]="!canBlock"
+      >
+        <mat-icon>lock</mat-icon>
+        Заблокировать
+      </button>
+    </div>
+  </div>
+</mat-card>
