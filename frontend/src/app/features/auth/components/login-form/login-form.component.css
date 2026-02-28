@@ -1,0 +1,142 @@
+.form {
+  display: grid;
+  gap: 16px;
+}
+
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(194, 24, 91, 0.85);
+}
+
+.control {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  border-radius: 18px;
+  background: rgba(255, 240, 245, 0.85);
+  border: 1px solid rgba(194, 24, 91, 0.25);
+
+  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.control:hover {
+  border-color: rgba(194, 24, 91, 0.45);
+}
+
+.control:focus-within {
+  border-color: #ec407a;
+  box-shadow: 0 0 0 4px rgba(236, 64, 122, 0.18);
+  background: rgba(255, 240, 245, 1);
+}
+
+.control.invalid {
+  border-color: rgba(216, 27, 96, 0.7);
+  box-shadow: 0 0 0 4px rgba(216, 27, 96, 0.12);
+}
+
+.input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+
+  padding: 14px 44px 14px 14px;
+  font-size: 14px;
+  color: rgba(33, 33, 33, 0.92);
+
+  caret-color: #c2185b;
+}
+
+.input::placeholder {
+  color: rgba(0, 0, 0, 0.35);
+}
+
+.icon {
+  position: absolute;
+  right: 14px;
+
+  font-size: 20px;
+  color: rgba(194, 24, 91, 0.6);
+  pointer-events: none;
+}
+
+.icon-btn {
+  position: absolute;
+  right: 10px;
+
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition: background 120ms ease;
+}
+
+.hint {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.error {
+  margin: 0;
+  color: #d81b60;
+  font-size: 13px;
+}
+
+.btn-icon {
+  margin-right: 8px;
+}
+
+.icon-btn mat-icon {
+  font-size: 20px;
+  color: rgba(194, 24, 91, 0.75); 
+  transition: color 120ms ease;
+}
+
+.icon-btn:hover mat-icon {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.full {
+  width: 100%;              
+  margin-top: 22px;        
+  padding: 12px 0;          
+  border-radius: 12px;
+
+  background-color: #c2185b !important; 
+  border: 2px solid #c2185b !important;
+  color: #fff !important;
+
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.full:hover:not(:disabled) {
+  background-color: #d81b60 !important;
+  border-color: #d81b60 !important;
+}
+
+.full:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
