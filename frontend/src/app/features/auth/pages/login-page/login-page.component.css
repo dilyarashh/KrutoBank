@@ -1,0 +1,25 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  padding: 28px;
+  border-radius: 20px;
+  background: #ffffffcc; 
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 8px 24px rgba(216, 27, 96, 0.15);
+}
+
+.title {
+  margin: 0 0 20px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #c2185b;
+  text-align: center;
+}
