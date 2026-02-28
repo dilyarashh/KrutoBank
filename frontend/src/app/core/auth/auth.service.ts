@@ -22,7 +22,7 @@ export class AuthService {
 
   private readonly http = inject(HttpClient); 
 
-  private readonly loginUrl = 'сюда в след раз вставлю бэкенд урл';
+  private readonly loginUrl = 'https://localhost:7205/api/auth/login';
 
   login(payload: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(this.loginUrl, payload).pipe(
