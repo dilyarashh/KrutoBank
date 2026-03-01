@@ -46,6 +46,19 @@ namespace CreditsService.Controllers
         }
 
         /// <summary>
+        /// Получить список всех активных тарифов банка
+        /// </summary>
+        /// <returns>Список тарифов</returns>
+        /// <response code="200">Список тарифов успешно получен</response>
+        /// <response code="401">Пользователь не авторизован</response>
+        [HttpGet("tariffs")]
+        public async Task<ActionResult<List<TariffResponseDto>>> GetAllTariffs()
+        {
+            var result = await _creditService.GetAllTariffs();
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Оформить новый кредит для клиента
         /// </summary>
         /// <param name="dto">Данные для оформления кредита (ID клиента, название тарифа, сумма)</param>

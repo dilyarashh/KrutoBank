@@ -4,7 +4,7 @@ namespace CreditsService.Repositories
 {
     public interface ITariffRepository
     {
-        Task<Tariff?> GetByIdAsync(int id);
+        Task<Tariff?> GetByIdAsync(Guid id);
         Task<Tariff?> GetByNameAsync(string name);
         Task<List<Tariff>> GetAllActiveAsync();
         Task<bool> ExistsByNameAsync(string name);

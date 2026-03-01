@@ -69,6 +69,18 @@ namespace CreditsService.Services
             return tariffDto;
         }
 
+        public async Task<List<TariffResponseDto>> GetAllTariffs()
+        {
+            var tariffs = await _tariffRepository.GetAllActiveAsync();
+
+            return tariffs.Select(t => new TariffResponseDto
+            {
+                Id = t.Id,
+                Name = t.Name,
+                InterestRate = t.InterestRate
+            }).ToList();
+        }
+
         public async Task<LoanInfoDto> TakeLoan(CreateLoanDto dto)
         {
             var currentUserId = _currentUser.GetUserId();

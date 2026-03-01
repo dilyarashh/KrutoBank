@@ -13,7 +13,7 @@ namespace CreditsService.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Tariff?> GetByIdAsync(int id)
+        public async Task<Tariff?> GetByIdAsync(Guid id)
         {
             return await _dbContext.Tariffs.FindAsync(id);
         }
