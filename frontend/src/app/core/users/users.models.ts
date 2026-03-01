@@ -38,3 +38,16 @@ export type CreateUserRequest = {
 };
 
 export type CreateUserResponse = { id: string };
+
+
+export interface UserDto {
+  id: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  phone: string;
+  email: string | null;
+  birthday: string; 
+  role: UserRole;
+  isBlocked: boolean;
+}

@@ -9,7 +9,7 @@ import { UserItem } from '../../../../core/users/users.models';
 @Component({
   selector: 'app-user-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatChipsModule, MatButtonModule, MatIconModule,],
+  imports: [CommonModule, MatCardModule, MatChipsModule, MatButtonModule, MatIconModule],
   templateUrl: './user-card.component.html',
   styleUrl: './user-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,7 +33,9 @@ export class UserCardComponent {
     const l = this.user.lastName?.[0] ?? '';
     return (l + f).toUpperCase();
   }
-
+  get roleText(): string {
+    return this.user.role === 'Client' ? 'Клиент' : 'Сотрудник';
+  }
   onOpen() {
     this.open.emit(this.user.id);
   }

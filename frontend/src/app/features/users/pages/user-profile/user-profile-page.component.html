@@ -1,0 +1,81 @@
+<div class="page">
+  <div class="content">
+    <div class="top">
+      <a class="back" routerLink="/users">
+        <mat-icon>arrow_back</mat-icon>
+        Назад
+      </a>
+    </div>
+
+    <p class="state error" *ngIf="userError()">{{ userError() }}</p>
+
+    <mat-card class="profile" *ngIf="!loadingUser() && user() as u">
+      <div class="profile-row">
+        <div class="avatar">{{ initials() }}</div>
+
+        <div class="info">
+          <div class="name">{{ fullName() }}</div>
+
+          <div class="meta">
+            <span><mat-icon>phone</mat-icon>{{ u.phone || '—' }}</span>
+            <span><mat-icon>mail</mat-icon>{{ u.email || '—' }}</span>
+            <span><mat-icon>cake</mat-icon>{{ u.birthday }}</span>
+          </div>
+        </div>
+
+        <div class="right">
+          <mat-chip
+            class="chip"
+            [class.client]="u.role === 'Client'"
+            [class.employee]="u.role === 'Employee'"
+          >
+            {{ roleText() }}
+          </mat-chip>
+
+          <mat-chip class="chip" [class.blocked]="u.isBlocked" [class.ok]="!u.isBlocked">
+            {{ statusText() }}
+          </mat-chip>
+        </div>
+      </div>
+    </mat-card>
+
+    <div class="tabs" *ngIf="user()">
+      <button
+        type="button"
+        class="tab"
+        [class.active]="tab() === 'accounts'"
+        (click)="selectTab('accounts')"
+      >
+        <mat-icon>account_balance_wallet</mat-icon>
+        Счета
+      </button>
+
+      <button
+        type="button"
+        class="tab"
+        [class.active]="tab() === 'loans'"
+        (click)="selectTab('loans')"
+      >
+        <mat-icon>payments</mat-icon>
+        Кредиты
+      </button>
+    </div>
+    <div class="section" *ngIf="tab() === 'accounts' && user()">
+      <p class="state" *ngIf="accountsLoading()">Загрузка счетов…</p>
+      <p class="state error" *ngIf="accountsError()">{{ accountsError() }}</p>
+
+      <div class="list" *ngIf="!accountsLoading() && accounts() as items">
+        <app-loan-card *ngFor="let a of items" [accountId]="a.accountId"></app-loan-card>
+        <div class="empty" *ngIf="items.length === 0">Счетов нет</div>
+      </div>
+    </div>
+    <div class="section" *ngIf="tab() === 'loans' && user()">
+      <p class="state error" *ngIf="loansError()">{{ loansError() }}</p>
+
+      <div class="list" *ngIf="!loansLoading() && loans() as items">
+        <app-credit-card *ngFor="let l of items" [loan]="l" [userId]="userId()"></app-credit-card>
+        <div class="empty" *ngIf="items.length === 0">Кредиты отсутствуют</div>
+      </div>
+    </div>
+  </div>
+</div>

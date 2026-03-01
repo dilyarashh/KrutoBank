@@ -3,7 +3,7 @@ import {
   LoginCredentials,
   LoginFormComponent,
 } from '../../components/login-form/login-form.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CommonModule } from '@angular/common';
 
@@ -18,20 +18,22 @@ import { CommonModule } from '@angular/common';
 export class LoginPageComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly pageLoading = signal(false);
 
-  async onLogin(credentials: LoginCredentials) {
-    this.pageLoading.set(true);
+ async onLogin(credentials: LoginCredentials) {
+  this.pageLoading.set(true);
 
-    try {
-      await this.auth.login(credentials).toPromise();
+  try {
+    await this.auth.login(credentials).toPromise();
 
-      await this.router.navigateByUrl('/');
-    } catch (e: any) {
-      console.error(e);
-    } finally {
-      this.pageLoading.set(false);
-    }
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/users';
+    await this.router.navigateByUrl(returnUrl);
+  } catch (e: any) {
+    console.error(e);
+  } finally {
+    this.pageLoading.set(false);
   }
+}
 }
