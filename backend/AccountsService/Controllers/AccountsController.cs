@@ -136,4 +136,16 @@ public class AccountsController(IAccountService service) : ControllerBase
             o.Amount
         }));
     }
+    
+    /// <summary>
+    /// Получить список своих счетов
+    /// </summary>
+    [Authorize]
+    [HttpGet("my-accounts")]
+    [ProducesResponseType(typeof(IEnumerable<UserAccountDto>), 200)]
+    public async Task<IActionResult> GetMyAccounts([FromQuery] bool? onlyOpened)
+    {
+        var result = await service.GetMyAccountsAsync(onlyOpened);
+        return Ok(result);
+    }
 }

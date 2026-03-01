@@ -229,4 +229,26 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
 
         return await _accountRepository.GetAccountOperationsAsync(accountId);
     }
+    
+    public async Task<IEnumerable<UserAccountDto>> GetMyAccountsAsync(bool? onlyOpened)
+    {
+        var userId = _currentUser.GetUserId();
+
+        var accounts = await _accountRepository.GetUserAccountsAsync(userId);
+
+        if (onlyOpened == true)
+            accounts = accounts.Where(a => !a.IsClosed);
+
+        if (onlyOpened == false)
+            accounts = accounts.Where(a => a.IsClosed);
+
+        return accounts.Select(a => new UserAccountDto
+        {
+            UserId = userId,
+            AccountId = a.Id,
+            AccountName = a.Name,
+            Balance = a.Balance,
+            IsClosed = a.IsClosed
+        });
+    }
 }

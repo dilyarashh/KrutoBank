@@ -14,4 +14,5 @@ public interface IAccountService
     Task<IEnumerable<AccountOperation>> GetMyAccountHistoryAsync(Guid accountId);
     Task<PagedResult<UserAccountDto>> GetAllUserAccountsAsync(bool? onlyOpened, int page, int pageSize);
     Task<IEnumerable<AccountOperation>> GetAccountHistoryAsync(Guid accountId);
+    Task<IEnumerable<UserAccountDto>> GetMyAccountsAsync(bool? onlyOpened);
 }
