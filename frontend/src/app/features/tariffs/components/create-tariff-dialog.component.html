@@ -1,0 +1,70 @@
+<div class="backdrop" (click)="close(false)" (keydown)="onKeydown($event)" tabindex="0">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="head">
+      <div class="title">Новый тариф</div>
+      <button class="x" type="button" (click)="close(false)" aria-label="Закрыть">✕</button>
+    </div>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+      <label class="field">
+        <span class="label">Название тарифа</span>
+        <div
+          class="control"
+          [class.invalid]="form.controls.name.invalid && form.controls.name.touched"
+        >
+          <input class="input" formControlName="name" placeholder="Например: Стандарт" />
+        </div>
+        <span
+          class="hint error"
+          *ngIf="form.controls.name.hasError('required') && form.controls.name.touched"
+        >
+          Обязательное поле
+        </span>
+        <span
+          class="hint error"
+          *ngIf="form.controls.name.hasError('maxlength') && form.controls.name.touched"
+        >
+          Слишком длинное название
+        </span>
+      </label>
+
+      <label class="field">
+        <span class="label">Процентная ставка (%)</span>
+        <div
+          class="control"
+          [class.invalid]="form.controls.interestRate.invalid && form.controls.interestRate.touched"
+        >
+          <input
+            class="input"
+            type="number"
+            formControlName="interestRate"
+            placeholder="Например: 12"
+          />
+        </div>
+        <span
+          class="hint error"
+          *ngIf="
+            form.controls.interestRate.hasError('required') && form.controls.interestRate.touched
+          "
+        >
+          Обязательное поле
+        </span>
+        <span
+          class="hint error"
+          *ngIf="form.controls.interestRate.hasError('min') && form.controls.interestRate.touched"
+        >
+          Не может быть меньше 0
+        </span>
+      </label>
+
+      <p class="server-error" *ngIf="error()">{{ error() }}</p>
+      <p class="success" *ngIf="success()">Тариф успешно создан</p>
+      <div class="actions">
+        <button class="btn ghost" type="button" (click)="close(false)">Отмена</button>
+        <button class="btn primary" type="submit" [disabled]="loading() || form.invalid">
+          {{ loading() ? 'Создаю…' : 'Создать' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

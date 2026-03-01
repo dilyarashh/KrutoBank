@@ -1,0 +1,43 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 64px;
+  padding: 0 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #c2185b;
+  box-shadow: 0 4px 16px rgba(194, 24, 91, 0.35);
+  z-index: 100;
+}
+
+.left {
+  font-size: 20px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.4px;
+}
+
+.right {
+  border: none;
+  background: transparent;
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  transition: background 120ms ease;
+}
+
+.right:hover {
+  background: rgba(255, 255, 255, 0.18);
+}

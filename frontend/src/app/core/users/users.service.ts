@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {
   CreateUserRequest,
   CreateUserResponse,
+  UserDto,
   UsersListRequest,
   UsersListResponse,
 } from './users.models';
@@ -16,6 +17,10 @@ export class UsersService {
   getUsersList(req: UsersListRequest): Observable<UsersListResponse> {
     const params = this.buildListParams(req);
     return this.http.get<UsersListResponse>(`${this.baseUrl}/list`, { params });
+  }
+
+   getById(id: string) {
+    return this.http.get<UserDto>(`${this.baseUrl}/${id}`);
   }
 
   private buildListParams(req: UsersListRequest): HttpParams {
