@@ -78,8 +78,7 @@ export class UsersPageComponent {
   }
 
   onOpenUser(userId: string) {
-    // TODO: позже сделаю переход на детальную страницу
-    console.log('open user', userId);
+    this.router.navigate(['/users', userId]);
   }
 
   async onToggleBlock(user: UserItem) {

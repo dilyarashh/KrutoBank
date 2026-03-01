@@ -1,0 +1,13 @@
+<header class="header">
+  <div class="left">КрутоБанк</div>
+
+  
+  <button class="right" type="button" (click)="openCreateTariff()">
+    Новый тариф
+  </button>
+</header>
+
+<app-create-tariff-modal
+  *ngIf="modalOpen()"
+    (closed)="onModalClosed($event)"
+></app-create-tariff-modal>

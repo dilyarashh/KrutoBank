@@ -19,10 +19,10 @@
 .row {
   display: grid;
   grid-template-columns:
-    46px   
-    3fr     
-    2fr     
-    1.5fr   
+    46px                
+    minmax(220px, 1fr)  
+    450px                
+    150px                
     auto;  
 
   gap: 16px;
@@ -68,6 +68,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
 }
 
 .role {

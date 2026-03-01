@@ -1,0 +1,58 @@
+<mat-card class="card" (click)="toggle()" role="button" tabindex="0">
+  <ng-container *ngIf="!loading() && account() as a; else states">
+    <div class="row">
+      <div class="avatar" aria-hidden="true">
+        <mat-icon>account_balance</mat-icon>
+      </div>
+
+      <div class="main">
+        <div class="title">
+          <span class="name">{{ a.name }}</span>
+
+          <mat-chip class="chip" [class.open]="!a.isClosed" [class.closed]="a.isClosed">
+            {{ accountStatus(a) }}
+          </mat-chip>
+        </div>
+
+        <div class="meta">
+          <span>Открыт: <b>{{ formatDate(a.openedAt) }}</b></span>
+          <span *ngIf="a.isClosed && a.closedAt">Закрыт: <b>{{ formatDate(a.closedAt) }}</b></span>
+        </div>
+      </div>
+
+      <div class="amounts">
+        <div class="amount">
+          <span class="k">Баланс</span>
+          <span class="v">{{ formatMoney(a.balance) }}</span>
+        </div>
+      </div>
+
+      <div class="chev" aria-hidden="true">
+        <mat-icon>{{ expanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </div>
+    </div>
+
+    <div class="dropdown" *ngIf="expanded()">
+      <p class="ops-state" *ngIf="opsLoading()">Загрузка операций…</p>
+      <p class="ops-state error" *ngIf="opsError()">{{ opsError() }}</p>
+
+      <div class="ops" *ngIf="!opsLoading() && ops() as items">
+        <div class="ops-empty" *ngIf="items.length === 0">Операций пока нет</div>
+
+        <div class="op" *ngFor="let op of items">
+          <div class="op-left">
+            <div class="op-type">{{ operationTypeText(op.type) }}</div>
+            <div class="op-date">{{ formatDate(op.createdAt) }}</div>
+          </div>
+
+          <div class="op-amount">{{ formatMoney(op.amount) }}</div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #states>
+    <div class="state" *ngIf="loading()">Загрузка счета…</div>
+    <div class="state error" *ngIf="error()">{{ error() }}</div>
+  </ng-template>
+</mat-card>
