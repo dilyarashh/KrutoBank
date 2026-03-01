@@ -31,6 +31,8 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         await _accountRepository.AddAsync(account);
         await _accountRepository.AddUserAccountAsync(userId, account.Id);
 
+        await _accountRepository.SaveChangesAsync();
+        
         return account;
     }
 
