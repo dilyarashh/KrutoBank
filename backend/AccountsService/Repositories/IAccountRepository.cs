@@ -19,5 +19,5 @@ public interface IAccountRepository
         int page,
         int pageSize);
     Task<IEnumerable<AccountOperation>> GetAccountOperationsAsync(Guid accountId);
-
+    Task<IEnumerable<Account>> GetUserAccountsByUserIdAsync(Guid userId);
 }

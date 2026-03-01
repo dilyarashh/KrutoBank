@@ -148,4 +148,18 @@ public class AccountsController(IAccountService service) : ControllerBase
         var result = await service.GetMyAccountsAsync(onlyOpened);
         return Ok(result);
     }
+    
+    /// <summary>
+    /// Получить счета конкретного пользователя (только сотрудник)
+    /// </summary>
+    [Authorize(Roles = "Employee")]
+    [HttpGet("user/{userId}")]
+    [ProducesResponseType(typeof(IEnumerable<UserAccountDto>), 200)]
+    public async Task<IActionResult> GetUserAccountsByUserId(
+        Guid userId,
+        [FromQuery] bool? onlyOpened)
+    {
+        var result = await service.GetUserAccountsByUserIdAsync(userId, onlyOpened);
+        return Ok(result);
+    }
 }

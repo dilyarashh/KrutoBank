@@ -133,4 +133,16 @@ public class AccountRepository(AccountsDbContext db) : IAccountRepository
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync();
     }
+    
+    public async Task<IEnumerable<Account>> GetUserAccountsByUserIdAsync(Guid userId)
+    {
+        var accountIds = await db.UserAccounts
+            .Where(ua => ua.UserId == userId)
+            .Select(ua => ua.AccountId)
+            .ToListAsync();
+
+        return await db.Accounts
+            .Where(a => accountIds.Contains(a.Id))
+            .ToListAsync();
+    }
 }
