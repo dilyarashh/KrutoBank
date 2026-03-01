@@ -82,7 +82,6 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         account.IsClosed = true;
         account.ClosedAt = DateTime.UtcNow;
         await _accountRepository.UpdateAsync(account);
-
         await _accountRepository.SaveChangesAsync();
     }
     
