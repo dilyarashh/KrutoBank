@@ -37,8 +37,8 @@ public class AccountRepository(AccountsDbContext db) : IAccountRepository
             .ToListAsync();
 
         return await db.Accounts
-            .Where(a => accountIds.Contains(a.Id) && !a.IsClosed)
-            .ToListAsync();
+            .Where(a => accountIds.Contains(a.Id))
+            .ToListAsync(); 
     }
 
     public Task UpdateAsync(Account account)
