@@ -1,0 +1,6 @@
+@KrutoBankSolution_HostAddress = http://localhost:5234
+
+GET {{KrutoBankSolution_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

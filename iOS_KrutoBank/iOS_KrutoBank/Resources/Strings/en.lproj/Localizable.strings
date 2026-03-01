@@ -1,0 +1,48 @@
+/* MARK: - Common */
+"common.cancel" = "Отмена";
+"common.ok" = "Ок";
+"common.error" = "Ошибка";
+
+/* MARK: - Network errors */
+"error.networkUnavailable" = "Нет подключения к интернету";
+"error.timeout" = "Время ожидания истекло. Повторите попытку";
+"error.serverUnavailable" = "Сервер недоступен. Попробуйте позже";
+"error.parsingFailed" = "Ошибка обработки данных";
+"error.serverError" = "Ошибка сервера (%d)";
+"error.unknown" = "Что-то пошло не так";
+
+/* MARK: - Login */
+"login.title" = "Вход";
+"login.button" = "Войти";
+"login.phoneNumber.placeholder" = "Логин";
+"login.password.placeholder" = "Пароль";
+"login.password.error" = "Неверный пароль";
+"login.phone.error" = "Некорректный номер телефона";
+"login.error" = "Не удалось войти, попробуйте еще раз";
+"login.sessionExpired" = "Сессия истекла. Войдите снова.";
+
+/* MARK: -  Tabs */
+"tabs.accounts" = "Счета";
+"tabs.credits" = "Кредиты";
+"tabs.profile" = "Профиль";
+
+/* MARK: - Accounts */
+"accounts.open" = "Открыть счёт";
+"accounts.close" = "Закрыть счёт";
+
+/* MARK: - Credits */
+"credits.take" = "Взять кредит";
+"credits.repay" = "Погасить кредит";
+
+/* MARK: - Profile */
+"profile.fullName" = "ФИО";
+"profile.phone" = "Телефон";
+"profile.email" = "Email";
+"profile.role" = "Роль";
+"profile.blocked" = "Аккаунт заблокирован";
+"profile.noData" = "Нет данных";
+"profile.logout" = "Выйти";
+
+/* MARK: - Roles */
+"role.client" = "Клиент";
+"role.employee" = "Сотрудник";

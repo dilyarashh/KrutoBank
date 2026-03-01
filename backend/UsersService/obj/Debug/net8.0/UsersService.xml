@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>UsersService</name>
+    </assembly>
+    <members>
+        <member name="M:UsersService.Controllers.UsersController.Create(UsersService.DTOs.CreateUserRequest)">
+            <summary>
+            Создать пользователя (доступно только сотруднику)
+            </summary>
+        </member>
+        <member name="M:UsersService.Controllers.UsersController.Block(System.Guid)">
+            <summary>
+            Заблокировать пользователя (доступно только сотруднику)
+            </summary>
+        </member>
+        <member name="M:UsersService.Controllers.UsersController.Get(System.Guid)">
+            <summary>
+            Получить информацию о пользователе
+            </summary>
+        </member>
+        <member name="M:UsersService.Controllers.UsersController.GetMyself">
+            <summary>
+            Получить информацию о себе
+            </summary>
+        </member>
+        <member name="M:UsersService.Controllers.UsersController.GetAll(UsersService.DTOs.PagedRequest)">
+            <summary>
+            Получить информацию о пользователях
+            </summary>
+        </member>
+        <member name="T:UsersService.Migrations.InitialUsers">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.InitialUsers.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.InitialUsers.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.InitialUsers.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:UsersService.Migrations.AddBlackTokens">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.AddBlackTokens.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.AddBlackTokens.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.AddBlackTokens.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:UsersService.Migrations.SeedUsers">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.SeedUsers.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.SeedUsers.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.SeedUsers.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:UsersService.Migrations.ChangeUserPassword">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.ChangeUserPassword.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.ChangeUserPassword.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.ChangeUserPassword.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:UsersService.Migrations.ChangeUserPasswordAgain">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.ChangeUserPasswordAgain.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.ChangeUserPasswordAgain.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:UsersService.Migrations.ChangeUserPasswordAgain.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AccountsService</name>
+    </assembly>
+    <members>
+        <member name="M:AccountsService.Controllers.AccountsController.CreateAccount(AccountsService.DTO.CreateAccountRequest)">
+            <summary>
+            Открыть счет
+            </summary>
+        </member>
+        <member name="M:AccountsService.Controllers.AccountsController.CloseAccount(System.Guid)">
+            <summary>
+            Закрыть счет
+            </summary>
+        </member>
+        <member name="M:AccountsService.Controllers.AccountsController.Deposit(AccountsService.DTO.MoneyOperationRequest)">
+            <summary>
+            Пополнить счет
+            </summary>
+        </member>
+        <member name="M:AccountsService.Controllers.AccountsController.Withdraw(AccountsService.DTO.MoneyOperationRequest)">
+            <summary>
+            Снять деньги со счета
+            </summary>
+        </member>
+        <member name="M:AccountsService.Controllers.AccountsController.GetMyAccount(System.Guid)">
+            <summary>
+            Получить информацию по своему счету
+            </summary>
+        </member>
+        <member name="M:AccountsService.Controllers.AccountsController.GetAccount(System.Guid)">
+            <summary>
+            Получить информацию по любому счету (доступно только сотруднику)
+            </summary>
+        </member>
+        <member name="M:AccountsService.Controllers.AccountsController.GetMyAccountHistory(System.Guid)">
+            <summary>
+            Получить историю операций по своему счету
+            </summary>
+        </member>
+        <member name="M:AccountsService.Controllers.AccountsController.GetAllUsersAccount(System.Nullable{System.Boolean},System.Int32,System.Int32)">
+            <summary>
+            Получить счета всех клиентов (доступно только сотруднику)
+            </summary>
+        </member>
+        <member name="M:AccountsService.Controllers.AccountsController.GetAccountHistory(System.Guid)">
+            <summary>
+            Получить историю операций любого счета (только сотрудник)
+            </summary>
+        </member>
+        <member name="M:AccountsService.Controllers.AccountsController.GetMyAccounts(System.Nullable{System.Boolean})">
+            <summary>
+            Получить список своих счетов
+            </summary>
+        </member>
+        <member name="M:AccountsService.Controllers.AccountsController.GetUserAccountsByUserId(System.Guid,System.Nullable{System.Boolean})">
+            <summary>
+            Получить счета конкретного пользователя (только сотрудник)
+            </summary>
+        </member>
+        <member name="T:AccountsService.Migrations.InitialAccounts">
+            <inheritdoc />
+        </member>
+        <member name="M:AccountsService.Migrations.InitialAccounts.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AccountsService.Migrations.InitialAccounts.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AccountsService.Migrations.InitialAccounts.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AccountsService.Migrations.SeedAccounts">
+            <inheritdoc />
+        </member>
+        <member name="M:AccountsService.Migrations.SeedAccounts.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AccountsService.Migrations.SeedAccounts.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AccountsService.Migrations.SeedAccounts.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
