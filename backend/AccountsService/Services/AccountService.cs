@@ -153,7 +153,7 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         return true;
     }
 
-    public async Task<AccountDto> GetMyAccountAsync(Guid accountId)
+    public async Task<AccountDetailsDto> GetMyAccountAsync(Guid accountId)
     {
         var userId = _currentUser.GetUserId();
 
@@ -172,7 +172,7 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         };
     }
 
-    public async Task<AccountDto> GetAccountAsync(Guid accountId)
+    public async Task<AccountDetailsDto> GetAccountAsync(Guid accountId)
     {
         var account = await _accountRepository.GetByIdAsync(accountId);
         if (account == null)

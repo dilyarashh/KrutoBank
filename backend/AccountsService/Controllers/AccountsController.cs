@@ -66,7 +66,7 @@ public class AccountsController(IAccountService service) : ControllerBase
     /// </summary>
     [Authorize]
     [HttpGet("{accountId}/my-account")]
-    [ProducesResponseType(typeof(AccountDto), 200)]
+    [ProducesResponseType(typeof(AccountDetailsDto), 200)]
     public async Task<IActionResult> GetMyAccount(Guid accountId)
     {
         var dto = await service.GetMyAccountAsync(accountId);
@@ -78,7 +78,7 @@ public class AccountsController(IAccountService service) : ControllerBase
     /// </summary>
     [Authorize(Roles = "Employee")]
     [HttpGet("{accountId}")]
-    [ProducesResponseType(typeof(AccountDto), 200)]
+    [ProducesResponseType(typeof(AccountDetailsDto), 200)]
     public async Task<IActionResult> GetAccount(Guid accountId)
     {
         var dto = await service.GetAccountAsync(accountId);
