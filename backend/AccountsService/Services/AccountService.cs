@@ -152,7 +152,43 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         await _accountRepository.SaveChangesAsync();
         return true;
     }
-    
+
+    public async Task<AccountDto> GetMyAccountAsync(Guid accountId)
+    {
+        var userId = _currentUser.GetUserId();
+
+        var account = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+        if (account == null)
+            throw new BadRequestException("Вы можете получить информацию только по своему счёту");
+
+        return new()
+        {
+            Id = account.Id,
+            Name = account.Name,
+            Balance = account.Balance,
+            OpenedAt = account.OpenedAt,
+            IsClosed = account.IsClosed,
+            ClosedAt = account.ClosedAt
+        };
+    }
+
+    public async Task<AccountDto> GetAccountAsync(Guid accountId)
+    {
+        var account = await _accountRepository.GetByIdAsync(accountId);
+        if (account == null)
+            throw new NotFoundException("Счет не найден");
+
+        return new()
+        {
+            Id = account.Id,
+            Name = account.Name,
+            Balance = account.Balance,
+            OpenedAt = account.OpenedAt,
+            IsClosed = account.IsClosed,
+            ClosedAt = account.ClosedAt
+        };
+    }
+
     public async Task<IEnumerable<AccountOperation>> GetMyAccountHistoryAsync(Guid accountId)
     {
         var userId = _currentUser.GetUserId();

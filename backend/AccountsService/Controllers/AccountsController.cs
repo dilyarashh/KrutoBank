@@ -60,7 +60,31 @@ public class AccountsController(IAccountService service) : ControllerBase
         await service.WithdrawAsync(request.AccountId, request.Amount);
         return NoContent();
     }
-    
+
+    /// <summary>
+    /// Получить информацию по своему счету
+    /// </summary>
+    [Authorize]
+    [HttpGet("{accountId}/my-account")]
+    [ProducesResponseType(typeof(AccountDto), 200)]
+    public async Task<IActionResult> GetMyAccount(Guid accountId)
+    {
+        var dto = await service.GetMyAccountAsync(accountId);
+        return Ok(dto);
+    }
+
+    /// <summary>
+    /// Получить информацию по любому счету (доступно только сотруднику)
+    /// </summary>
+    [Authorize(Roles = "Employee")]
+    [HttpGet("{accountId}")]
+    [ProducesResponseType(typeof(AccountDto), 200)]
+    public async Task<IActionResult> GetAccount(Guid accountId)
+    {
+        var dto = await service.GetAccountAsync(accountId);
+        return Ok(dto);
+    }
+
     /// <summary>
     /// Получить историю операций по своему счету
     /// </summary>
