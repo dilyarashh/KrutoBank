@@ -71,4 +71,14 @@ public class AccountClient(HttpClient httpClient) : IAccountClient
             throw new Exception("Ошибка перевода средств");
         }
     }
+
+    public async Task<BankAccountInfoDto> GetMasterAccountAsync()
+    {
+        var response = await httpClient.GetAsync("/api/accounts/bank/master");
+
+        if (!response.IsSuccessStatusCode)
+            throw new Exception("Ошибка получения мастер-счета банка");
+
+        return await response.Content.ReadFromJsonAsync<BankAccountInfoDto>();
+    }
 }

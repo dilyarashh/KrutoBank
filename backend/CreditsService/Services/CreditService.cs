@@ -131,6 +131,13 @@ namespace CreditsService.Services
                 throw new ArgumentException("Сумма кредита не может превышать 10 000 000");
             }
 
+            var bankAccount = await _accountClient.GetMasterAccountAsync();
+
+            if (bankAccount.Balance < dto.Amount)
+            {
+                throw new InvalidOperationException("Недостаточно средств на мастер-счете банка");
+            }
+
             var loan = new Loan
             {
                 UserId = dto.UserId,

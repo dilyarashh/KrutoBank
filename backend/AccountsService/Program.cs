@@ -45,7 +45,9 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountValidator>();
-    
+
+builder.Services.AddHttpClient<CurrencyService>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

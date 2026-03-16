@@ -17,4 +17,5 @@ public interface IAccountService
     Task<IEnumerable<AccountOperation>> GetAccountHistoryAsync(Guid accountId);
     Task<IEnumerable<UserAccountDto>> GetMyAccountsAsync(bool? onlyOpened);
     Task<IEnumerable<UserAccountDto>> GetUserAccountsByUserIdAsync(Guid userId, bool? onlyOpened);
+    Task<BankAccountInfoDto> GetMasterAccountInfoAsync();
 }

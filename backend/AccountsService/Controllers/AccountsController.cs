@@ -184,4 +184,16 @@ public class AccountsController(IAccountService service) : ControllerBase
         await service.DepositAsync(BankAccounts.MasterAccountId, amount);
         return NoContent();
     }
+
+    /// <summary>
+    /// Получить баланс мастер-счета банка (только сотрудник)
+    /// </summary>
+    [Authorize(Roles = "Employee")]
+    [HttpGet("bank/master")]
+    public async Task<IActionResult> GetMasterAccount()
+    {
+        var result = await service.GetMasterAccountInfoAsync();
+
+        return Ok(result);
+    }
 }

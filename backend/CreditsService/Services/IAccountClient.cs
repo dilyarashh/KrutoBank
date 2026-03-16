@@ -7,4 +7,5 @@ public interface IAccountClient
     Task<bool> IsMyAccount(Guid accountId);
     Task<bool> IsAccountOwnedByUser(Guid accountId, Guid userId);
     Task TransferAsync(Guid fromAccountId, Guid toAccountId, decimal amount);
+    Task<BankAccountInfoDto> GetMasterAccountAsync();
 }
