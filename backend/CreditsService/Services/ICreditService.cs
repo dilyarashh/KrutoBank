@@ -15,4 +15,8 @@ public interface ICreditService
     Task<List<LoanOperationDto>> GetLoanOperations(Guid userId, Guid loanId);
 
     Task AccrueInterestForAll();
+
+    Task SetupAutoPayment(CreateAutoPaymentDto dto);
+
+    Task ProcessAutoPayments();
 }

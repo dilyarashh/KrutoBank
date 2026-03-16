@@ -11,6 +11,7 @@ public class CreditsDbContext(DbContextOptions<CreditsDbContext> options) : DbCo
     public DbSet<Tariff> Tariffs => Set<Tariff>();
     public DbSet<Loan> Loans => Set<Loan>();
     public DbSet<LoanOperation> LoanOperations => Set<LoanOperation>();
+    public DbSet<AutoPayment> AutoPayments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -116,6 +116,61 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         return true;
     }
 
+    public async Task TransferAsync(TransferRequest request)
+    {
+        if (request.Amount <= 0)
+        {
+            throw new BadRequestException("Сумма должна быть больше нуля");
+        }
+
+        var userId = _currentUser.GetUserId();
+
+        var from = await _accountRepository.GetByIdForUserAsync(request.FromAccountId, userId);
+
+        if (from == null)
+        {
+            throw new BadRequestException("Вы можете переводить деньги только со своего счета");
+        }
+
+        var to = await _accountRepository.GetByIdAsync(request.ToAccountId);
+
+        if (to == null)
+        {
+            throw new NotFoundException("Счет назначения не найден");
+        }
+
+        if (from.Balance < request.Amount)
+        {
+            throw new BadRequestException("Недостаточно средств");
+        }
+
+        from.Balance -= request.Amount;
+        to.Balance += request.Amount;
+
+        await _accountRepository.AddOperationAsync(new AccountOperation
+        {
+            Id = Guid.NewGuid(),
+            AccountId = from.Id,
+            Amount = request.Amount,
+            Type = OperationType.Withdraw,
+            CreatedAt = DateTime.UtcNow
+        });
+
+        await _accountRepository.AddOperationAsync(new AccountOperation
+        {
+            Id = Guid.NewGuid(),
+            AccountId = to.Id,
+            Amount = request.Amount,
+            Type = OperationType.Deposit,
+            CreatedAt = DateTime.UtcNow
+        });
+
+        await _accountRepository.UpdateAsync(from);
+        await _accountRepository.UpdateAsync(to);
+
+        await _accountRepository.SaveChangesAsync();
+    }
+
     public async Task<bool> WithdrawAsync(Guid accountId, decimal amount)
     {
         if (amount <= 0)

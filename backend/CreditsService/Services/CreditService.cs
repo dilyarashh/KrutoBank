@@ -17,15 +17,22 @@ namespace CreditsService.Services
         private readonly ILoanOperationRepository _loanOperationRepository;
         private readonly ILogger<CreditService> _logger;
         private readonly ICurrentUser _currentUser;
+        private readonly IAccountClient _accountClient;
+        private readonly IUserClient _userClient;
+        private readonly CreditsDbContext _dbContext;
 
         public CreditService(ITariffRepository tariffRepository, ILoanRepository loanRepository,
-            ILoanOperationRepository loanOperationRepository, ILogger<CreditService> logger, ICurrentUser currentUser)
+            ILoanOperationRepository loanOperationRepository, ILogger<CreditService> logger, 
+            ICurrentUser currentUser, IAccountClient accountClient, IUserClient userClient, CreditsDbContext dbContext)
         {
             _tariffRepository = tariffRepository;
             _loanRepository = loanRepository;
             _loanOperationRepository = loanOperationRepository;
             _logger = logger;
             _currentUser = currentUser;
+            _accountClient = accountClient;
+            _userClient = userClient;
+            _dbContext = dbContext;
         }
 
         public async Task<TariffResponseDto> CreateTariff(CreateTariffDto dto)
@@ -83,6 +90,13 @@ namespace CreditsService.Services
 
         public async Task<LoanInfoDto> TakeLoan(CreateLoanDto dto)
         {
+            var userExists = await _userClient.UserExists(dto.UserId);
+
+            if (!userExists)
+            {
+                throw new NotFoundException("Пользователь не существует");
+            }
+
             var currentUserId = _currentUser.GetUserId();
             if (currentUserId != dto.UserId)
             {
@@ -92,6 +106,13 @@ namespace CreditsService.Services
             if (_currentUser.GetRole() != "Client")
             {
                 throw new ForbiddenException("Только клиенты могут брать кредиты");
+            }
+
+            var isMyAccount = await _accountClient.IsMyAccount(dto.AccountId);
+
+            if (!isMyAccount)
+            {
+                throw new ForbiddenException("Вы можете получить кредит только на свой счет");
             }
 
             var tariff = await _tariffRepository.GetByNameAsync(dto.TariffName);
@@ -121,8 +142,19 @@ namespace CreditsService.Services
                 IsActive = true
             };
 
-            _loanRepository.Add(loan);
-            await _loanRepository.SaveChangesAsync();
+            try
+            {
+                await _accountClient.DepositAsync(dto.AccountId, dto.Amount);
+
+                _loanRepository.Add(loan);
+                await _loanRepository.SaveChangesAsync();
+            }
+            catch
+            {
+                await _accountClient.WithdrawAsync(dto.AccountId, dto.Amount);
+
+                throw new InvalidOperationException("Не удалось оформить кредит. Попробуйте позже.");
+            }
 
             _logger.LogInformation("Пользователь {UserId} взял кредит ID {LoanId} на сумму {Amount:C} по тарифу {TariffName}",
                 dto.UserId, loan.Id, dto.Amount, tariff.Name);
@@ -146,13 +178,21 @@ namespace CreditsService.Services
             var loan = await _loanRepository.GetByIdWithTariffAsync(dto.LoanId);
             if (loan == null)
             {
-                throw new KeyNotFoundException($"Кредит с ID {dto.LoanId} не найден");
-            }
+                throw new KeyNotFoundException($"Кредит {dto.LoanId} не найден");
+            }    
 
             var currentUserId = _currentUser.GetUserId();
+
             if (currentUserId != loan.UserId)
             {
                 throw new ForbiddenException("Вы можете гасить только свои кредиты");
+            }
+
+            var isOwnerAccount = await _accountClient.IsAccountOwnedByUser(dto.AccountId, loan.UserId);
+
+            if (!isOwnerAccount)
+            {
+                throw new ForbiddenException("Счет не принадлежит владельцу кредита");
             }
 
             if (!loan.IsActive)
@@ -162,13 +202,16 @@ namespace CreditsService.Services
 
             if (dto.Amount <= 0)
             {
-                throw new ArgumentException("Сумма погашения должна быть положительной");
+                throw new ArgumentException("Сумма должна быть положительной");
             }
 
             if (dto.Amount > loan.RemainingAmount)
             {
-                throw new InvalidOperationException($"Сумма погашения превышает остаток. Остаток: {loan.RemainingAmount:C}");
+                throw new InvalidOperationException("Сумма превышает остаток");
             }
+
+            // списываем деньги
+            await _accountClient.WithdrawAsync(dto.AccountId, dto.Amount);
 
             loan.RemainingAmount -= dto.Amount;
 
@@ -189,12 +232,10 @@ namespace CreditsService.Services
             };
 
             _loanOperationRepository.Add(operation);
+
             await _loanOperationRepository.SaveChangesAsync();
 
-            _logger.LogInformation("Погашение кредита ID {LoanId} на сумму {Amount:C}. Остаток: {Remaining:C}",
-                loan.Id, dto.Amount, loan.RemainingAmount);
-
-            var loanInfoDto = new LoanInfoDto
+            return new LoanInfoDto
             {
                 LoanId = loan.Id,
                 InitialAmount = loan.InitialAmount,
@@ -204,8 +245,6 @@ namespace CreditsService.Services
                 CreatedAt = loan.CreatedAt,
                 IsActive = loan.IsActive
             };
-
-            return loanInfoDto;
         }
 
         public async Task<List<LoanInfoDto>> GetUserLoans(Guid userId)
@@ -266,6 +305,76 @@ namespace CreditsService.Services
             }).ToList();
 
             return loanoperationDto;
+        }
+
+        public async Task SetupAutoPayment(CreateAutoPaymentDto dto)
+        {
+            var loan = await _loanRepository.GetByIdAsync(dto.LoanId);
+
+            if (loan == null)
+            {
+                throw new NotFoundException("Кредит не найден");
+            }
+
+            var currentUserId = _currentUser.GetUserId();
+
+            if (loan.UserId != currentUserId)
+            {
+                throw new ForbiddenException("Это не ваш кредит");
+            }
+
+            var isMyAccount = await _accountClient.IsMyAccount(dto.AccountId);
+
+            if (!isMyAccount)
+            {
+                throw new ForbiddenException("Счет не принадлежит пользователю");
+            }
+
+            var autoPayment = new AutoPayment
+            {
+                Id = Guid.NewGuid(),
+                LoanId = dto.LoanId,
+                AccountId = dto.AccountId,
+                Amount = dto.Amount,
+                IntervalMinutes = dto.IntervalMinutes,
+                CreatedAt = DateTime.UtcNow,
+                NextExecutionDate = DateTime.UtcNow.AddDays(dto.IntervalMinutes),
+                IsActive = true
+            };
+
+            _dbContext.AutoPayments.Add(autoPayment);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task ProcessAutoPayments()
+        {
+            var now = DateTime.UtcNow;
+
+            var payments = await _dbContext.AutoPayments
+                .Where(p => p.IsActive && p.NextExecutionDate <= now)
+                .ToListAsync();
+
+            foreach (var payment in payments)
+            {
+                try
+                {
+                    await RepayLoan(new RepayLoanDto
+                    {
+                        LoanId = payment.LoanId,
+                        AccountId = payment.AccountId,
+                        Amount = payment.Amount
+                    });
+
+                    payment.NextExecutionDate = now.AddMinutes(payment.IntervalMinutes);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Ошибка автоплатежа {paymentId}", payment.Id);
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task AccrueInterestForAll()
