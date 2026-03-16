@@ -144,15 +144,13 @@ namespace CreditsService.Services
 
             try
             {
-                await _accountClient.DepositAsync(dto.AccountId, dto.Amount);
+                await _accountClient.TransferAsync(BankAccounts.MasterAccountId, dto.AccountId, dto.Amount);
 
                 _loanRepository.Add(loan);
                 await _loanRepository.SaveChangesAsync();
             }
             catch
             {
-                await _accountClient.WithdrawAsync(dto.AccountId, dto.Amount);
-
                 throw new InvalidOperationException("Не удалось оформить кредит. Попробуйте позже.");
             }
 
@@ -338,7 +336,7 @@ namespace CreditsService.Services
                 Amount = dto.Amount,
                 IntervalMinutes = dto.IntervalMinutes,
                 CreatedAt = DateTime.UtcNow,
-                NextExecutionDate = DateTime.UtcNow.AddDays(dto.IntervalMinutes),
+                NextExecutionDate = DateTime.UtcNow.AddMinutes(dto.IntervalMinutes),
                 IsActive = true
             };
 
@@ -375,6 +373,30 @@ namespace CreditsService.Services
             }
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<CreditScoreDto> GetCreditScore(Guid userId)
+        {
+            var loans = await _loanRepository.GetUserLoansAsync(userId);
+
+            var active = loans.Count(l => l.IsActive);
+            var closed = loans.Count(l => !l.IsActive);
+
+            var overdue = loans.Count(l => l.IsActive && l.LastInterestApplicationDate.AddMinutes(15) < DateTime.UtcNow);
+
+            var score = 100 - overdue * 10 - active * 5 + closed * 5;
+
+            if (score < 0)
+                score = 0;
+
+            return new CreditScoreDto
+            {
+                UserId = userId,
+                Score = score,
+                ActiveLoans = active,
+                ClosedLoans = closed,
+                OverduePayments = overdue
+            };
         }
 
         public async Task AccrueInterestForAll()

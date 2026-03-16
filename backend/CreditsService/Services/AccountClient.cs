@@ -54,4 +54,21 @@ public class AccountClient(HttpClient httpClient) : IAccountClient
 
         return accounts!.Any(a => a.AccountId == accountId);
     }
+
+    public async Task TransferAsync(Guid fromAccountId, Guid toAccountId, decimal amount)
+    {
+        var request = new
+        {
+            fromAccountId,
+            toAccountId,
+            amount
+        };
+
+        var response = await httpClient.PostAsJsonAsync("/api/accounts/transfer", request);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception("Ошибка перевода средств");
+        }
+    }
 }

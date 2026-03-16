@@ -1,6 +1,8 @@
 using AccountsService.Entities;
 using AccountsService.Entities.Enums;
+using AccountsService.Helper;
 using Microsoft.EntityFrameworkCore;
+using static AccountsService.Services.AccountService;
 
 namespace AccountsService.Data;
 
@@ -44,6 +46,14 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
         var acc6 = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6"); 
 
         modelBuilder.Entity<Account>().HasData(
+            new Account
+            {
+                Id = BankAccounts.MasterAccountId,
+                Name = "Master Bank Account",
+                Balance = 1000000000,
+                OpenedAt = Utc(2024, 1, 1),
+                IsClosed = false
+            },
             new Account
             {
                 Id = acc1,
