@@ -50,6 +50,16 @@ public class AccountsController(IAccountService service) : ControllerBase
     }
 
     /// <summary>
+    /// Перевести с одного счета на другой
+    /// </summary>
+    [HttpPost("transfer")]
+    public async Task<IActionResult> Transfer(TransferRequest request)
+    {
+        await service.TransferAsync(request);
+        return NoContent();
+    }
+
+    /// <summary>
     /// Снять деньги со счета
     /// </summary>
     [Authorize]

@@ -67,6 +67,17 @@ builder.Services.AddScoped<ILoanOperationRepository, LoanOperationRepository>();
 
 builder.Services.AddScoped<ICreditService, CreditService>();
 
+builder.Services.AddHttpClient<IAccountClient, AccountClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5251");
+});
+
+
+builder.Services.AddHttpClient<IUserClient, UserClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5260");
+});
+
 builder.Services.AddValidatorsFromAssemblyContaining<CreateTariffDtoValidator>();
 
 builder.Services.AddHangfire(configuration => configuration
@@ -150,8 +161,14 @@ using (var scope = app.Services.CreateScope())
             TimeZone = TimeZoneInfo.Utc
         });
 
+    recurringJobManager.AddOrUpdate<ICreditService>(
+        "auto-payments",
+        job => job.ProcessAutoPayments(),
+        "*/1 * * * *"
+);
+
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Задание начисления процентов настроено: выполняется каждые 5 минут");
+    logger.LogInformation("Задание начисления процентов настроено: выполняется каждую минуту");
 }
 
 app.Run();

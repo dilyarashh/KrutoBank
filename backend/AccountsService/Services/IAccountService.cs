@@ -11,6 +11,7 @@ public interface IAccountService
     Task<bool> WithdrawAsync(Guid accountId, decimal amount);
     Task<AccountDetailsDto> GetMyAccountAsync(Guid accountId);
     Task<AccountDetailsDto> GetAccountAsync(Guid accountId);
+    Task TransferAsync(TransferRequest request);
     Task<IEnumerable<AccountOperation>> GetMyAccountHistoryAsync(Guid accountId);
     Task<PagedResult<UserAccountDto>> GetAllUserAccountsAsync(bool? onlyOpened, int page, int pageSize);
     Task<IEnumerable<AccountOperation>> GetAccountHistoryAsync(Guid accountId);

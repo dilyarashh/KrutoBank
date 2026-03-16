@@ -120,6 +120,23 @@ namespace CreditsService.Controllers
         }
 
         /// <summary>
+        /// Настроить автоматическое погашение кредита
+        /// </summary>
+        /// <param name="dto">Данные автоплатежа (кредит, счет, сумма и период)</param>
+        /// <response code="200">Автопогашение успешно настроено</response>
+        /// <response code="400">Ошибка валидации</response>
+        /// <response code="401">Пользователь не авторизован</response>
+        /// <response code="403">Кредит или счет не принадлежат пользователю</response>
+        /// <response code="404">Кредит не найден</response>
+        [HttpPost("loans/auto-payment")]
+        public async Task<IActionResult> SetupAutoPayment(CreateAutoPaymentDto dto)
+        {
+            await _creditService.SetupAutoPayment(dto);
+
+            return Ok();
+        }
+
+        /// <summary>
         /// Получить историю операций по конкретному кредиту
         /// </summary>
         /// <param name="userId">ID пользователя-владельца кредита</param>
