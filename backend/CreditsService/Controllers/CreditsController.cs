@@ -163,5 +163,15 @@ namespace CreditsService.Controllers
             var result = await _creditService.GetLoanOperations(userId, loanId);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Получить кредитный рейтинг пользователя
+        /// </summary>
+        [HttpGet("users/{userId}/credit-score")]
+        public async Task<ActionResult<CreditScoreDto>> GetCreditScore(Guid userId)
+        {
+            var result = await _creditService.GetCreditScore(userId);
+            return Ok(result);
+        }
     }
 }

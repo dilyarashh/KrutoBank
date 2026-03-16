@@ -19,4 +19,6 @@ public interface ICreditService
     Task SetupAutoPayment(CreateAutoPaymentDto dto);
 
     Task ProcessAutoPayments();
+
+    Task<CreditScoreDto> GetCreditScore(Guid userId);
 }

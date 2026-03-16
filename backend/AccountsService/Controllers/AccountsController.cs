@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace AccountsService.Controllers;
 
+using AccountsService.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -171,5 +172,16 @@ public class AccountsController(IAccountService service) : ControllerBase
     {
         var result = await service.GetUserAccountsByUserIdAsync(userId, onlyOpened);
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Пополнить мастер-счет банка (только сотрудник)
+    /// </summary>
+    [Authorize(Roles = "Employee")]
+    [HttpPost("bank/deposit")]
+    public async Task<IActionResult> DepositToBank(decimal amount)
+    {
+        await service.DepositAsync(BankAccounts.MasterAccountId, amount);
+        return NoContent();
     }
 }
