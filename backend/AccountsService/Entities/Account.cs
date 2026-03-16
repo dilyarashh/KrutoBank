@@ -1,3 +1,5 @@
+using AccountsService.Entities.Enums;
+
 namespace AccountsService.Entities;
 
 public class Account
@@ -6,6 +8,7 @@ public class Account
     public required string Name { get; set; }
     public decimal Balance { get; set; }
     public required DateTime OpenedAt { get; set; }
+    public Currency Currency { get; set; }
     public bool IsClosed { get; set; }
     public DateTime? ClosedAt { get; set; }
     public ICollection<AccountOperation> Operations { get; set; } = new List<AccountOperation>();

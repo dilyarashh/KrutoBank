@@ -7,10 +7,11 @@ using AccountsService.Repositories;
 
 namespace AccountsService.Services;
 
-public class AccountService(IAccountRepository accountRepository, ICurrentUser currentUser) : IAccountService
+public class AccountService(IAccountRepository accountRepository, ICurrentUser currentUser, CurrencyService currencyService) : IAccountService
 {
     private readonly IAccountRepository _accountRepository = accountRepository;
     private readonly ICurrentUser _currentUser = currentUser;
+    private readonly CurrencyService _currencyService = currencyService;
 
     public async Task<Account> CreateAccountAsync(CreateAccountRequest request)
     {
@@ -24,6 +25,7 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             Id = Guid.NewGuid(),
             Name = accountName,
             Balance = 0,
+            Currency = request.Currency,
             OpenedAt = DateTime.UtcNow,
             IsClosed = false
         };
@@ -144,8 +146,27 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             throw new BadRequestException("Недостаточно средств");
         }
 
+        if (from.Id == BankAccounts.MasterAccountId && from.Balance < request.Amount)
+        {
+            throw new BadRequestException("Недостаточно средств на мастер-счете банка");
+        }
+
+        decimal depositAmount;
+
+        if (from.Currency != to.Currency)
+        {
+            depositAmount = await _currencyService.Convert(
+                request.Amount,
+                from.Currency.ToString(),
+                to.Currency.ToString());
+        }
+        else
+        {
+            depositAmount = request.Amount;
+        }
+
         from.Balance -= request.Amount;
-        to.Balance += request.Amount;
+        to.Balance += depositAmount;
 
         await _accountRepository.AddOperationAsync(new AccountOperation
         {
@@ -160,7 +181,7 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         {
             Id = Guid.NewGuid(),
             AccountId = to.Id,
-            Amount = request.Amount,
+            Amount = depositAmount,
             Type = OperationType.Deposit,
             CreatedAt = DateTime.UtcNow
         });
@@ -330,5 +351,22 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             Balance = a.Balance,
             IsClosed = a.IsClosed
         });
+    }
+
+    public async Task<BankAccountInfoDto> GetMasterAccountInfoAsync()
+    {
+        var account = await _accountRepository.GetByIdAsync(BankAccounts.MasterAccountId);
+
+        if (account == null)
+        {
+            throw new NotFoundException("Мастер-счет банка не найден");
+        }
+
+        return new BankAccountInfoDto
+        {
+            AccountId = account.Id,
+            Balance = account.Balance,
+            Currency = account.Currency
+        };
     }
 }
