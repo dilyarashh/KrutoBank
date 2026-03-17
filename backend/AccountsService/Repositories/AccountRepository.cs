@@ -145,4 +145,10 @@ public class AccountRepository(AccountsDbContext db) : IAccountRepository
             .Where(a => accountIds.Contains(a.Id))
             .ToListAsync();
     }
+
+    public async Task<bool> OperationExists(Guid operationId)
+    {
+        return await db.AccountOperations
+            .AnyAsync(o => o.Id == operationId);
+    }
 }

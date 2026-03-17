@@ -20,4 +20,5 @@ public interface IAccountRepository
         int pageSize);
     Task<IEnumerable<AccountOperation>> GetAccountOperationsAsync(Guid accountId);
     Task<IEnumerable<Account>> GetUserAccountsByUserIdAsync(Guid userId);
+    Task<bool> OperationExists(Guid operationId);
 }
