@@ -3,15 +3,19 @@ using AccountsService.Entities;
 using AccountsService.Entities.Enums;
 using AccountsService.Errors.Exceptions;
 using AccountsService.Helper;
+using AccountsService.Kafka;
+using AccountsService.Kafka.Events;
 using AccountsService.Repositories;
+using System.Security.Principal;
 
 namespace AccountsService.Services;
 
-public class AccountService(IAccountRepository accountRepository, ICurrentUser currentUser, CurrencyService currencyService) : IAccountService
+public class AccountService(IAccountRepository accountRepository, ICurrentUser currentUser, CurrencyService currencyService, KafkaProducer kafkaProducer) : IAccountService
 {
     private readonly IAccountRepository _accountRepository = accountRepository;
     private readonly ICurrentUser _currentUser = currentUser;
     private readonly CurrencyService _currencyService = currencyService;
+    private readonly KafkaProducer _kafkaProducer = kafkaProducer;
 
     public async Task<Account> CreateAccountAsync(CreateAccountRequest request)
     {
@@ -47,7 +51,7 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         {
             throw new NotFoundException("Счет не найден");
         }
-            
+
         var userIsOwner = await _accountRepository.GetByIdForUserAsync(accountId, userId);
         if (userIsOwner == null)
         {
@@ -66,27 +70,31 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         if (account.Balance > 0 && otherAccounts.Count != 0)
         {
             var target = otherAccounts.First();
-            target.Balance += account.Balance;
 
-            await _accountRepository.AddOperationAsync(new AccountOperation
+            await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
             {
-                Id = Guid.NewGuid(),
-                AccountId = target.Id,
-                Type = OperationType.Deposit,
+                OperationId = Guid.NewGuid(),
+                AccountId = account.Id,
                 Amount = account.Balance,
-                CreatedAt = DateTime.UtcNow
+                Type = "Withdraw"
             });
 
-            account.Balance = 0;
-            await _accountRepository.UpdateAsync(target);
+            await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
+            {
+                OperationId = Guid.NewGuid(),
+                AccountId = target.Id,
+                Amount = account.Balance,
+                Type = "Deposit"
+            });
         }
 
         account.IsClosed = true;
         account.ClosedAt = DateTime.UtcNow;
+
         await _accountRepository.UpdateAsync(account);
         await _accountRepository.SaveChangesAsync();
     }
-    
+
     public async Task<bool> DepositAsync(Guid accountId, decimal amount)
     {
         if (amount <= 0)
@@ -101,20 +109,18 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         }
 
         if (account.IsClosed)
-            throw new BadRequestException("Счет закрыт");
-
-        account.Balance += amount;
-
-        await _accountRepository.AddOperationAsync(new AccountOperation
         {
-            Id = Guid.NewGuid(),
+            throw new BadRequestException("Счет закрыт");
+        }
+
+        await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
+        {
+            OperationId = Guid.NewGuid(),
             AccountId = account.Id,
-            Type = OperationType.Deposit,
             Amount = amount,
-            CreatedAt = DateTime.UtcNow
+            Type = "Deposit"
         });
 
-        await _accountRepository.SaveChangesAsync();
         return true;
     }
 
@@ -165,31 +171,21 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             depositAmount = request.Amount;
         }
 
-        from.Balance -= request.Amount;
-        to.Balance += depositAmount;
-
-        await _accountRepository.AddOperationAsync(new AccountOperation
+        await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
         {
-            Id = Guid.NewGuid(),
+            OperationId = Guid.NewGuid(),
             AccountId = from.Id,
             Amount = request.Amount,
-            Type = OperationType.Withdraw,
-            CreatedAt = DateTime.UtcNow
+            Type = "Withdraw"
         });
 
-        await _accountRepository.AddOperationAsync(new AccountOperation
+        await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
         {
-            Id = Guid.NewGuid(),
+            OperationId = Guid.NewGuid(),
             AccountId = to.Id,
             Amount = depositAmount,
-            Type = OperationType.Deposit,
-            CreatedAt = DateTime.UtcNow
+            Type = "Deposit"
         });
-
-        await _accountRepository.UpdateAsync(from);
-        await _accountRepository.UpdateAsync(to);
-
-        await _accountRepository.SaveChangesAsync();
     }
 
     public async Task<bool> WithdrawAsync(Guid accountId, decimal amount)
@@ -212,23 +208,23 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         }
 
         if (account.IsClosed)
+        {
             throw new BadRequestException("Счет закрыт");
+        }
 
         if (account.Balance < amount)
-            throw new BadRequestException("Недостаточно средств");
-
-        account.Balance -= amount;
-
-        await _accountRepository.AddOperationAsync(new AccountOperation
         {
-            Id = Guid.NewGuid(),
+            throw new BadRequestException("Недостаточно средств");
+        }
+
+        await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
+        {
+            OperationId = Guid.NewGuid(),
             AccountId = account.Id,
-            Type = OperationType.Withdraw,
             Amount = amount,
-            CreatedAt = DateTime.UtcNow
+            Type = "Withdraw"
         });
 
-        await _accountRepository.SaveChangesAsync();
         return true;
     }
 

@@ -1,17 +1,18 @@
-using System.Reflection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using AccountsService.Data;
 using AccountsService.Errors.Exceptions;
 using AccountsService.Helper;
+using AccountsService.Kafka;
 using AccountsService.Repositories;
 using AccountsService.Services;
 using AccountsService.Services.Validators;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Polly;
-using FluentValidation;
+using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,9 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountValidator>();
 
 builder.Services.AddHttpClient<CurrencyService>();
+builder.Services.AddSingleton<KafkaProducer>();
+builder.Services.AddSingleton<KafkaInitializer>();
+builder.Services.AddHostedService<KafkaConsumerService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
