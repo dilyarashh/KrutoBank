@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import {
   CreateUserRequest,
   CreateUserResponse,
@@ -8,11 +8,13 @@ import {
   UsersListRequest,
   UsersListResponse,
 } from './users.models';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7205/api/users';
+  private readonly auth = inject(AuthService);
+  private readonly baseUrl = 'http://localhost:5260/api/users';
 
   getUsersList(req: UsersListRequest): Observable<UsersListResponse> {
     const params = this.buildListParams(req);
@@ -43,7 +45,18 @@ export class UsersService {
     return this.http.patch<void>(`${this.baseUrl}/block/${id}`, {});
   }
 
-  createUser(payload: CreateUserRequest) {
-    return this.http.post<CreateUserResponse>(`${this.baseUrl}`, payload);
+  createUser(payload: CreateUserRequest): Observable<CreateUserResponse> {
+    return this.auth.register({
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      middleName: payload.middleName,
+      phone: payload.phone,
+      email: payload.email ?? undefined,
+      birthday: payload.birthday,
+      password: payload.password,
+      role: payload.role,
+    }).pipe(
+      map(res => ({ id: res.userId }))
+    );
   }
 }

@@ -1,7 +1,13 @@
 <div class="page">
   <div class="card">
-    <h1 class="title">Войти</h1>
+    <h1 class="title">Единый вход KrutoBank</h1>
+    <p class="subtitle">Используйте SSO: один аккаунт для клиентского и сотруднического приложения.</p>
 
-    <app-login-form (login)="onLogin($event)"></app-login-form>
+    <button mat-raised-button color="primary" class="sso-btn" (click)="onLogin()">
+      <span class="icon">🔒</span>
+      Войти через SSO
+    </button>
+
+    <p class="hint">Ни один сервис не получает пароль, данные вводятся на портале AuthService.</p>
   </div>
 </div>
