@@ -11,5 +11,4 @@ public class CreateUserRequest
     public required  string Email { get; set; } 
     public DateOnly Birthday { get; set; }
     public UserRole Role { get; set; }
-    public required string Password { get; set; }
 }

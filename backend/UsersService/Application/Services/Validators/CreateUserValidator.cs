@@ -46,9 +46,6 @@ public class CreateUserValidator : AbstractValidator<CreateUserRequest>
             .Must(d => d <= DateOnly.FromDateTime(DateTime.UtcNow))
             .WithMessage("Дата рождения не может быть в будущем");
 
-        RuleFor(x => x.Password)
-            .MinimumLength(8);
-
         RuleFor(x => x.Role)
             .IsInEnum();
     }

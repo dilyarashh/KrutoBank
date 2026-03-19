@@ -46,7 +46,9 @@ public class UserService(
             Phone = dto.Phone,
             Email = dto.Email,
             Birthday = dto.Birthday,
-            HashPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+            // Password operations are managed in AuthService only.
+            // New users receive a random hash placeholder until initial password is set via AuthService.
+            HashPassword = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString("N")),
             Role = dto.Role,
             IsBlocked = false,
             Created = DateTime.UtcNow

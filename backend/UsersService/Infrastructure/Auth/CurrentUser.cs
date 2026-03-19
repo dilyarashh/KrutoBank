@@ -12,7 +12,8 @@ public class CurrentUser(IHttpContextAccessor httpContextAccessor) : ICurrentUse
 
     public Guid GetUserId()
     {
-        var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                 ?? User.FindFirst("sub")?.Value;
 
         if (string.IsNullOrEmpty(id))
             throw new UnauthorizedException("ID пользователя не найден");
@@ -22,7 +23,9 @@ public class CurrentUser(IHttpContextAccessor httpContextAccessor) : ICurrentUse
     
     public UserRole GetRole()
     {
-        var role = User.FindFirst(ClaimTypes.Role)?.Value;
+        var role = User.FindFirst(ClaimTypes.Role)?.Value
+                   ?? User.FindFirst("role")?.Value
+                   ?? User.FindFirst("roles")?.Value;
 
         if (string.IsNullOrEmpty(role))
             throw new UnauthorizedException("Роль пользователя не найдена");

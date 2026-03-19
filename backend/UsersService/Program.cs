@@ -1,7 +1,7 @@
 using System.Reflection;
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using FluentValidation;
 using UsersService.Infrastructure.Auth;
 using Microsoft.OpenApi.Models;
@@ -37,9 +37,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<UsersDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
-builder.Services.AddSingleton(jwtSettings);
-builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddHttpContextAccessor();
@@ -82,7 +79,9 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        var key = Encoding.UTF8.GetBytes(jwtSettings.Secret);
+        options.Authority = builder.Configuration["Authentication:Authority"];
+        options.RequireHttpsMetadata = false;
+        options.MapInboundClaims = false;
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -90,9 +89,9 @@ builder.Services.AddAuthentication("Bearer")
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings.Issuer,
-            ValidAudience = jwtSettings.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(key)
+            ValidAudience = builder.Configuration["Authentication:Audience"],
+            NameClaimType = ClaimTypes.NameIdentifier,
+            RoleClaimType = ClaimTypes.Role
         };
     });
 
@@ -118,7 +117,6 @@ app.UseSwaggerUI();
 app.UseCors("FrontCors");
 
 app.UseAuthentication();
-app.UseMiddleware<BlacklistTokenMiddleware>();
 app.UseAuthorization();
 
 app.UseMiddleware<ExceptionMiddleware>();

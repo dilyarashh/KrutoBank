@@ -10,18 +10,6 @@ namespace UsersService.Controllers;
 public class UsersController(IUserService service) : ControllerBase
 {
     /// <summary>
-    /// Создать пользователя (доступно только сотруднику)
-    /// </summary>
-    [Authorize(Roles = "Employee")]
-    [HttpPost]
-    [ProducesResponseType(typeof(Guid), 200)]
-    public async Task<ActionResult<Guid>> Create([FromBody] CreateUserRequest dto)
-    {
-        var user = await service.CreateUserAsync(dto);
-        return Ok(user.Id);
-    }
-    
-    /// <summary>
     /// Заблокировать пользователя (доступно только сотруднику)
     /// </summary>
     [Authorize(Roles = "Employee")]
