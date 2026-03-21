@@ -49,8 +49,9 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
             new Account
             {
                 Id = BankAccounts.MasterAccountId,
-                Name = "Master Bank Account",
+                Name = "Мастер Счет Банка",
                 Balance = 1000000000,
+                Currency = Currency.RUB,
                 OpenedAt = Utc(2024, 1, 1),
                 IsClosed = false
             },
@@ -59,6 +60,7 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
                 Id = acc1,
                 Name = "Мой счёт",
                 Balance = 150000,
+                Currency = Currency.RUB,
                 OpenedAt = Utc(2024, 1, 1),
                 IsClosed = false
             },
@@ -67,6 +69,7 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
                 Id = acc2,
                 Name = "На отдых",
                 Balance = 90000,
+                Currency = Currency.EUR,
                 OpenedAt = Utc(2024, 1, 2),
                 IsClosed = false
             },
@@ -75,6 +78,7 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
                 Id = acc3,
                 Name = "Копилка",
                 Balance = 25000,
+                Currency = Currency.RUB,
                 OpenedAt = Utc(2024, 2, 1),
                 IsClosed = false
             },
@@ -83,6 +87,7 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
                 Id = acc4,
                 Name = "На квартиру",
                 Balance = 78000,
+                Currency = Currency.USD,
                 OpenedAt = Utc(2024, 2, 5),
                 IsClosed = false
             },
@@ -91,6 +96,7 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
                 Id = acc5,
                 Name = "Просто счёт",
                 Balance = 12000,
+                Currency = Currency.USD,
                 OpenedAt = Utc(2024, 3, 1),
                 IsClosed = false
             },
@@ -99,6 +105,7 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
                 Id = acc6,
                 Name = "Инвестиционный",
                 Balance = 50000,
+                Currency = Currency.RUB,
                 OpenedAt = Utc(2024, 3, 10),
                 IsClosed = false
             }
@@ -130,7 +137,7 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
                 AccountId = acc3,
                 CreatedAt = Utc(2024, 2, 10),
                 Type = OperationType.Withdraw,
-                Amount = -5000
+                Amount = 5000
             },
             new AccountOperation
             {

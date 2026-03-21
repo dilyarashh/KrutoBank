@@ -323,6 +323,7 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             AccountId = a.Id,
             AccountName = a.Name,
             Balance = a.Balance,
+            Currency = a.Currency,
             IsClosed = a.IsClosed
         });
     }
@@ -345,6 +346,7 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             AccountId = a.Id,
             AccountName = a.Name,
             Balance = a.Balance,
+            Currency = a.Currency,
             IsClosed = a.IsClosed
         });
     }

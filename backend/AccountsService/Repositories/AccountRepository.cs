@@ -113,6 +113,7 @@ public class AccountRepository(AccountsDbContext db) : IAccountRepository
                 AccountId = x.AccountId,
                 AccountName = x.Account.Name,
                 Balance = x.Account.Balance,
+                Currency = x.Account.Currency,
                 IsClosed = x.Account.IsClosed
             })
             .ToListAsync();
