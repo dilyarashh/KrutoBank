@@ -105,6 +105,23 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  settings-db:
+    image: postgres:16
+    container_name: settings-db
+    environment:
+      POSTGRES_DB: settingsdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "55438:5432"
+    volumes:
+      - settings_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
       
 volumes:
   users_data:
@@ -112,3 +129,4 @@ volumes:
   credits_data:
   hangfire_data:
   auth_data:
+  settings_data:

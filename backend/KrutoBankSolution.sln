@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreditsService", "CreditsSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService", "AuthService\AuthService.csproj", "{C8425ED5-EFA8-4B78-8B70-9EE5CA7AD663}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserSettingsService", "UserSettingsService\UserSettingsService.csproj", "{FDEA9A0F-B8E1-4EFD-B673-D9749F83127D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,5 +33,9 @@ Global
 		{C8425ED5-EFA8-4B78-8B70-9EE5CA7AD663}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8425ED5-EFA8-4B78-8B70-9EE5CA7AD663}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8425ED5-EFA8-4B78-8B70-9EE5CA7AD663}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDEA9A0F-B8E1-4EFD-B673-D9749F83127D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDEA9A0F-B8E1-4EFD-B673-D9749F83127D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDEA9A0F-B8E1-4EFD-B673-D9749F83127D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDEA9A0F-B8E1-4EFD-B673-D9749F83127D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
