@@ -54,4 +54,14 @@ public class UserRepository(UsersDbContext db) : IUserRepository
         db.Users.Update(user);
         await db.SaveChangesAsync();
     }
+
+    public async Task<bool> ExistsByPhoneAsync(string phone)
+    {
+        return await db.Users.AnyAsync(x => x.Phone == phone);
+    }
+
+    public async Task<bool> ExistsByEmailAsync(string email)
+    {
+        return await db.Users.AnyAsync(x => x.Email == email);
+    }
 }

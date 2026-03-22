@@ -14,6 +14,10 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
             .HasIndex(x => x.Email)
             .IsUnique();
 
+        modelBuilder.Entity<User>()
+            .HasIndex(x => x.Phone)
+            .IsUnique();
+
         var now = DateTime.UtcNow;
 
         modelBuilder.Entity<User>().HasData(

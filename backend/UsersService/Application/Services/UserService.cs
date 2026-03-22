@@ -24,6 +24,18 @@ public class UserService(
 
     public async Task<User> CreateUserAsync(CreateUserRequest dto)
     {
+        var existingByPhone = await _userRepository.ExistsByPhoneAsync(dto.Phone);
+        if (existingByPhone)
+        {
+            throw new BadRequestException("Пользователь с таким номером уже существует");
+        }
+
+        var existingByEmail = await _userRepository.ExistsByEmailAsync(dto.Email);
+        if (existingByEmail)
+        {
+            throw new BadRequestException("Пользователь с таким email уже существует");
+        }
+
         var validationResult = await _userValidator.ValidateAsync(dto);
 
         if (!validationResult.IsValid)
