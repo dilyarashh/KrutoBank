@@ -2,10 +2,10 @@ import Foundation
 
 enum APIConstants {
     // MARK: - Base URLs
-    static let authServiceBaseURL = "http://localhost:5270"
-    static let usersServiceBaseURL = URL(string: "http://localhost:5260")!
-    static let accountsServiceBaseURL = URL(string: "http://localhost:5251")!
-    static let creditsServiceBaseURL = URL(string: "http://localhost:5173")!
+    static let authServiceBaseURL        = URL(string: "http://localhost:5270")!
+    static let usersServiceBaseURL       = URL(string: "http://localhost:5260")!
+    static let accountsServiceBaseURL    = URL(string: "http://localhost:5251")!
+    static let creditsServiceBaseURL     = URL(string: "http://localhost:5173")!
     static let appSettingsServiceBaseURL = URL(string: "http://localhost:5165")!
 
     // MARK: - WebSocket
@@ -65,4 +65,3 @@ enum APIConstants {
         URL(string: "https://api.exchangerate-api.com/v4/latest/\(base)")!
     }
 }
-

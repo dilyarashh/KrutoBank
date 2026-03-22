@@ -90,8 +90,11 @@
 		88CEA2C82F701B3300515031 /* UpdateThemeEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2C72F701B3300515031 /* UpdateThemeEndPoint.swift */; };
 		88CEA2CA2F701B8500515031 /* UpdateHiddenAccountsEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2C92F701B8500515031 /* UpdateHiddenAccountsEndPoint.swift */; };
 		88CEA2CC2F701E9300515031 /* AccountCurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2CB2F701E9300515031 /* AccountCurrency.swift */; };
-		88CEA2CE2F701F6700515031 /* ExchangeRatesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2CD2F701F6700515031 /* ExchangeRatesResponse.swift */; };
-		88CEA2D02F701F7100515031 /* ExchangeRateServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2CF2F701F7100515031 /* ExchangeRateServiceProtocol.swift */; };
+		88CEA2D32F70251700515031 /* OAuthConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2D22F70251700515031 /* OAuthConstants.swift */; };
+		88CEA2D62F70260200515031 /* OAuthTokenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2D52F70260200515031 /* OAuthTokenResponse.swift */; };
+		88CEA2D82F70262300515031 /* OAuthServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2D72F70262300515031 /* OAuthServiceProtocol.swift */; };
+		88CEA2DB2F70265000515031 /* OAuthError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2DA2F70265000515031 /* OAuthError.swift */; };
+		88CEA2DD2F70269800515031 /* PresentationContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2DC2F70269800515031 /* PresentationContextProvider.swift */; };
 		88DCEC952F6FA61100EC380D /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCEC942F6FA60A00EC380D /* UserProfile.swift */; };
 		88DCED042F6FA69400EC380D /* TakeLoanRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECD12F6FA69400EC380D /* TakeLoanRequest.swift */; };
 		88DCED052F6FA69400EC380D /* URLRequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECFB2F6FA69400EC380D /* URLRequestBuilder.swift */; };
@@ -131,7 +134,6 @@
 		88DCED2A2F6FA69400EC380D /* AuthorizationRequirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECF62F6FA69400EC380D /* AuthorizationRequirement.swift */; };
 		88DCED2B2F6FA69400EC380D /* CreditsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECD52F6FA69400EC380D /* CreditsRepository.swift */; };
 		88DCED2C2F6FA69400EC380D /* SessionServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECD82F6FA69400EC380D /* SessionServiceProtocol.swift */; };
-		88DCED2D2F6FA69400EC380D /* ExchangeRateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECAA2F6FA69400EC380D /* ExchangeRateService.swift */; };
 		88DCED2E2F6FA69400EC380D /* GetMyAccountsEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECB12F6FA69400EC380D /* GetMyAccountsEndPoint.swift */; };
 		88DCED302F6FA75F00EC380D /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCED2F2F6FA75C00EC380D /* Token.swift */; };
 		88DCED312F6FA89400EC380D /* EndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECF72F6FA69400EC380D /* EndPoint.swift */; };
@@ -269,8 +271,11 @@
 		88CEA2C72F701B3300515031 /* UpdateThemeEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateThemeEndPoint.swift; sourceTree = "<group>"; };
 		88CEA2C92F701B8500515031 /* UpdateHiddenAccountsEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateHiddenAccountsEndPoint.swift; sourceTree = "<group>"; };
 		88CEA2CB2F701E9300515031 /* AccountCurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCurrency.swift; sourceTree = "<group>"; };
-		88CEA2CD2F701F6700515031 /* ExchangeRatesResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeRatesResponse.swift; sourceTree = "<group>"; };
-		88CEA2CF2F701F7100515031 /* ExchangeRateServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeRateServiceProtocol.swift; sourceTree = "<group>"; };
+		88CEA2D22F70251700515031 /* OAuthConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthConstants.swift; sourceTree = "<group>"; };
+		88CEA2D52F70260200515031 /* OAuthTokenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthTokenResponse.swift; sourceTree = "<group>"; };
+		88CEA2D72F70262300515031 /* OAuthServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthServiceProtocol.swift; sourceTree = "<group>"; };
+		88CEA2DA2F70265000515031 /* OAuthError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthError.swift; sourceTree = "<group>"; };
+		88CEA2DC2F70269800515031 /* PresentationContextProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationContextProvider.swift; sourceTree = "<group>"; };
 		88DCEC942F6FA60A00EC380D /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		88DCEC962F6FA69400EC380D /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		88DCEC972F6FA69400EC380D /* AppDependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDependency.swift; sourceTree = "<group>"; };
@@ -282,7 +287,6 @@
 		88DCEC9E2F6FA69400EC380D /* KeychainTokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainTokenStorage.swift; sourceTree = "<group>"; };
 		88DCECA02F6FA69400EC380D /* TokenStorageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStorageProtocol.swift; sourceTree = "<group>"; };
 		88DCECA72F6FA69400EC380D /* AppSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsRepository.swift; sourceTree = "<group>"; };
-		88DCECAA2F6FA69400EC380D /* ExchangeRateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeRateService.swift; sourceTree = "<group>"; };
 		88DCECAC2F6FA69400EC380D /* AccountOperationsWebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountOperationsWebSocket.swift; sourceTree = "<group>"; };
 		88DCECAE2F6FA69400EC380D /* OAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthService.swift; sourceTree = "<group>"; };
 		88DCECAF2F6FA69400EC380D /* PKCEHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKCEHelper.swift; sourceTree = "<group>"; };
@@ -814,6 +818,33 @@
 			path = Responses;
 			sourceTree = "<group>";
 		};
+		88CEA2D42F7025F700515031 /* DTO */ = {
+			isa = PBXGroup;
+			children = (
+				88CEA2D52F70260200515031 /* OAuthTokenResponse.swift */,
+			);
+			path = DTO;
+			sourceTree = "<group>";
+		};
+		88CEA2D92F70264D00515031 /* Error */ = {
+			isa = PBXGroup;
+			children = (
+				88CEA2DA2F70265000515031 /* OAuthError.swift */,
+			);
+			path = Error;
+			sourceTree = "<group>";
+		};
+		88CEA2DE2F7026AF00515031 /* OAuthService */ = {
+			isa = PBXGroup;
+			children = (
+				88CEA2DC2F70269800515031 /* PresentationContextProvider.swift */,
+				88CEA2D72F70262300515031 /* OAuthServiceProtocol.swift */,
+				88DCECAE2F6FA69400EC380D /* OAuthService.swift */,
+				88DCECAF2F6FA69400EC380D /* PKCEHelper.swift */,
+			);
+			path = OAuthService;
+			sourceTree = "<group>";
+		};
 		88DCEC922F6FA5F400EC380D /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -909,16 +940,6 @@
 			path = AppSettings;
 			sourceTree = "<group>";
 		};
-		88DCECAB2F6FA69400EC380D /* Exchange */ = {
-			isa = PBXGroup;
-			children = (
-				88CEA2CF2F701F7100515031 /* ExchangeRateServiceProtocol.swift */,
-				88CEA2CD2F701F6700515031 /* ExchangeRatesResponse.swift */,
-				88DCECAA2F6FA69400EC380D /* ExchangeRateService.swift */,
-			);
-			path = Exchange;
-			sourceTree = "<group>";
-		};
 		88DCECAD2F6FA69400EC380D /* WebSocket */ = {
 			isa = PBXGroup;
 			children = (
@@ -930,8 +951,9 @@
 		88DCECB02F6FA69400EC380D /* Auth */ = {
 			isa = PBXGroup;
 			children = (
-				88DCECAE2F6FA69400EC380D /* OAuthService.swift */,
-				88DCECAF2F6FA69400EC380D /* PKCEHelper.swift */,
+				88CEA2DE2F7026AF00515031 /* OAuthService */,
+				88CEA2D92F70264D00515031 /* Error */,
+				88CEA2D42F7025F700515031 /* DTO */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -1128,7 +1150,6 @@
 			isa = PBXGroup;
 			children = (
 				88DCECA92F6FA69400EC380D /* AppSettings */,
-				88DCECAB2F6FA69400EC380D /* Exchange */,
 				88DCECAD2F6FA69400EC380D /* WebSocket */,
 				88DCECB02F6FA69400EC380D /* Auth */,
 				88DCECC52F6FA69400EC380D /* Accounts */,
@@ -1187,6 +1208,7 @@
 		88DCED012F6FA69400EC380D /* Constants */ = {
 			isa = PBXGroup;
 			children = (
+				88CEA2D22F70251700515031 /* OAuthConstants.swift */,
 				88DCECFD2F6FA69400EC380D /* APIConstants.swift */,
 				88DCECFE2F6FA69400EC380D /* HTTPStatusCode.swift */,
 				88DCECFF2F6FA69400EC380D /* HTTPHeader.swift */,
@@ -1373,6 +1395,7 @@
 				8838CC7D2F542DFC00B46A23 /* AppDelegate.swift in Sources */,
 				88DCED292F6FA69400EC380D /* WithdrawFromAccountEndPoint.swift in Sources */,
 				88DCED232F6FA69400EC380D /* GetMyInfoEndPoint.swift in Sources */,
+				88CEA2D62F70260200515031 /* OAuthTokenResponse.swift in Sources */,
 				88DCED042F6FA69400EC380D /* TakeLoanRequest.swift in Sources */,
 				88A38EF42F6BDF34004C7E29 /* AuthViewModel+State.swift in Sources */,
 				88CEA2AA2F6FF51300515031 /* CreditRatingResponse.swift in Sources */,
@@ -1408,6 +1431,7 @@
 				88DCED372F6FAB7900EC380D /* DepositAccountEndPoint.swift in Sources */,
 				88CEA2C42F701A9900515031 /* AppSettingsResponse.swift in Sources */,
 				88A38F372F6BE1B6004C7E29 /* ToastOverlayView.swift in Sources */,
+				88CEA2D32F70251700515031 /* OAuthConstants.swift in Sources */,
 				88DCED282F6FA69400EC380D /* NetworkService.swift in Sources */,
 				88A38F382F6BE1B6004C7E29 /* ErrorFallbackView.swift in Sources */,
 				88A38F392F6BE1B6004C7E29 /* ToastStore.swift in Sources */,
@@ -1437,6 +1461,8 @@
 				8838CD3B2F542E3700B46A23 /* NavigationController.swift in Sources */,
 				88DCED0D2F6FA69400EC380D /* CloseAccountEndPoint.swift in Sources */,
 				88CEA2CC2F701E9300515031 /* AccountCurrency.swift in Sources */,
+				88CEA2DD2F70269800515031 /* PresentationContextProvider.swift in Sources */,
+				88CEA2DB2F70265000515031 /* OAuthError.swift in Sources */,
 				88A38F452F6BE1F4004C7E29 /* PhoneValidator.swift in Sources */,
 				88DCED522F6FEB8A00EC380D /* OAuthService.swift in Sources */,
 				88A38F462F6BE1F4004C7E29 /* Constants.swift in Sources */,
@@ -1456,7 +1482,6 @@
 				88DCED262F6FA69400EC380D /* TokenStorageProtocol.swift in Sources */,
 				8838CD452F542E3700B46A23 /* TabBarCoordinator.swift in Sources */,
 				88DCED392F6FAB8D00EC380D /* OpenAccountRequest.swift in Sources */,
-				88CEA2CE2F701F6700515031 /* ExchangeRatesResponse.swift in Sources */,
 				88DCED1C2F6FA69400EC380D /* ThemeManager.swift in Sources */,
 				8838CD882F54347500B46A23 /* CreditsViewModel.swift in Sources */,
 				88DCED352F6FAA8000EC380D /* UserAccount.swift in Sources */,
@@ -1469,7 +1494,6 @@
 				8838CD902F54349900B46A23 /* ProfileViewModel+State.swift in Sources */,
 				8838CDA42F54935400B46A23 /* LoanDetailsSheet.swift in Sources */,
 				8838CD542F542E3700B46A23 /* ConfigurableCoordinator.swift in Sources */,
-				88DCED2D2F6FA69400EC380D /* ExchangeRateService.swift in Sources */,
 				88DCED402F6FAD2800EC380D /* TransferRequest.swift in Sources */,
 				8838CD592F542E3700B46A23 /* ProfileCoordinator.swift in Sources */,
 				8838CD5A2F542E3700B46A23 /* TabBarItem.swift in Sources */,
@@ -1486,7 +1510,6 @@
 				88DCED482F6FB16600EC380D /* Account.swift in Sources */,
 				88DCED062F6FA69400EC380D /* CreditsRepositoryProtocol.swift in Sources */,
 				8838CD6B2F542E3700B46A23 /* AccountsCoordinator.swift in Sources */,
-				88CEA2D02F701F7100515031 /* ExchangeRateServiceProtocol.swift in Sources */,
 				88DCED2B2F6FA69400EC380D /* CreditsRepository.swift in Sources */,
 				88CEA2C62F701B1400515031 /* AppSettings.swift in Sources */,
 				8838CDAC2F549A5C00B46A23 /* LoanOperationsList.swift in Sources */,
@@ -1507,6 +1530,7 @@
 				B8A10C687E4E88A06DD53F40 /* GetLoanHistoryEndPoint.swift in Sources */,
 				C7E1076F953B67E83768888D /* CreditResponse.swift in Sources */,
 				F3C9F7FE12525A7BD821C32B /* RepayLoanRequest.swift in Sources */,
+				88CEA2D82F70262300515031 /* OAuthServiceProtocol.swift in Sources */,
 				25761191FAE89AA5F076CEAE /* SessionService.swift in Sources */,
 				3E1C7AE06BD0CBF863BC1BC1 /* UserResponse.swift in Sources */,
 				823E12440BCFBAB568CC3B9C /* AppError.swift in Sources */,
