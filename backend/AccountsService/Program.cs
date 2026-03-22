@@ -1,7 +1,9 @@
 using AccountsService.Data;
 using AccountsService.Errors.Exceptions;
 using AccountsService.Helper;
+using AccountsService.Hubs;
 using AccountsService.Kafka;
+using AccountsService.Realtime;
 using AccountsService.Repositories;
 using AccountsService.Services;
 using AccountsService.Services.Validators;
@@ -29,7 +31,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(origins)
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -45,7 +48,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddSingleton<IOperationRealtimeNotifier, SignalROperationRealtimeNotifier>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountValidator>();
+builder.Services.AddSignalR();
 
 builder.Services.AddHttpClient<CurrencyService>();
 builder.Services.AddSingleton<KafkaProducer>();
@@ -63,6 +68,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.Authority = builder.Configuration["Authentication:Authority"];
         options.RequireHttpsMetadata = false;
         options.MapInboundClaims = false;
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    path.StartsWithSegments(AccountOperationsHub.HubRoute))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -138,5 +159,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<AccountOperationsHub>(AccountOperationsHub.HubRoute);
 
 app.Run();

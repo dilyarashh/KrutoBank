@@ -1,6 +1,7 @@
 ﻿using AccountsService.Entities;
 using AccountsService.Entities.Enums;
 using AccountsService.Kafka.Events;
+using AccountsService.Realtime;
 using AccountsService.Repositories;
 using Confluent.Kafka;
 using System.Text.Json;
@@ -45,6 +46,7 @@ namespace AccountsService.Kafka
 
                     using var scope = _scopeFactory.CreateScope();
                     var repo = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
+                    var notifier = scope.ServiceProvider.GetRequiredService<IOperationRealtimeNotifier>();
 
                     var account = await repo.GetByIdAsync(message.AccountId);
 
@@ -80,6 +82,7 @@ namespace AccountsService.Kafka
 
                     await repo.UpdateAsync(account);
                     await repo.SaveChangesAsync();
+                    await notifier.NotifyOperationChangedAsync(account.Id, stoppingToken);
                 }
                 catch (ConsumeException ex)
                 {
