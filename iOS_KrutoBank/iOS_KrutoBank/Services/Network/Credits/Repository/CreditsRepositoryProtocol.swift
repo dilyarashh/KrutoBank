@@ -6,6 +6,5 @@ protocol CreditsRepositoryProtocol {
     func getLoanHistory(with userId: String, loanId: String) async throws -> [LoanOperationResponse]
     func takeLoan(with request: TakeLoanRequest) async throws
     func repayLoan(with request: RepayLoanRequest) async throws
-    func getOverduePayments(userId: String) async throws -> [OverduePaymentResponse]
     func getCreditRating(userId: String) async throws -> CreditRatingResponse
 }

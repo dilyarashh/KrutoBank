@@ -1,12 +1,5 @@
 import Foundation
 
-// MARK: - Protocol
-protocol AppSettingsRepositoryProtocol {
-    func getSettings() async throws -> AppSettingsResponse
-    func saveSettings(_ settings: AppSettingsResponse) async throws
-}
-
-// MARK: - Repository
 final class AppSettingsRepository: AppSettingsRepositoryProtocol {
     private let networkService: NetworkServiceProtocol
 

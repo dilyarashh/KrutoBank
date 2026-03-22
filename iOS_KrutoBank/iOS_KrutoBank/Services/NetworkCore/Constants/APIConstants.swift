@@ -2,11 +2,11 @@ import Foundation
 
 enum APIConstants {
     // MARK: - Base URLs
-    static let authServiceBaseURL = "http://localhost:5000"
+    static let authServiceBaseURL = "http://localhost:5270"
     static let usersServiceBaseURL = URL(string: "http://localhost:5260")!
     static let accountsServiceBaseURL = URL(string: "http://localhost:5251")!
     static let creditsServiceBaseURL = URL(string: "http://localhost:5173")!
-    static let appSettingsServiceBaseURL = URL(string: "http://localhost:5300")!
+    static let appSettingsServiceBaseURL = URL(string: "http://localhost:5165")!
 
     // MARK: - WebSocket
     static func accountOperationsWebSocket(accountId: String) -> URL {
@@ -55,8 +55,9 @@ enum APIConstants {
 
     // MARK: - App Settings
     enum AppSettings {
-        static let settings = "/api/app-settings"
-        static let hiddenAccounts = "/api/app-settings/hidden-accounts"
+        static let settings = "/api/settings/me"
+        static let theme = "/api/settings/theme"
+        static let hiddenAccounts = "/api/settings/hidden-accounts"
     }
 
     // MARK: - Exchange Rates
