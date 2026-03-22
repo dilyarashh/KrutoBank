@@ -1,7 +1,5 @@
 import Foundation
 
-// MARK: - Domain Model
-
 struct UserAccount: Identifiable {
     let id: String
     let name: String
@@ -11,6 +9,10 @@ struct UserAccount: Identifiable {
     let isClosed: Bool
     let closedAt: String?
 
-    var currencySymbol: String { CurrencyFormatter.symbol(for: currency) }
-    var formattedBalance: String { CurrencyFormatter.formatted(amount: balance, currency: currency) }
+    var currencySymbol: String {
+        CurrencyFormatter.symbol(for: currency)
+    }
+    var formattedBalance: String {
+        CurrencyFormatter.formatted(amount: balance, currency: currency)
+    }
 }

@@ -84,6 +84,11 @@
 		88CEA2B62F700BA200515031 /* Tariff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2B52F700BA200515031 /* Tariff.swift */; };
 		88CEA2B82F700CDC00515031 /* CreditRating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2B72F700CDC00515031 /* CreditRating.swift */; };
 		88CEA2BA2F700FD100515031 /* LoanOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2B92F700FD100515031 /* LoanOperation.swift */; };
+		88CEA2C02F701A4800515031 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2BF2F701A4800515031 /* AppTheme.swift */; };
+		88CEA2C42F701A9900515031 /* AppSettingsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2C32F701A9900515031 /* AppSettingsResponse.swift */; };
+		88CEA2C62F701B1400515031 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2C52F701B1400515031 /* AppSettings.swift */; };
+		88CEA2C82F701B3300515031 /* UpdateThemeEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2C72F701B3300515031 /* UpdateThemeEndPoint.swift */; };
+		88CEA2CA2F701B8500515031 /* UpdateHiddenAccountsEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2C92F701B8500515031 /* UpdateHiddenAccountsEndPoint.swift */; };
 		88DCEC952F6FA61100EC380D /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCEC942F6FA60A00EC380D /* UserProfile.swift */; };
 		88DCED042F6FA69400EC380D /* TakeLoanRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECD12F6FA69400EC380D /* TakeLoanRequest.swift */; };
 		88DCED052F6FA69400EC380D /* URLRequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECFB2F6FA69400EC380D /* URLRequestBuilder.swift */; };
@@ -141,8 +146,6 @@
 		88DCED4A2F6FB22C00EC380D /* CurrencyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCED492F6FB22C00EC380D /* CurrencyFormatter.swift */; };
 		88DCED4E2F6FB2FB00EC380D /* TransferEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCED4D2F6FB2FB00EC380D /* TransferEndPoint.swift */; };
 		88DCED4F2F6FEB7700EC380D /* AppSettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECA72F6FA69400EC380D /* AppSettingsRepository.swift */; };
-		88DCED502F6FEB7B00EC380D /* AppSettingsEndPoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECA52F6FA69400EC380D /* AppSettingsEndPoints.swift */; };
-		88DCED512F6FEB7F00EC380D /* AppSettingsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECA32F6FA69400EC380D /* AppSettingsDTO.swift */; };
 		88DCED522F6FEB8A00EC380D /* OAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECAE2F6FA69400EC380D /* OAuthService.swift */; };
 		88DCED532F6FEB8F00EC380D /* PKCEHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECAF2F6FA69400EC380D /* PKCEHelper.swift */; };
 		88DCED542F6FEC1100EC380D /* TariffResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECCC2F6FA69400EC380D /* TariffResponse.swift */; };
@@ -257,6 +260,11 @@
 		88CEA2B52F700BA200515031 /* Tariff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tariff.swift; sourceTree = "<group>"; };
 		88CEA2B72F700CDC00515031 /* CreditRating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditRating.swift; sourceTree = "<group>"; };
 		88CEA2B92F700FD100515031 /* LoanOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoanOperation.swift; sourceTree = "<group>"; };
+		88CEA2BF2F701A4800515031 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		88CEA2C32F701A9900515031 /* AppSettingsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsResponse.swift; sourceTree = "<group>"; };
+		88CEA2C52F701B1400515031 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		88CEA2C72F701B3300515031 /* UpdateThemeEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateThemeEndPoint.swift; sourceTree = "<group>"; };
+		88CEA2C92F701B8500515031 /* UpdateHiddenAccountsEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateHiddenAccountsEndPoint.swift; sourceTree = "<group>"; };
 		88DCEC942F6FA60A00EC380D /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		88DCEC962F6FA69400EC380D /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		88DCEC972F6FA69400EC380D /* AppDependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDependency.swift; sourceTree = "<group>"; };
@@ -267,8 +275,6 @@
 		88DCEC9D2F6FA69400EC380D /* KeychainConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainConstants.swift; sourceTree = "<group>"; };
 		88DCEC9E2F6FA69400EC380D /* KeychainTokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainTokenStorage.swift; sourceTree = "<group>"; };
 		88DCECA02F6FA69400EC380D /* TokenStorageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStorageProtocol.swift; sourceTree = "<group>"; };
-		88DCECA32F6FA69400EC380D /* AppSettingsDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsDTO.swift; sourceTree = "<group>"; };
-		88DCECA52F6FA69400EC380D /* AppSettingsEndPoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsEndPoints.swift; sourceTree = "<group>"; };
 		88DCECA72F6FA69400EC380D /* AppSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsRepository.swift; sourceTree = "<group>"; };
 		88DCECAA2F6FA69400EC380D /* ExchangeRateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeRateService.swift; sourceTree = "<group>"; };
 		88DCECAC2F6FA69400EC380D /* AccountOperationsWebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountOperationsWebSocket.swift; sourceTree = "<group>"; };
@@ -777,6 +783,8 @@
 		88CEA2A32F6FEDB800515031 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				88CEA2C52F701B1400515031 /* AppSettings.swift */,
+				88CEA2BF2F701A4800515031 /* AppTheme.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -790,6 +798,14 @@
 				88CEA2B32F700B3F00515031 /* Credit.swift */,
 			);
 			path = Credits;
+			sourceTree = "<group>";
+		};
+		88CEA2BB2F7019E100515031 /* Responses */ = {
+			isa = PBXGroup;
+			children = (
+				88CEA2C32F701A9900515031 /* AppSettingsResponse.swift */,
+			);
+			path = Responses;
 			sourceTree = "<group>";
 		};
 		88DCEC922F6FA5F400EC380D /* Model */ = {
@@ -853,7 +869,7 @@
 		88DCECA42F6FA69400EC380D /* DTO */ = {
 			isa = PBXGroup;
 			children = (
-				88DCECA32F6FA69400EC380D /* AppSettingsDTO.swift */,
+				88CEA2BB2F7019E100515031 /* Responses */,
 			);
 			path = DTO;
 			sourceTree = "<group>";
@@ -861,8 +877,9 @@
 		88DCECA62F6FA69400EC380D /* EndPoints */ = {
 			isa = PBXGroup;
 			children = (
+				88CEA2C92F701B8500515031 /* UpdateHiddenAccountsEndPoint.swift */,
+				88CEA2C72F701B3300515031 /* UpdateThemeEndPoint.swift */,
 				88CEA2A62F6FEE5300515031 /* GetAppSettingsEndPoint.swift */,
-				88DCECA52F6FA69400EC380D /* AppSettingsEndPoints.swift */,
 			);
 			path = EndPoints;
 			sourceTree = "<group>";
@@ -1380,6 +1397,7 @@
 				88A38F362F6BE1B6004C7E29 /* TextInput.swift in Sources */,
 				88DCED2E2F6FA69400EC380D /* GetMyAccountsEndPoint.swift in Sources */,
 				88DCED372F6FAB7900EC380D /* DepositAccountEndPoint.swift in Sources */,
+				88CEA2C42F701A9900515031 /* AppSettingsResponse.swift in Sources */,
 				88A38F372F6BE1B6004C7E29 /* ToastOverlayView.swift in Sources */,
 				88DCED282F6FA69400EC380D /* NetworkService.swift in Sources */,
 				88A38F382F6BE1B6004C7E29 /* ErrorFallbackView.swift in Sources */,
@@ -1388,6 +1406,7 @@
 				88DCED252F6FA69400EC380D /* LoanOperationResponse.swift in Sources */,
 				88DCED0A2F6FA69400EC380D /* NetworkServiceProtocol.swift in Sources */,
 				88DCED172F6FA69400EC380D /* OpenAccountEndPoint.swift in Sources */,
+				88CEA2C82F701B3300515031 /* UpdateThemeEndPoint.swift in Sources */,
 				88A38F3A2F6BE1B6004C7E29 /* CommonButton.swift in Sources */,
 				88DCED212F6FA69400EC380D /* AuthorizationProvider.swift in Sources */,
 				88CEA2AE2F6FF51C00515031 /* GetCreditRatingEndPoint.swift in Sources */,
@@ -1428,7 +1447,6 @@
 				8838CD452F542E3700B46A23 /* TabBarCoordinator.swift in Sources */,
 				88DCED392F6FAB8D00EC380D /* OpenAccountRequest.swift in Sources */,
 				88DCED1C2F6FA69400EC380D /* ThemeManager.swift in Sources */,
-				88DCED512F6FEB7F00EC380D /* AppSettingsDTO.swift in Sources */,
 				8838CD882F54347500B46A23 /* CreditsViewModel.swift in Sources */,
 				88DCED352F6FAA8000EC380D /* UserAccount.swift in Sources */,
 				88DCED102F6FA69400EC380D /* RepayLoanEndPoint.swift in Sources */,
@@ -1436,6 +1454,7 @@
 				88DCED192F6FA69400EC380D /* HTTPMethod.swift in Sources */,
 				88DCED122F6FA69400EC380D /* GetTariffs.swift in Sources */,
 				88CEA2A72F6FEE5300515031 /* GetAppSettingsEndPoint.swift in Sources */,
+				88CEA2CA2F701B8500515031 /* UpdateHiddenAccountsEndPoint.swift in Sources */,
 				8838CD902F54349900B46A23 /* ProfileViewModel+State.swift in Sources */,
 				8838CDA42F54935400B46A23 /* LoanDetailsSheet.swift in Sources */,
 				8838CD542F542E3700B46A23 /* ConfigurableCoordinator.swift in Sources */,
@@ -1457,7 +1476,7 @@
 				88DCED062F6FA69400EC380D /* CreditsRepositoryProtocol.swift in Sources */,
 				8838CD6B2F542E3700B46A23 /* AccountsCoordinator.swift in Sources */,
 				88DCED2B2F6FA69400EC380D /* CreditsRepository.swift in Sources */,
-				88DCED502F6FEB7B00EC380D /* AppSettingsEndPoints.swift in Sources */,
+				88CEA2C62F701B1400515031 /* AppSettings.swift in Sources */,
 				8838CDAC2F549A5C00B46A23 /* LoanOperationsList.swift in Sources */,
 				88DCED4A2F6FB22C00EC380D /* CurrencyFormatter.swift in Sources */,
 				882119972F60A8110073396D /* Notification+userDidLogout.swift in Sources */,
@@ -1468,6 +1487,7 @@
 				8838CC7E2F542DFC00B46A23 /* SceneDelegate.swift in Sources */,
 				99EA1D5718F2BC6FD091DC36 /* AppDependency.swift in Sources */,
 				72E9EAC9BB5A1C7F00EF62EB /* DIInject.swift in Sources */,
+				88CEA2C02F701A4800515031 /* AppTheme.swift in Sources */,
 				4B64D85C4A5E5D0059706AD5 /* KeychainStoreFactory.swift in Sources */,
 				3A74CF244DEC91B093A3C9DD /* KeyValueStoreProtocol.swift in Sources */,
 				ADD24B718D2C34BAF4E78FC1 /* KeychainConstants.swift in Sources */,

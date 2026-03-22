@@ -1,7 +1,5 @@
 import Foundation
 
-// MARK: - Domain Model
-
 struct AccountOperation: Identifiable {
     let id: String
     let accountId: String
@@ -10,29 +8,25 @@ struct AccountOperation: Identifiable {
     let amount: Double
     let currency: String
 
-    var currencySymbol: String { CurrencyFormatter.symbol(for: currency) }
+    var currencySymbol: String {
+        CurrencyFormatter.symbol(for: currency)
+    }
 
     var formattedDate: String {
-        let isoFormatter = ISO8601DateFormatter()
-        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        guard let date = isoFormatter.date(from: createdAt) else { return createdAt }
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        formatter.locale = Locale(identifier: "ru_RU")
-        return formatter.string(from: date)
+        DateTimeFormatter.format(createdAt, dateStyle: .short, timeStyle: .short)
     }
 
     var formattedAmount: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.groupingSeparator = " "
-        formatter.maximumFractionDigits = 2
-        formatter.minimumFractionDigits = amount.rounded() == amount ? 0 : 2
-        let number = formatter.string(from: NSNumber(value: amount)) ?? String(amount)
+        let number = CurrencyFormatter.formatNumber(
+            amount,
+            minFraction: amount.rounded() == amount ? 0 : 2,
+            maxFraction: 2
+        )
         switch type {
-        case .deposit:  return "+\(number) \(currencySymbol)"
-        case .withdraw: return "-\(number) \(currencySymbol)"
+        case .deposit: 
+            return "+\(number) \(currencySymbol)"
+        case .withdraw: 
+            return "-\(number) \(currencySymbol)"
         }
     }
 }

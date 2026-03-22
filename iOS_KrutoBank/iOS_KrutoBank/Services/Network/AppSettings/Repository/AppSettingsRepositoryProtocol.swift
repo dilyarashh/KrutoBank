@@ -1,4 +1,5 @@
 protocol AppSettingsRepositoryProtocol {
     func getSettings() async throws -> AppSettingsResponse
-    func saveSettings(_ settings: AppSettingsResponse) async throws
+    func updateTheme(theme: String) async throws -> AppSettingsResponse
+    func updateHiddenAccounts(hiddenAccounts: [String]) async throws -> AppSettingsResponse
 }

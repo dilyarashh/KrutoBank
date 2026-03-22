@@ -1,7 +1,5 @@
 import Foundation
 
-// MARK: - Domain Model
-
 struct UserProfile {
     let id: String
     let firstName: String

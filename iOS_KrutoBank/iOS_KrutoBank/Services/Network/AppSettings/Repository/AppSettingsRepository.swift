@@ -1,6 +1,7 @@
 import Foundation
 
 final class AppSettingsRepository: AppSettingsRepositoryProtocol {
+
     private let networkService: NetworkServiceProtocol
 
     init(networkService: NetworkServiceProtocol) {
@@ -8,10 +9,23 @@ final class AppSettingsRepository: AppSettingsRepositoryProtocol {
     }
 
     func getSettings() async throws -> AppSettingsResponse {
-        try await networkService.requestDecodable(GetAppSettingsEndPoint(), as: AppSettingsResponse.self)
+        try await networkService.requestDecodable(
+            GetAppSettingsEndPoint(),
+            as: AppSettingsResponse.self
+        )
     }
 
-    func saveSettings(_ settings: AppSettingsResponse) async throws {
-        try await networkService.request(UpdateAppSettingsEndPoint(body: settings))
+    func updateTheme(theme: String) async throws -> AppSettingsResponse {
+        try await networkService.requestDecodable(
+            UpdateThemeEndPoint(theme: theme),
+            as: AppSettingsResponse.self
+        )
+    }
+
+    func updateHiddenAccounts(hiddenAccounts: [String]) async throws -> AppSettingsResponse {
+        try await networkService.requestDecodable(
+            UpdateHiddenAccountsEndPoint(hiddenAccountIds: hiddenAccounts),
+            as: AppSettingsResponse.self
+        )
     }
 }

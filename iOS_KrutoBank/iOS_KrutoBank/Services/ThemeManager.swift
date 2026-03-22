@@ -1,26 +1,6 @@
 import SwiftUI
 import Combine
 
-// MARK: - AppTheme
-enum AppTheme: String, CaseIterable {
-    case light
-    case dark
-
-    var colorScheme: ColorScheme {
-        switch self {
-        case .light: return .light
-        case .dark:  return .dark
-        }
-    }
-
-    var displayName: String {
-        switch self {
-        case .light: return "Светлая"
-        case .dark:  return "Тёмная"
-        }
-    }
-}
-
 // MARK: - ThemeManager
 @MainActor
 final class ThemeManager: ObservableObject {

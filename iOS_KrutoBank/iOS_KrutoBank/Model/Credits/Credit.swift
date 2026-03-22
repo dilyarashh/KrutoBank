@@ -11,9 +11,7 @@ struct Credit: Identifiable {
 
     var id: String { loanId }
 
-    var paidAmount: Double {
-        initialAmount - remainingAmount
-    }
+    var paidAmount: Double { initialAmount - remainingAmount }
 
     var progress: Double {
         guard initialAmount > 0 else { return 0 }
@@ -23,24 +21,25 @@ struct Credit: Identifiable {
     var status: String {
         if remainingAmount <= 0 {
             return "Закрыт"
-        } else if isActive {
+        }
+        else if isActive {
             return "Активный"
-        } else {
+        }
+        else {
             return "Неактивный"
         }
     }
 
-    var formattedInitialAmount: String { formatMoney(initialAmount) }
-    var formattedRemainingAmount: String { formatMoney(remainingAmount) }
-    var formattedPaidAmount: String { formatMoney(paidAmount) }
-
+    var formattedInitialAmount: String {
+        CurrencyFormatter.formatMoney(initialAmount)
+    }
+    var formattedRemainingAmount: String {
+        CurrencyFormatter.formatMoney(remainingAmount)
+    }
+    var formattedPaidAmount: String {
+        CurrencyFormatter.formatMoney(paidAmount)
+    }
     var formattedInterestRate: String {
         "\(Int(interestRate * 100))%"
-    }
-
-    private func formatMoney(_ value: Double) -> String {
-        value.rounded() == value
-            ? String(Int(value))
-            : String(format: "%.2f", value)
     }
 }
