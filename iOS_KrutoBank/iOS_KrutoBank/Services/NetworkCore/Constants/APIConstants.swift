@@ -61,6 +61,8 @@ enum APIConstants {
     }
 
     // MARK: - Exchange Rates
-    static let exchangeRatesURL = URL(string: "https://api.exchangerate-api.com/v4/latest/RUB")!
+    static func exchangeRatesURL(base: String) -> URL {
+        URL(string: "https://api.exchangerate-api.com/v4/latest/\(base)")!
+    }
 }
 
