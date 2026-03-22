@@ -41,21 +41,14 @@ final class ProfileViewModel: ObservableObject {
         state.errorText = nil
 
         Task {
-            do {
-                try await usersRepository.logout()
-                state.isLogoutLoading = false
-                delegate?.profileViewModelDidLogout(self)
-            } catch {
-                state.isLogoutLoading = false
-                state.errorText = AppStrings.Common.error
-            }
+//            do {
+//                try await usersRepository.logout()
+//                state.isLogoutLoading = false
+//                delegate?.profileViewModelDidLogout(self)
+//            } catch {
+//                state.isLogoutLoading = false
+//                state.errorText = AppStrings.Common.error
+//            }
         }
-    }
-
-    func fullName(from user: UserResponse) -> String {
-        let parts = [user.lastName, user.firstName, user.middleName]
-            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-        return parts.isEmpty ? "—" : parts.joined(separator: " ")
     }
 }

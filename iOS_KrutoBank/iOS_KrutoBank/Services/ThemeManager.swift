@@ -25,7 +25,7 @@ final class ThemeManager: ObservableObject {
         Task {
             do {
                 let settings = try await repository.getSettings()
-                theme = AppTheme(rawValue: settings.theme) ?? .light
+                theme = settings.theme
                 hiddenAccountIds = Set(settings.hiddenAccountIds)
             } catch {
                 // Fall back to local default silently
@@ -39,11 +39,8 @@ final class ThemeManager: ObservableObject {
         syncTask = Task {
             try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s debounce
             guard !Task.isCancelled else { return }
-            let settings = AppSettingsResponse(
-                theme: theme.rawValue,
-                hiddenAccountIds: Array(hiddenAccountIds)
-            )
-            try? await repository.saveSettings(settings)
+            try? await repository.updateTheme(theme: theme.rawValue)
+            try? await repository.updateHiddenAccounts(hiddenAccounts: Array(hiddenAccountIds))
         }
     }
 

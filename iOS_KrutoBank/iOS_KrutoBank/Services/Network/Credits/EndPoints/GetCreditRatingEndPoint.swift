@@ -8,7 +8,7 @@ struct GetCreditRatingEndPoint: EndPoint {
     }
 
     var baseURL: URL { APIConstants.creditsServiceBaseURL }
-    var path: String { APIConstants.Credits.creditRating(userId: userId) }
+    var path: String { APIConstants.Credits.creditScore(userId: userId) }
     var method: HTTPMethod { .get }
     var task: HTTPTask { .request }
     var authorization: AuthorizationRequirement { .accessToken }

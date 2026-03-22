@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 struct AccountOperation: Identifiable {
     let id: String
@@ -34,4 +35,31 @@ struct AccountOperation: Identifiable {
 enum AccountOperationType {
     case deposit
     case withdraw
+
+    var displayedName: String {
+        switch self {
+        case .deposit: 
+            return "Пополнение"
+        case .withdraw:
+            return "Снятие"
+        }
+    }
+
+    var iconName: String {
+        switch self {
+        case .deposit: 
+            return "arrow.down.circle.fill"
+        case .withdraw:
+            return "arrow.up.circle.fill"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .deposit: 
+            return Color.green
+        case .withdraw:
+            return Color.red
+        }
+    }
 }

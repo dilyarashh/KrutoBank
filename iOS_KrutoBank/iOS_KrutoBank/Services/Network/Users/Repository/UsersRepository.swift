@@ -12,8 +12,8 @@ final class UsersRepository: UsersRepositoryProtocol {
         self.tokenStorage = tokenStorage
     }
 
-    func getMyInfo() async throws -> UserResponse {
-        let endPoint = GetMyInfoEndPoint()
-        return try await networkService.requestDecodable(endPoint, as: UserResponse.self)
+    func getMyInfo() async throws -> UserProfile {
+        let response = try await networkService.requestDecodable(GetMyInfoEndPoint(), as: UserResponse.self)
+        return response.toDomain()
     }
 }

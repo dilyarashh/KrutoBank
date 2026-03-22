@@ -73,8 +73,8 @@ private extension AccountsView {
                     .foregroundStyle(Color.AppColor.textSecondary)
 
                 Picker("Валюта", selection: $viewModel.state.selectedCurrency) {
-                    ForEach(Currency.allCases, id: \.self) { currency in
-                        Text(currency.displayName).tag(currency)
+                    ForEach(AccountCurrency.allCases, id: \.self) { currency in
+                        Text(currency.rawValue).tag(currency)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -139,13 +139,13 @@ private extension AccountsView {
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
-    func accountRow(_ account: UserAccountResponse) -> some View {
+    func accountRow(_ account: UserAccount) -> some View {
         Button {
-            viewModel.selectAccount(accountId: account.accountId)
+            viewModel.selectAccount(accountId: account.id)
         } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(account.accountName.isEmpty ? "Без названия" : account.accountName)
+                    Text(account.name.isEmpty ? "Без названия" : account.name)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(Color.AppColor.textPrimary)
 
@@ -156,7 +156,7 @@ private extension AccountsView {
                 Spacer()
 
                 // Hidden indicator
-                if themeManager.isHidden(account.accountId) {
+                if themeManager.isHidden(account.id) {
                     Image(systemName: "eye.slash")
                         .font(.system(size: 12))
                         .foregroundStyle(Color.AppColor.textSecondary)

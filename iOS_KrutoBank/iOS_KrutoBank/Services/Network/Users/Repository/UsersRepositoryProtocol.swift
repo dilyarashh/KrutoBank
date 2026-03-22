@@ -1,3 +1,5 @@
+import Foundation
+
 protocol UsersRepositoryProtocol {
-    func getMyInfo() async throws -> UserResponse
+    func getMyInfo() async throws -> UserProfile
 }

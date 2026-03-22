@@ -19,9 +19,6 @@ final class AccountsViewModel: ObservableObject {
     @DIInject(\.accountOperationsWebSocket, container: DI.container)
     private var webSocket: AccountOperationsWebSocketProtocol
 
-    @DIInject(\.exchangeRateService, container: DI.container)
-    private var exchangeRateService: ExchangeRateServiceProtocol
-
     private let themeManager = ThemeManager.shared
     private let toastStore = ToastStore.shared
 
@@ -29,11 +26,11 @@ final class AccountsViewModel: ObservableObject {
 
     var webSocketConnected: Bool { webSocket.isConnected }
 
-    var visibleAccounts: [UserAccountResponse] {
+    var visibleAccounts: [UserAccount] {
         if state.showHiddenAccounts {
             return state.accounts
         }
-        return state.accounts.filter { !themeManager.isHidden($0.accountId) }
+        return state.accounts.filter { !themeManager.isHidden($0.id) }
     }
 
     // MARK: - Lifecycle
@@ -138,7 +135,7 @@ final class AccountsViewModel: ObservableObject {
 
         Task {
             do {
-                try await accountsRepository.openAccount(with: name, currency: currency)
+                try await accountsRepository.openAccount(data: .init(name: name, currency: AccountCurrency(rawValue: currency) ?? .rub))
                 state.isActionLoading = false
                 toastStore.show(.success("Счёт открыт"))
                 await reloadAccountsAfterChange(keepSelection: false)
@@ -179,7 +176,8 @@ final class AccountsViewModel: ObservableObject {
 
         Task {
             do {
-                try await accountsRepository.depositAccount(with: accountId, amount: amount)
+                // TODO: поправить логику перевода средств со счета на счет
+                try await accountsRepository.depositAccount(data: .init(fromAccountId: accountId, toAccountId: accountId, amount: amount))
                 state.isActionLoading = false
                 toastStore.show(.success("Пополнение выполнено"))
                 await reloadAccountsAfterChange(keepSelection: true)
@@ -200,7 +198,7 @@ final class AccountsViewModel: ObservableObject {
 
         Task {
             do {
-                try await accountsRepository.withdrawFromAccount(with: accountId, amount: amount)
+                try await accountsRepository.withdrawFromAccount(data: .init(fromAccountId: accountId, toAccountId: accountId, amount: amount))
                 state.isActionLoading = false
                 toastStore.show(.success("Списание выполнено"))
                 await reloadAccountsAfterChange(keepSelection: true)
@@ -227,7 +225,7 @@ final class AccountsViewModel: ObservableObject {
 
         Task {
             do {
-                try await accountsRepository.transferMoney(from: fromId, to: toId, amount: amount, currency: currency)
+                try await accountsRepository.transferMoney(data: .init(fromAccountId: fromId, toPhone: toId, amount: amount))
                 state.isActionLoading = false
                 toastStore.show(.success("Перевод выполнен"))
                 state.transferTargetAccountId = ""

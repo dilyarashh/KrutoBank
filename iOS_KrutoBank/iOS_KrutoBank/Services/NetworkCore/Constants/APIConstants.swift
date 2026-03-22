@@ -39,17 +39,15 @@ enum APIConstants {
         static let tariffs = "/api/Credits/tariffs"
         static let takeLoan = "/api/Credits/loans/take"
         static let repayLoan = "/api/Credits/loans/repay"
+        static let autoPayment = "/api/Credits/loans/auto-payment"
         static func userLoans(userId: String) -> String {
             "/api/Credits/users/\(userId)/loans"
         }
         static func loanOperations(userId: String, loanId: String) -> String {
             "/api/Credits/users/\(userId)/loans/\(loanId)/operations"
         }
-        static func overduePayments(userId: String) -> String {
-            "/api/Credits/users/\(userId)/overdue"
-        }
-        static func creditRating(userId: String) -> String {
-            "/api/Credits/users/\(userId)/rating"
+        static func creditScore(userId: String) -> String {
+            "/api/Credits/users/\(userId)/credit-score"
         }
     }
 

@@ -20,6 +20,9 @@ final class CreditsViewModel: ObservableObject {
     @DIInject(\.usersRepository, container: DI.container)
     private var usersRepository: UsersRepositoryProtocol
 
+    @DIInject(\.accountsRepository, container: DI.container)
+    private var accountsRepository: AccountsRepositoryProtocol
+
     private let toastStore = ToastStore.shared
 
     @Published var state = State()
@@ -46,10 +49,16 @@ final class CreditsViewModel: ObservableObject {
 
                 async let loansTask = creditsRepository.getLoans(with: user.id)
                 async let tariffsTask = creditsRepository.getTariffs()
+                async let accountsTask = accountsRepository.getMyAccounts()
 
-                let (loans, tariffs) = try await (loansTask, tariffsTask)
+                let (loans, tariffs, accounts) = try await (loansTask, tariffsTask, accountsTask)
                 state.loans = loans
                 state.tariffs = tariffs
+                state.accounts = accounts
+                state.selectedAccountId = accounts.first?.id
+                state.tariffs = tariffs
+                state.accounts = accounts
+                state.selectedAccountId = accounts.first?.id
                 state.isLoading = false
 
                 // Load rating & overdue in background
@@ -65,11 +74,9 @@ final class CreditsViewModel: ObservableObject {
     func loadCreditRatingAndOverdue(userId: String) {
         state.isRatingLoading = true
         Task {
-            async let overdueTask = creditsRepository.getOverduePayments(userId: userId)
             async let ratingTask = creditsRepository.getCreditRating(userId: userId)
             do {
-                let (overdue, rating) = try await (overdueTask, ratingTask)
-                state.overduePayments = overdue
+                let rating = try await ratingTask
                 state.creditRating = rating
                 state.isRatingLoading = false
             } catch {
@@ -95,18 +102,25 @@ final class CreditsViewModel: ObservableObject {
         state.operationsErrorText = nil
     }
 
-    var selectedLoan: CreditResponse? {
+    var selectedLoan: Credit? {
         guard let selectedLoanId = state.selectedLoanId else { return nil }
         return state.loans.first { $0.loanId == selectedLoanId }
+    }
+
+    var selectedAccount: UserAccount? {
+        guard let id = state.selectedAccountId else { return nil }
+        return state.accounts.first { $0.id == id }
     }
 
     // MARK: - Actions
 
     func takeLoan() {
-        guard let userId = state.userId, !state.tariffName.isEmpty else { return }
+        guard let userId = state.userId,
+              let accountId = state.selectedAccountId,
+              !state.tariffName.isEmpty else { return }
         state.errorText = nil
         state.isActionLoading = true
-        let request = TakeLoanRequest(userId: userId, tariffName: state.tariffName, amount: state.takeAmount)
+        let request = TakeLoanRequest(userId: userId, tariffName: state.tariffName, amount: state.takeAmount, accountId: accountId)
 
         Task {
             do {
@@ -127,7 +141,8 @@ final class CreditsViewModel: ObservableObject {
 
     func repaySelectedLoan() {
         guard let selectedLoanId = state.selectedLoanId,
-              let selectedLoan = selectedLoan else { return }
+              let selectedLoan = selectedLoan,
+              let accountId = state.selectedAccountId else { return }
 
         guard state.repayAmount <= selectedLoan.remainingAmount else {
             state.detailsErrorText = "Сумма погашения не может превышать остаток"
@@ -135,7 +150,7 @@ final class CreditsViewModel: ObservableObject {
         }
         state.detailsErrorText = nil
         state.isActionLoading = true
-        let request = RepayLoanRequest(loanId: selectedLoanId, amount: state.repayAmount)
+        let request = RepayLoanRequest(loanId: selectedLoanId, amount: state.repayAmount, accountId: accountId)
 
         Task {
             do {

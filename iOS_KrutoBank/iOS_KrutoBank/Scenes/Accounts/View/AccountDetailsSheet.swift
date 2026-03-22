@@ -72,12 +72,13 @@ private extension AccountDetailsSheet {
         }
     }
 
-    func accountInfoCard(_ account: AccountResponse) -> some View {
+    func accountInfoCard(_ account: Account) -> some View {
         VStack(spacing: 12) {
             HStack {
-                Text(account.name.flatMap { $0.isEmpty ? nil : $0 } ?? "Без названия")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(Color.AppColor.textPrimary)
+                // TODO: -
+//                Text(account.name.flatMap { $0.isEmpty ? nil : $0 } ?? "Без названия")
+//                    .font(.system(size: 18, weight: .bold))
+//                    .foregroundStyle(Color.AppColor.textPrimary)
 
                 Spacer()
 
@@ -109,14 +110,6 @@ private extension AccountDetailsSheet {
                     .foregroundStyle(Color.AppColor.primaryPink)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
-            HStack {
-                detailItem(title: "Открыт", value: formatDateString(account.openedAt))
-                if let closedAt = account.closedAt {
-                    Spacer()
-                    detailItem(title: "Закрыт", value: formatDateString(closedAt))
-                }
-            }
         }
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 16).fill(Color.AppColor.primaryWhite))
@@ -226,7 +219,7 @@ private extension AccountDetailsSheet {
         }
     }
 
-    func operationsList(_ operations: [AccountOperationResponse]) -> some View {
+    func operationsList(_ operations: [AccountOperation]) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 10) {
                 ForEach(operations) { operation in
@@ -238,19 +231,18 @@ private extension AccountDetailsSheet {
         }
     }
 
-    func operationRow(_ operation: AccountOperationResponse) -> some View {
+    func operationRow(_ operation: AccountOperation) -> some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(operation.type.color.opacity(0.1))
                 .frame(width: 36, height: 36)
                 .overlay(
-                    Image(systemName: operation.type.iconName)
+                    Image(systemName: operation.type.displayedName)
                         .font(.system(size: 16))
                         .foregroundStyle(operation.type.color)
                 )
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(operation.type.displayName)
+                Text(operation.type.displayedName)
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(Color.AppColor.textPrimary)
                 Text(operation.formattedDate)

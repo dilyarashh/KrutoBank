@@ -1,8 +1,6 @@
 import Foundation
 import AuthenticationServices
 
-private 
-
 final class OAuthService: OAuthServiceProtocol {
 
     private var authSession: ASWebAuthenticationSession?

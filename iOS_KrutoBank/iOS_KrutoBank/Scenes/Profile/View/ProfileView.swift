@@ -53,9 +53,9 @@ private extension ProfileView {
         }
     }
 
-    func profileContent(user: UserResponse) -> some View {
+    func profileContent(user: UserProfile) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            profileRow(title: AppStrings.Profile.fullName, value: viewModel.fullName(from: user))
+            profileRow(title: AppStrings.Profile.fullName, value: user.fullName)
 
             Divider()
 
@@ -67,7 +67,7 @@ private extension ProfileView {
 
             Divider()
 
-            profileRow(title: AppStrings.Profile.role, value: user.role.rawValue)
+            profileRow(title: AppStrings.Profile.role, value: user.role.title)
 
             if user.isBlocked {
                 Divider()

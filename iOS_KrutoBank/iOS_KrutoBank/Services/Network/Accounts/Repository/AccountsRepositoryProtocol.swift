@@ -6,7 +6,7 @@ protocol AccountsRepositoryProtocol {
     func depositAccount(data: AccountBalanceRequest) async throws
     func withdrawFromAccount(data: AccountBalanceRequest) async throws
     func transferMoney(data: TransferRequest) async throws
-    func getMyAccount(with accountId: String) async throws -> AccountResponse
-    func getMyAccounts() async throws -> [UserAccountResponse]
-    func getMyOperations(with accountId: String) async throws -> [AccountOperationResponse]
+    func getMyAccount(with accountId: String) async throws -> Account
+    func getMyAccounts() async throws -> [UserAccount]
+    func getMyOperations(with accountId: String) async throws -> [AccountOperation]
 }

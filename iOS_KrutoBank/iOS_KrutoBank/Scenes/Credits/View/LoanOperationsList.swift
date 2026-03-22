@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LoanOperationsList: View {
-    let operations: [LoanOperationResponse]
+    let operations: [LoanOperation]
     let isLoading: Bool
     let errorText: String?
     let onRetry: () -> Void
@@ -77,7 +77,7 @@ struct LoanOperationsList: View {
 }
 
 struct LoanOperationRow: View {
-    let operation: LoanOperationResponse
+    let operation: LoanOperation
 
     var body: some View {
         HStack(spacing: 12) {

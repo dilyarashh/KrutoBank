@@ -6,8 +6,8 @@ enum OAuthConstants {
     static let logout    = "/connect/logout"
     static let register  = "/account/register"
 
-    static let clientId       = "krutobank-ios"
-    static let redirectURI    = "krutobank://callback"
+    static let clientId       = "bank-client-web"
+    static let redirectURI    = "http://localhost:3000/auth/callback"
     static let responseType   = "code"
     static let grantType      = "authorization_code"
     static let refreshGrant   = "refresh_token"

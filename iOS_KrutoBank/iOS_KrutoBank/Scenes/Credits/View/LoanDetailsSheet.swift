@@ -73,7 +73,7 @@ private extension LoanDetailsSheet {
         .padding(.top, 12)
     }
 
-    func loanInfoCard(_ loan: CreditResponse) -> some View {
+    func loanInfoCard(_ loan: Credit) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(loan.tariffName ?? "Кредит")
@@ -198,7 +198,7 @@ private extension LoanDetailsSheet {
         .frame(maxWidth: .infinity)
     }
 
-    func repaymentPanel(loan: CreditResponse) -> some View {
+    func repaymentPanel(loan: Credit) -> some View {
         ScrollView {
             VStack(spacing: 16) {
                 if loan.isActive && loan.remainingAmount > 0 {

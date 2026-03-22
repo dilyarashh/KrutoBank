@@ -8,18 +8,16 @@ protocol OAuthLoginViewModelDelegate: AnyObject {
 
 @MainActor
 final class OAuthLoginViewModel: ObservableObject {
+
     weak var delegate: OAuthLoginViewModelDelegate?
+
+    @Published var state = State()
 
     @DIInject(\.oauthService, container: DI.container)
     private var oauthService: OAuthServiceProtocol
 
+    @DIInject(\.tokenStorage, container: DI.container)
     private var tokenStorage: TokenStorageProtocol
-
-    @Published var state = State()
-
-    init() {
-        self.tokenStorage = DI.container.tokenStorage
-    }
 
     // Called from View, passing the window anchor for ASWebAuthenticationSession
     func loginWithSSO(anchor: ASPresentationAnchor) {
@@ -30,7 +28,7 @@ final class OAuthLoginViewModel: ObservableObject {
         Task {
             do {
                 let tokenResponse = try await oauthService.startAuthFlow(from: anchor)
-                tokenStorage.accessToken = tokenResponse.accessToken
+                tokenStorage.accessToken  = tokenResponse.accessToken
                 tokenStorage.refreshToken = tokenResponse.refreshToken
                 state.isLoading = false
                 delegate?.oauthLoginViewModelDidAuthenticate(self)

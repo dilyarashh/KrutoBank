@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - DTO
+// MARK: - CreditRating DTO
 
 struct CreditRatingResponse: Decodable {
     let userId: String
@@ -9,7 +9,7 @@ struct CreditRatingResponse: Decodable {
     let overduePayments: Int
 }
 
-// MARK: - Mapper
+// MARK: - CreditRating Mapper
 
 extension CreditRatingResponse {
     func toDomain() -> CreditRating {
