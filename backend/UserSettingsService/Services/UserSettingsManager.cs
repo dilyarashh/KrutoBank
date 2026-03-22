@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using UserSettingsService.DTO;
 using UserSettingsService.Entities;
+using UserSettingsService.Entities.Enums;
 using UserSettingsService.Repositories;
 
 namespace UserSettingsService.Services;
@@ -16,7 +17,7 @@ public class UserSettingsManager(UserSettingsRepository repo)
             settings = new UserSettings
             {
                 UserId = userId,
-                Theme = "light",
+                Theme = Theme.Light,
                 HiddenAccountIdsJson = "[]"
             };
 
@@ -31,13 +32,8 @@ public class UserSettingsManager(UserSettingsRepository repo)
         };
     }
 
-    public async Task UpdateTheme(Guid userId, string theme)
+    public async Task UpdateTheme(Guid userId, Theme theme)
     {
-        if (theme != "light" && theme != "dark")
-        {
-            throw new Exception("Тема должна быть 'light' либо 'dark'");
-        }
-
         var settings = await repo.GetAsync(userId) ?? new UserSettings { UserId = userId };
 
         settings.Theme = theme;

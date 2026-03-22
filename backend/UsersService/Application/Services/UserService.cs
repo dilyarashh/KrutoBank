@@ -154,4 +154,14 @@ public class UserService(
             Items = enumerable.Select(u => u.ToDto()).ToArray()
         };
     }
+
+    public async Task<UserDto?> GetByPhoneAsync(string phone)
+    {
+        var user = await _userRepository.GetByPhoneAsync(phone);
+
+        if (user == null)
+            throw new NotFoundException("Пользователь не найден");
+
+        return user.ToDto();
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserSettingsService.DTO;
+using UserSettingsService.Entities.Enums;
 using UserSettingsService.Services;
 
 namespace UserSettingsService.Controllers;
@@ -21,7 +22,7 @@ public class UserSettingsController(UserSettingsManager service, ICurrentUser cu
 
     /// Обновить тему
     [HttpPatch("theme")]
-    public async Task<IActionResult> UpdateTheme([FromBody] string theme)
+    public async Task<IActionResult> UpdateTheme([FromBody] Theme theme)
     {
         var userId = currentUser.GetUserId();
         await service.UpdateTheme(userId, theme);

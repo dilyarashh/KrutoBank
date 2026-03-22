@@ -71,6 +71,7 @@ namespace AccountsService.Kafka
                         Id = message.OperationId,
                         AccountId = account.Id,
                         Amount = message.Amount,
+                        Currency = Enum.Parse<Currency>(message.Currency),
                         Type = message.Type == "Deposit"
                             ? OperationType.Deposit
                             : OperationType.Withdraw,

@@ -1,8 +1,10 @@
-﻿namespace UserSettingsService.DTO
+﻿using UserSettingsService.Entities.Enums;
+
+namespace UserSettingsService.DTO
 {
     public class UserSettingsDto
     {
-        public string Theme { get; set; } = "light";
+        public Theme Theme { get; set; } = Theme.Light;
         public List<Guid> HiddenAccountIds { get; set; } = new();
     }
 }

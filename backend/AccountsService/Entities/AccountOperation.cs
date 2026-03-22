@@ -9,5 +9,6 @@ public class AccountOperation
     public DateTime CreatedAt { get; set; }
     public required OperationType Type { get; set; } 
     public decimal Amount { get; set; }
+    public Currency Currency { get; set; }
     public Account Account { get; set; } = null!;
 }

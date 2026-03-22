@@ -10,12 +10,14 @@ using System.Security.Principal;
 
 namespace AccountsService.Services;
 
-public class AccountService(IAccountRepository accountRepository, ICurrentUser currentUser, CurrencyService currencyService, KafkaProducer kafkaProducer) : IAccountService
+public class AccountService(IAccountRepository accountRepository, ICurrentUser currentUser, CurrencyService currencyService, 
+    KafkaProducer kafkaProducer, IUsersClient usersClient) : IAccountService
 {
     private readonly IAccountRepository _accountRepository = accountRepository;
     private readonly ICurrentUser _currentUser = currentUser;
     private readonly CurrencyService _currencyService = currencyService;
     private readonly KafkaProducer _kafkaProducer = kafkaProducer;
+    private readonly IUsersClient _usersClient = usersClient;
 
     public async Task<Account> CreateAccountAsync(CreateAccountRequest request)
     {
@@ -47,21 +49,17 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         var userId = _currentUser.GetUserId();
 
         var account = await _accountRepository.GetByIdAsync(accountId);
+
         if (account == null)
-        {
             throw new NotFoundException("Счет не найден");
-        }
 
         var userIsOwner = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+
         if (userIsOwner == null)
-        {
             throw new BadRequestException("Вы можете закрыть только свой счет");
-        }
 
         if (account.IsClosed)
-        {
             throw new BadRequestException("Счет уже закрыт");
-        }
 
         var otherAccounts = (await _accountRepository.GetUserAccountsAsync(userId))
             .Where(a => a.Id != accountId && !a.IsClosed)
@@ -76,7 +74,8 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
                 OperationId = Guid.NewGuid(),
                 AccountId = account.Id,
                 Amount = account.Balance,
-                Type = "Withdraw"
+                Type = "Withdraw",
+                Currency = account.Currency.ToString()
             });
 
             await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
@@ -84,7 +83,8 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
                 OperationId = Guid.NewGuid(),
                 AccountId = target.Id,
                 Amount = account.Balance,
-                Type = "Deposit"
+                Type = "Deposit",
+                Currency = target.Currency.ToString()
             });
         }
 
@@ -100,25 +100,21 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         if (amount <= 0)
             throw new BadRequestException("Сумма должна быть больше нуля");
 
-        var userId = _currentUser.GetUserId();
-        
         var account = await _accountRepository.GetByIdAsync(accountId);
+
         if (account == null)
-        {
             throw new NotFoundException("Счет не найден");
-        }
 
         if (account.IsClosed)
-        {
             throw new BadRequestException("Счет закрыт");
-        }
 
         await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
         {
             OperationId = Guid.NewGuid(),
             AccountId = account.Id,
             Amount = amount,
-            Type = "Deposit"
+            Type = "Deposit",
+            Currency = account.Currency.ToString()
         });
 
         return true;
@@ -126,36 +122,40 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
 
     public async Task TransferAsync(TransferRequest request)
     {
+        if (string.IsNullOrWhiteSpace(request.ToPhone))
+            throw new BadRequestException("Телефон получателя обязателен");
+
         if (request.Amount <= 0)
-        {
             throw new BadRequestException("Сумма должна быть больше нуля");
-        }
 
         var userId = _currentUser.GetUserId();
 
         var from = await _accountRepository.GetByIdForUserAsync(request.FromAccountId, userId);
 
         if (from == null)
-        {
             throw new BadRequestException("Вы можете переводить деньги только со своего счета");
-        }
 
-        var to = await _accountRepository.GetByIdAsync(request.ToAccountId);
+        if (from.IsClosed)
+            throw new BadRequestException("Счет отправителя закрыт");
+
+        var user = await _usersClient.GetByPhoneAsync(request.ToPhone);
+
+        if (user == null)
+            throw new NotFoundException("Пользователь не найден");
+
+        var to = await _accountRepository.GetPrimaryAccountByUserIdAsync(user.Id);
 
         if (to == null)
-        {
-            throw new NotFoundException("Счет назначения не найден");
-        }
+            throw new NotFoundException("У пользователя нет счета");
+
+        if (to.IsClosed)
+            throw new BadRequestException("Счет получателя закрыт");
+
+        if (from.Id == to.Id)
+            throw new BadRequestException("Нельзя перевести самому себе");
 
         if (from.Balance < request.Amount)
-        {
             throw new BadRequestException("Недостаточно средств");
-        }
-
-        if (from.Id == BankAccounts.MasterAccountId && from.Balance < request.Amount)
-        {
-            throw new BadRequestException("Недостаточно средств на мастер-счете банка");
-        }
 
         decimal depositAmount;
 
@@ -176,7 +176,8 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             OperationId = Guid.NewGuid(),
             AccountId = from.Id,
             Amount = request.Amount,
-            Type = "Withdraw"
+            Type = "Withdraw",
+            Currency = from.Currency.ToString()
         });
 
         await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
@@ -184,7 +185,8 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             OperationId = Guid.NewGuid(),
             AccountId = to.Id,
             Amount = depositAmount,
-            Type = "Deposit"
+            Type = "Deposit",
+            Currency = to.Currency.ToString()
         });
     }
 
@@ -196,33 +198,28 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         var userId = _currentUser.GetUserId();
 
         var account = await _accountRepository.GetByIdAsync(accountId);
+
         if (account == null)
-        {
             throw new NotFoundException("Счет не найден");
-        }
-        
+
         var userIsOwner = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+
         if (userIsOwner == null)
-        {
             throw new BadRequestException("Вы можете снять деньги только со своего счёта");
-        }
 
         if (account.IsClosed)
-        {
             throw new BadRequestException("Счет закрыт");
-        }
 
         if (account.Balance < amount)
-        {
             throw new BadRequestException("Недостаточно средств");
-        }
 
         await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
         {
             OperationId = Guid.NewGuid(),
             AccountId = account.Id,
             Amount = amount,
-            Type = "Withdraw"
+            Type = "Withdraw",
+            Currency = account.Currency.ToString()
         });
 
         return true;
@@ -233,14 +230,16 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         var userId = _currentUser.GetUserId();
 
         var account = await _accountRepository.GetByIdForUserAsync(accountId, userId);
+
         if (account == null)
             throw new BadRequestException("Вы можете получить информацию только по своему счёту");
 
-        return new()
+        return new AccountDetailsDto
         {
             Id = account.Id,
             Name = account.Name,
             Balance = account.Balance,
+            Currency = account.Currency,
             OpenedAt = account.OpenedAt,
             IsClosed = account.IsClosed,
             ClosedAt = account.ClosedAt
@@ -250,14 +249,16 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
     public async Task<AccountDetailsDto> GetAccountAsync(Guid accountId)
     {
         var account = await _accountRepository.GetByIdAsync(accountId);
+
         if (account == null)
             throw new NotFoundException("Счет не найден");
 
-        return new()
+        return new AccountDetailsDto
         {
             Id = account.Id,
             Name = account.Name,
             Balance = account.Balance,
+            Currency = account.Currency,
             OpenedAt = account.OpenedAt,
             IsClosed = account.IsClosed,
             ClosedAt = account.ClosedAt
@@ -304,7 +305,7 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
 
         return await _accountRepository.GetAccountOperationsAsync(accountId);
     }
-    
+
     public async Task<IEnumerable<UserAccountDto>> GetMyAccountsAsync(bool? onlyOpened)
     {
         var userId = _currentUser.GetUserId();
@@ -327,10 +328,10 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             IsClosed = a.IsClosed
         });
     }
-    
+
     public async Task<IEnumerable<UserAccountDto>> GetUserAccountsByUserIdAsync(
-        Guid userId,
-        bool? onlyOpened)
+    Guid userId,
+    bool? onlyOpened)
     {
         var accounts = await _accountRepository.GetUserAccountsByUserIdAsync(userId);
 
@@ -356,9 +357,7 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         var account = await _accountRepository.GetByIdAsync(BankAccounts.MasterAccountId);
 
         if (account == null)
-        {
             throw new NotFoundException("Мастер-счет банка не найден");
-        }
 
         return new BankAccountInfoDto
         {

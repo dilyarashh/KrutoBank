@@ -52,6 +52,11 @@ builder.Services.AddSingleton<KafkaProducer>();
 builder.Services.AddSingleton<KafkaInitializer>();
 builder.Services.AddHostedService<KafkaConsumerService>();
 
+builder.Services.AddHttpClient<IUsersClient, UsersClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5001"); // UsersService
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

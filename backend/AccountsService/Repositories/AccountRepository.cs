@@ -152,4 +152,17 @@ public class AccountRepository(AccountsDbContext db) : IAccountRepository
         return await db.AccountOperations
             .AnyAsync(o => o.Id == operationId);
     }
+
+    public async Task<Account?> GetPrimaryAccountByUserIdAsync(Guid userId)
+    {
+        var accountIds = await db.UserAccounts
+            .Where(ua => ua.UserId == userId)
+            .Select(ua => ua.AccountId)
+            .ToListAsync();
+
+        return await db.Accounts
+            .Where(a => accountIds.Contains(a.Id) && !a.IsClosed)
+            .OrderBy(a => a.OpenedAt)
+            .FirstOrDefaultAsync();
+    }
 }

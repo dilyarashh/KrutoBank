@@ -56,4 +56,15 @@ public class UsersController(IUserService service) : ControllerBase
         var result = await service.GetAllAsync(request);
         return Ok(result);
     }
+
+    /// <summary>
+    /// Получить пользователя по телефону
+    /// </summary>
+    [HttpGet("by-phone")]
+    public async Task<ActionResult<UserDto>> GetByPhone([FromQuery] string phone)
+    {
+        var user = await service.GetByPhoneAsync(phone);
+
+        return Ok(user);
+    }
 }

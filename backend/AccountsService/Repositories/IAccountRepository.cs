@@ -21,4 +21,5 @@ public interface IAccountRepository
     Task<IEnumerable<AccountOperation>> GetAccountOperationsAsync(Guid accountId);
     Task<IEnumerable<Account>> GetUserAccountsByUserIdAsync(Guid userId);
     Task<bool> OperationExists(Guid operationId);
+    Task<Account?> GetPrimaryAccountByUserIdAsync(Guid userId);
 }

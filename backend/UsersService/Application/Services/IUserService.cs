@@ -10,4 +10,5 @@ public interface IUserService
     Task<UserDto?> GetById(Guid id);
     Task<UserDto?> GetMyself();
     Task<PagedResponse<UserDto>> GetAllAsync(PagedRequest pagedRequest);
+    Task<UserDto?> GetByPhoneAsync(string phone);
 }
