@@ -1,4 +1,4 @@
 struct OpenAccountRequest: Encodable {
     let name: String
-    let currency: String
+    let currency: AccountCurrency
 }

@@ -1,14 +1,37 @@
-struct UserAccountResponse: Decodable, Identifiable {
-    let userId: String
-    let accountId: String
-    let accountName: String
+import Foundation
+
+// MARK: - DTO
+
+struct UserAccountResponse: Decodable {
+    let id: String
+    let name: String?
     let balance: Double
+    let currency: AccountCurrency
+    let openedAt: String
     let isClosed: Bool
-    let currency: String
+    let closedAt: String?
+}
 
-    var id: String { accountId }
+// MARK: - Currency Enum
 
-    var currencySymbol: String {
-        Currency(rawValue: currency)?.symbol ?? currency
+enum AccountCurrency: String, Codable {
+    case rub = "RUB"
+    case usd = "USD"
+    case eur = "EUR"
+}
+
+// MARK: - Mapper
+
+extension UserAccountResponse {
+    func toDomain() -> UserAccount {
+        UserAccount(
+            id: id,
+            name: name ?? "",
+            balance: balance,
+            currency: currency.rawValue,
+            openedAt: openedAt,
+            isClosed: isClosed,
+            closedAt: closedAt
+        )
     }
 }

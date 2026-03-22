@@ -1,0 +1,16 @@
+import Foundation
+
+// MARK: - Domain Model
+
+struct UserAccount: Identifiable {
+    let id: String
+    let name: String
+    let balance: Double
+    let currency: String
+    let openedAt: String
+    let isClosed: Bool
+    let closedAt: String?
+
+    var currencySymbol: String { CurrencyFormatter.symbol(for: currency) }
+    var formattedBalance: String { CurrencyFormatter.formatted(amount: balance, currency: currency) }
+}

@@ -7,10 +7,9 @@ final class AccountsRepository: AccountsRepositoryProtocol {
         self.networkService = networkService
     }
 
-    func openAccount(with name: String, currency: String) async throws {
-        let dto = OpenAccountRequest(name: name, currency: currency)
-        let endPoint = OpenAccountEndPoint(body: dto)
-        return try await networkService.request(endPoint)
+    func openAccount(data: OpenAccountRequest) async throws {
+        let endPoint = OpenAccountEndPoint(body: data)
+        try await networkService.request(endPoint)
     }
 
     func closeAccount(with accountId: String) async throws {
@@ -18,21 +17,18 @@ final class AccountsRepository: AccountsRepositoryProtocol {
         try await networkService.request(endPoint)
     }
 
-    func depositAccount(with accountId: String, amount: Double) async throws {
-        let dto = AccountBalanceRequest(accountId: accountId, amount: amount)
-        let endPoint = DepositAccountEndPoint(body: dto)
+    func depositAccount(data: AccountBalanceRequest) async throws {
+        let endPoint = DepositAccountEndPoint(body: data)
         try await networkService.request(endPoint)
     }
 
-    func withdrawFromAccount(with accountId: String, amount: Double) async throws {
-        let dto = AccountBalanceRequest(accountId: accountId, amount: amount)
-        let endPoint = WithdrawFromAccountEndPoint(body: dto)
+    func withdrawFromAccount(data: AccountBalanceRequest) async throws {
+        let endPoint = WithdrawFromAccountEndPoint(body: data)
         try await networkService.request(endPoint)
     }
 
-    func transferMoney(from fromId: String, to toId: String, amount: Double, currency: String) async throws {
-        let dto = TransferRequest(fromAccountId: fromId, toAccountId: toId, amount: amount, currency: currency)
-        let endPoint = TransferEndPoint(body: dto)
+    func transferMoney(data: TransferRequest) async throws {
+        let endPoint = TransferEndPoint(body: data)
         try await networkService.request(endPoint)
     }
 

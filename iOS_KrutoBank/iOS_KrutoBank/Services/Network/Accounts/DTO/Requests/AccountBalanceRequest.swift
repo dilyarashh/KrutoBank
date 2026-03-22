@@ -1,4 +1,5 @@
 struct AccountBalanceRequest: Encodable {
-    let accountId: String
+    let fromAccountId: String
+    let toAccountId: String
     let amount: Double
 }

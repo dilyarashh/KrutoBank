@@ -1,4 +1,6 @@
-import SwiftUI
+import Foundation
+
+// MARK: - DTO
 
 struct UserResponse: Decodable {
     let id: String
@@ -15,13 +17,33 @@ struct UserResponse: Decodable {
 enum UserRole: String, Decodable {
     case client = "Client"
     case employee = "Employee"
+}
 
-    var title: String {
+// MARK: - Mapper
+
+extension UserResponse {
+    func toDomain() -> UserProfile {
+        UserProfile(
+            id: id,
+            firstName: firstName,
+            lastName: lastName,
+            middleName: middleName,
+            phone: phone,
+            email: email,
+            birthday: birthday,
+            role: role.toDomain(),
+            isBlocked: isBlocked
+        )
+    }
+}
+
+private extension UserRole {
+    func toDomain() -> UserProfile.Role {
         switch self {
         case .client:
-            return AppStrings.Profile.roleClient
+            return .client
         case .employee:
-            return AppStrings.Profile.roleEmployee
+            return .employee
         }
     }
 }

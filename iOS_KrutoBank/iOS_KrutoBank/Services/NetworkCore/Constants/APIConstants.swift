@@ -15,8 +15,6 @@ enum APIConstants {
 
     // MARK: - Users
     enum Users {
-        static let login = "/api/auth/login"
-        static let logout = "/api/auth/logout"
         static let myself = "/api/users/myself"
     }
 
