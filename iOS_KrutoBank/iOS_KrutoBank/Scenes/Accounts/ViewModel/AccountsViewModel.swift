@@ -16,15 +16,31 @@ final class AccountsViewModel: ObservableObject {
     @DIInject(\.accountsRepository, container: DI.container)
     private var accountsRepository: AccountsRepositoryProtocol
 
-    @Published
-    var state = State()
+    @DIInject(\.accountOperationsWebSocket, container: DI.container)
+    private var webSocket: AccountOperationsWebSocketProtocol
+
+    @DIInject(\.exchangeRateService, container: DI.container)
+    private var exchangeRateService: ExchangeRateServiceProtocol
+
+    private let themeManager = ThemeManager.shared
+    private let toastStore = ToastStore.shared
+
+    @Published var state = State()
+
+    var webSocketConnected: Bool { webSocket.isConnected }
+
+    var visibleAccounts: [UserAccountResponse] {
+        if state.showHiddenAccounts {
+            return state.accounts
+        }
+        return state.accounts.filter { !themeManager.isHidden($0.accountId) }
+    }
 
     // MARK: - Lifecycle
 
     func load() {
         state.errorText = nil
         state.isLoading = true
-
         Task {
             do {
                 let accounts = try await accountsRepository.getMyAccounts()
@@ -33,6 +49,7 @@ final class AccountsViewModel: ObservableObject {
             } catch {
                 state.isLoading = false
                 state.errorText = AppStrings.Common.error
+                toastStore.showError(error)
             }
         }
     }
@@ -45,8 +62,11 @@ final class AccountsViewModel: ObservableObject {
         state.accountOperations = nil
         state.detailsErrorText = nil
         state.operationsErrorText = nil
+        state.transferTargetAccountId = ""
+        state.transferAmount = 1000
 
         loadAccountData()
+        connectWebSocket(accountId: accountId)
     }
 
     func dismissDetails() {
@@ -57,11 +77,11 @@ final class AccountsViewModel: ObservableObject {
         state.detailsErrorText = nil
         state.operationsErrorText = nil
         state.isDetailsLoading = false
+        webSocket.disconnect()
     }
 
     func loadAccountData() {
         guard let accountId = state.selectedAccountId else { return }
-
         state.isDetailsLoading = true
         state.detailsErrorText = nil
         state.operationsErrorText = nil
@@ -69,45 +89,43 @@ final class AccountsViewModel: ObservableObject {
         Task {
             async let accountTask = accountsRepository.getMyAccount(with: accountId)
             async let operationsTask = accountsRepository.getMyOperations(with: accountId)
-
             do {
                 let (account, operations) = try await (accountTask, operationsTask)
-
-                await MainActor.run {
-                    state.selectedAccount = account
-                    state.accountOperations = operations
-                    state.isDetailsLoading = false
-                }
+                state.selectedAccount = account
+                state.accountOperations = operations
+                state.isDetailsLoading = false
             } catch {
-                await MainActor.run {
-                    state.isDetailsLoading = false
-                    state.detailsErrorText = AppStrings.Common.error
-                    state.operationsErrorText = AppStrings.Common.error
-                }
+                state.isDetailsLoading = false
+                state.detailsErrorText = AppStrings.Common.error
+                state.operationsErrorText = AppStrings.Common.error
+                toastStore.showError(error)
             }
         }
     }
 
     func reloadAccountDataAfterOperation() {
         guard let accountId = state.selectedAccountId else { return }
-
         Task {
             async let accountTask = accountsRepository.getMyAccount(with: accountId)
             async let operationsTask = accountsRepository.getMyOperations(with: accountId)
-
             do {
                 let (account, operations) = try await (accountTask, operationsTask)
-
-                await MainActor.run {
-                    state.selectedAccount = account
-                    state.accountOperations = operations
-                }
+                state.selectedAccount = account
+                state.accountOperations = operations
             } catch {
-                await MainActor.run {
-                    state.detailsErrorText = AppStrings.Common.error
-                }
+                state.detailsErrorText = AppStrings.Common.error
             }
         }
+    }
+
+    // MARK: - WebSocket (push-invalidation)
+
+    private func connectWebSocket(accountId: String) {
+        webSocket.onInvalidate = { [weak self] in
+            self?.reloadAccountDataAfterOperation()
+        }
+        webSocket.onError = { _ in }
+        webSocket.connect(accountId: accountId)
     }
 
     // MARK: - Actions
@@ -115,25 +133,26 @@ final class AccountsViewModel: ObservableObject {
     func openAccount() {
         state.errorText = nil
         state.isActionLoading = true
-
         let name = state.openAccountName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let currency = state.selectedCurrency.rawValue
 
         Task {
             do {
-                try await accountsRepository.openAccount(with: name)
+                try await accountsRepository.openAccount(with: name, currency: currency)
                 state.isActionLoading = false
+                toastStore.show(.success("Счёт открыт"))
                 await reloadAccountsAfterChange(keepSelection: false)
                 state.openAccountName = ""
             } catch {
                 state.isActionLoading = false
                 state.errorText = AppStrings.Common.error
+                toastStore.showError(error)
             }
         }
     }
 
     func closeSelectedAccount() {
         guard let accountId = state.selectedAccountId else { return }
-
         state.detailsErrorText = nil
         state.isActionLoading = true
 
@@ -141,55 +160,96 @@ final class AccountsViewModel: ObservableObject {
             do {
                 try await accountsRepository.closeAccount(with: accountId)
                 state.isActionLoading = false
+                toastStore.show(.success("Счёт закрыт"))
                 await reloadAccountsAfterChange(keepSelection: false)
                 dismissDetails()
             } catch {
                 state.isActionLoading = false
                 state.detailsErrorText = AppStrings.Common.error
+                toastStore.showError(error)
             }
         }
     }
 
     func depositSelectedAccount() {
         guard let accountId = state.selectedAccountId else { return }
-
         state.detailsErrorText = nil
         state.isActionLoading = true
-
         let amount = state.amountInput
 
         Task {
             do {
                 try await accountsRepository.depositAccount(with: accountId, amount: amount)
                 state.isActionLoading = false
+                toastStore.show(.success("Пополнение выполнено"))
                 await reloadAccountsAfterChange(keepSelection: true)
                 await reloadAccountDataAfterOperation()
             } catch {
                 state.isActionLoading = false
                 state.detailsErrorText = AppStrings.Common.error
+                toastStore.showError(error)
             }
         }
     }
 
     func withdrawSelectedAccount() {
         guard let accountId = state.selectedAccountId else { return }
-
         state.detailsErrorText = nil
         state.isActionLoading = true
-
         let amount = state.amountInput
 
         Task {
             do {
                 try await accountsRepository.withdrawFromAccount(with: accountId, amount: amount)
                 state.isActionLoading = false
+                toastStore.show(.success("Списание выполнено"))
                 await reloadAccountsAfterChange(keepSelection: true)
                 await reloadAccountDataAfterOperation()
             } catch {
                 state.isActionLoading = false
                 state.detailsErrorText = AppStrings.Common.error
+                toastStore.showError(error)
             }
         }
+    }
+
+    func transferFromSelectedAccount() {
+        guard let fromId = state.selectedAccountId else { return }
+        let toId = state.transferTargetAccountId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !toId.isEmpty else {
+            state.transferError = "Укажите ID счёта получателя"
+            return
+        }
+        state.transferError = nil
+        state.isActionLoading = true
+        let amount = state.transferAmount
+        let currency = state.selectedAccount?.currency ?? "RUB"
+
+        Task {
+            do {
+                try await accountsRepository.transferMoney(from: fromId, to: toId, amount: amount, currency: currency)
+                state.isActionLoading = false
+                toastStore.show(.success("Перевод выполнен"))
+                state.transferTargetAccountId = ""
+                await reloadAccountsAfterChange(keepSelection: true)
+                await reloadAccountDataAfterOperation()
+            } catch {
+                state.isActionLoading = false
+                state.transferError = AppError.from(error).errorDescription
+                toastStore.showError(error)
+            }
+        }
+    }
+
+    // MARK: - Hidden accounts
+
+    func toggleHidden(accountId: String) {
+        themeManager.toggleHidden(accountId: accountId)
+        toastStore.show(.info(themeManager.isHidden(accountId) ? "Счёт скрыт" : "Счёт отображается"))
+    }
+
+    func isHidden(_ accountId: String) -> Bool {
+        themeManager.isHidden(accountId)
     }
 
     func showOperations() {
@@ -203,7 +263,6 @@ final class AccountsViewModel: ObservableObject {
         do {
             let accounts = try await accountsRepository.getMyAccounts()
             state.accounts = accounts
-
             if keepSelection, state.isDetailsSheetPresented {
                 loadAccountData()
             }

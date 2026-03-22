@@ -46,6 +46,11 @@ final class MainCoordinator: Coordinator {
     }
 
     private func showMain(animated: Bool) {
+        // Load user preferences after login
+        Task { @MainActor in
+            ThemeManager.shared.loadFromServer()
+        }
+
         let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
         tabBarCoordinator.onDidFinish = { [weak self, weak tabBarCoordinator] in
             guard let coordinator = tabBarCoordinator else { return }

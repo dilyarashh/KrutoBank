@@ -20,8 +20,9 @@ final class CreditsViewModel: ObservableObject {
     @DIInject(\.usersRepository, container: DI.container)
     private var usersRepository: UsersRepositoryProtocol
 
-    @Published
-    var state = State()
+    private let toastStore = ToastStore.shared
+
+    @Published var state = State()
 
     var selectedTariffId: String? {
         didSet {
@@ -47,13 +48,33 @@ final class CreditsViewModel: ObservableObject {
                 async let tariffsTask = creditsRepository.getTariffs()
 
                 let (loans, tariffs) = try await (loansTask, tariffsTask)
-
                 state.loans = loans
                 state.tariffs = tariffs
                 state.isLoading = false
+
+                // Load rating & overdue in background
+                loadCreditRatingAndOverdue(userId: user.id)
             } catch {
                 state.isLoading = false
                 state.errorText = AppStrings.Common.error
+                toastStore.showError(error)
+            }
+        }
+    }
+
+    func loadCreditRatingAndOverdue(userId: String) {
+        state.isRatingLoading = true
+        Task {
+            async let overdueTask = creditsRepository.getOverduePayments(userId: userId)
+            async let ratingTask = creditsRepository.getCreditRating(userId: userId)
+            do {
+                let (overdue, rating) = try await (overdueTask, ratingTask)
+                state.overduePayments = overdue
+                state.creditRating = rating
+                state.isRatingLoading = false
+            } catch {
+                state.isRatingLoading = false
+                state.ratingErrorText = "Не удалось загрузить кредитный рейтинг"
             }
         }
     }
@@ -82,72 +103,52 @@ final class CreditsViewModel: ObservableObject {
     // MARK: - Actions
 
     func takeLoan() {
-        guard let userId = state.userId else { return }
-        guard !state.tariffName.isEmpty else { return }
-
+        guard let userId = state.userId, !state.tariffName.isEmpty else { return }
         state.errorText = nil
         state.isActionLoading = true
-
-        let request = TakeLoanRequest(
-            userId: userId,
-            tariffName: state.tariffName,
-            amount: state.takeAmount
-        )
+        let request = TakeLoanRequest(userId: userId, tariffName: state.tariffName, amount: state.takeAmount)
 
         Task {
             do {
                 try await creditsRepository.takeLoan(with: request)
-
-                await MainActor.run {
-                    state.isActionLoading = false
-                    selectedTariffId = nil
-                    state.tariffName = ""
-                    state.takeAmount = 10_000
-                }
-
+                state.isActionLoading = false
+                selectedTariffId = nil
+                state.tariffName = ""
+                state.takeAmount = 10_000
+                toastStore.show(.success("Кредит оформлен"))
                 await reloadLoans()
             } catch {
-                await MainActor.run {
-                    state.isActionLoading = false
-                    state.errorText = AppStrings.Common.error
-                }
+                state.isActionLoading = false
+                state.errorText = AppStrings.Common.error
+                toastStore.showError(error)
             }
         }
     }
 
     func repaySelectedLoan() {
-        guard let selectedLoanId = state.selectedLoanId else { return }
-        guard let selectedLoan = selectedLoan else { return }
+        guard let selectedLoanId = state.selectedLoanId,
+              let selectedLoan = selectedLoan else { return }
 
         guard state.repayAmount <= selectedLoan.remainingAmount else {
             state.detailsErrorText = "Сумма погашения не может превышать остаток"
             return
         }
-
         state.detailsErrorText = nil
         state.isActionLoading = true
-
-        let request = RepayLoanRequest(
-            loanId: selectedLoanId,
-            amount: state.repayAmount
-        )
+        let request = RepayLoanRequest(loanId: selectedLoanId, amount: state.repayAmount)
 
         Task {
             do {
                 try await creditsRepository.repayLoan(with: request)
-
-                await MainActor.run {
-                    state.isActionLoading = false
-                    state.repayAmount = 1_000
-                }
-
+                state.isActionLoading = false
+                state.repayAmount = 1_000
+                toastStore.show(.success("Платёж по кредиту выполнен"))
                 await reloadLoans(keepSelection: true)
                 loadLoanHistory()
             } catch {
-                await MainActor.run {
-                    state.isActionLoading = false
-                    state.detailsErrorText = AppStrings.Common.error
-                }
+                state.isActionLoading = false
+                state.detailsErrorText = AppStrings.Common.error
+                toastStore.showError(error)
             }
         }
     }
@@ -156,85 +157,54 @@ final class CreditsViewModel: ObservableObject {
         Task {
             do {
                 let tariffs = try await creditsRepository.getTariffs()
-                await MainActor.run {
-                    state.tariffs = tariffs
-                }
+                state.tariffs = tariffs
             } catch {
-                await MainActor.run {
-                    state.detailsErrorText = AppStrings.Common.error
-                }
+                state.detailsErrorText = AppStrings.Common.error
             }
         }
     }
 
-    func showLoanHistory() {
-        loadLoanHistory()
-    }
-
     func loadLoanHistory() {
-        guard let userId = state.userId,
-              let loanId = state.selectedLoanId else { return }
-
+        guard let userId = state.userId, let loanId = state.selectedLoanId else { return }
         state.isOperationsLoading = true
         state.operationsErrorText = nil
 
         Task {
             do {
                 let operations = try await creditsRepository.getLoanHistory(with: userId, loanId: loanId)
-
-                let sortedOperations = operations.sorted {
-                    $0.operationDate > $1.operationDate
-                }
-
-                await MainActor.run {
-                    state.loanOperations = sortedOperations
-                    state.isOperationsLoading = false
-                }
+                state.loanOperations = operations.sorted { $0.operationDate > $1.operationDate }
+                state.isOperationsLoading = false
             } catch {
-                await MainActor.run {
-                    state.isOperationsLoading = false
-                    state.operationsErrorText = AppStrings.Common.error
-                }
+                state.isOperationsLoading = false
+                state.operationsErrorText = AppStrings.Common.error
             }
         }
     }
 
     // MARK: - Validation
 
-    var canTakeLoan: Bool {
-        !state.tariffName.isEmpty && state.takeAmount > 0
-    }
+    var canTakeLoan: Bool { !state.tariffName.isEmpty && state.takeAmount > 0 }
 
     var canRepayLoan: Bool {
         guard let selectedLoan = selectedLoan else { return false }
-        return state.repayAmount > 0 &&
-        state.repayAmount <= selectedLoan.remainingAmount &&
-        !state.isActionLoading
+        return state.repayAmount > 0 && state.repayAmount <= selectedLoan.remainingAmount && !state.isActionLoading
     }
 
     // MARK: - Helpers
 
     private func reloadLoans(keepSelection: Bool = false) async {
         guard let userId = state.userId else { return }
-
         do {
             let loans = try await creditsRepository.getLoans(with: userId)
-
-            await MainActor.run {
-                state.loans = loans
-
-                if keepSelection, let selectedLoanId = state.selectedLoanId {
-                    let stillExists = loans.contains { $0.loanId == selectedLoanId }
-                    if !stillExists {
-                        state.selectedLoanId = nil
-                        state.isDetailsSheetPresented = false
-                    }
+            state.loans = loans
+            if keepSelection, let selectedLoanId = state.selectedLoanId {
+                if !loans.contains(where: { $0.loanId == selectedLoanId }) {
+                    state.selectedLoanId = nil
+                    state.isDetailsSheetPresented = false
                 }
             }
         } catch {
-            await MainActor.run {
-                state.errorText = AppStrings.Common.error
-            }
+            state.errorText = AppStrings.Common.error
         }
     }
 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @ObservedObject private var viewModel: ProfileViewModel
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
@@ -11,12 +12,14 @@ struct ProfileView: View {
         VStack(spacing: 16) {
             title
             content
+            themeSection
             Spacer()
             logoutButton
         }
         .background(background)
         .onAppear {
             viewModel.load()
+            themeManager.loadFromServer()
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
@@ -104,6 +107,35 @@ private extension ProfileView {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 4)
         }
+    }
+
+    // MARK: - Theme section
+
+    var themeSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Настройки приложения")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(Color.AppColor.primaryDark)
+
+            HStack {
+                Text("Тема оформления")
+                    .font(.system(size: 14))
+                    .foregroundStyle(Color.AppColor.textPrimary)
+
+                Spacer()
+
+                Picker("Тема", selection: $themeManager.theme) {
+                    ForEach(AppTheme.allCases, id: \.self) { theme in
+                        Text(theme.displayName).tag(theme)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 160)
+            }
+        }
+        .padding(16)
+        .background(Color.AppColor.primaryWhite)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     var logoutButton: some View {

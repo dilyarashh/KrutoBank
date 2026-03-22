@@ -5,4 +5,9 @@ struct AccountResponse: Decodable {
     let openedAt: String
     let isClosed: Bool
     let closedAt: String?
+    let currency: String
+
+    var currencySymbol: String {
+        Currency(rawValue: currency)?.symbol ?? currency
+    }
 }

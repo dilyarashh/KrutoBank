@@ -2,9 +2,16 @@ import Foundation
 
 enum APIConstants {
     // MARK: - Base URLs
+    static let authServiceBaseURL = "http://localhost:5000"
     static let usersServiceBaseURL = URL(string: "http://localhost:5260")!
     static let accountsServiceBaseURL = URL(string: "http://localhost:5251")!
     static let creditsServiceBaseURL = URL(string: "http://localhost:5173")!
+    static let appSettingsServiceBaseURL = URL(string: "http://localhost:5300")!
+
+    // MARK: - WebSocket
+    static func accountOperationsWebSocket(accountId: String) -> URL {
+        URL(string: "ws://localhost:5251/ws/accounts/\(accountId)/operations")!
+    }
 
     // MARK: - Users
     enum Users {
@@ -19,6 +26,7 @@ enum APIConstants {
         static let close = "/api/accounts"
         static let deposit = "/api/accounts/deposit"
         static let withdraw = "/api/accounts/withdraw"
+        static let transfer = "/api/accounts/transfer"
         static let myAccounts = "/api/accounts/my-accounts"
         static func myOperations(accountId: String) -> String {
             "/api/accounts/\(accountId)/my-operations"
@@ -39,5 +47,21 @@ enum APIConstants {
         static func loanOperations(userId: String, loanId: String) -> String {
             "/api/Credits/users/\(userId)/loans/\(loanId)/operations"
         }
+        static func overduePayments(userId: String) -> String {
+            "/api/Credits/users/\(userId)/overdue"
+        }
+        static func creditRating(userId: String) -> String {
+            "/api/Credits/users/\(userId)/rating"
+        }
     }
+
+    // MARK: - App Settings
+    enum AppSettings {
+        static let settings = "/api/app-settings"
+        static let hiddenAccounts = "/api/app-settings/hidden-accounts"
+    }
+
+    // MARK: - Exchange Rates
+    static let exchangeRatesURL = URL(string: "https://api.exchangerate-api.com/v4/latest/RUB")!
 }
+

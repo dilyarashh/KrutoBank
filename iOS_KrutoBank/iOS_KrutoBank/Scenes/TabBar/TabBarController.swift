@@ -27,6 +27,7 @@ class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        addToastOverlay()
     }
 
     // MARK: - Setup
@@ -57,6 +58,20 @@ class TabBarController: UITabBarController {
         }
 
         additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: Constants.tabBarHeight, right: 0)
+    }
+
+    private func addToastOverlay() {
+        let toastVC = ToastOverlayView().hostingController
+        addChild(toastVC)
+        view.addSubview(toastVC.view)
+        toastVC.view.backgroundColor = .clear
+        toastVC.view.isUserInteractionEnabled = false
+        toastVC.didMove(toParent: self)
+
+        toastVC.view.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview()
+            make.height.equalTo(140)
+        }
     }
 
     // MARK: - Private methods

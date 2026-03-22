@@ -4,8 +4,13 @@ struct AccountOperationResponse: Decodable, Identifiable {
     let createdAt: String
     let type: OperationType
     let amount: Double
+    let currency: String
 
-    var id: String { createdAt }
+    var id: String { "\(createdAt)-\(type)-\(amount)" }
+
+    var currencySymbol: String {
+        Currency(rawValue: currency)?.symbol ?? currency
+    }
 }
 
 extension AccountOperationResponse {
@@ -33,12 +38,15 @@ extension AccountOperationResponse {
         formatter.minimumFractionDigits = amount.rounded() == amount ? 0 : 2
 
         let formattedNumber = formatter.string(from: NSNumber(value: amount)) ?? String(amount)
+        let symbol = currencySymbol
 
         switch type {
         case .deposit:
-            return "+\(formattedNumber) ₽"
+            return "+\(formattedNumber) \(symbol)"
         case .withdraw:
-            return "-\(formattedNumber) ₽"
+            return "-\(formattedNumber) \(symbol)"
+        case .transfer:
+            return "↔ \(formattedNumber) \(symbol)"
         }
     }
 }

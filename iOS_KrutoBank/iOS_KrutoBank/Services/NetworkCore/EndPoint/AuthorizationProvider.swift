@@ -2,11 +2,14 @@ import Foundation
 
 final class AuthorizationProvider: AuthorizationProvidingProtocol {
     private let tokenStorage: TokenStorageProtocol
+    private let oauthService: OAuthServiceProtocol
 
     init(
-        tokenStorage: TokenStorageProtocol
+        tokenStorage: TokenStorageProtocol,
+        oauthService: OAuthServiceProtocol
     ) {
         self.tokenStorage = tokenStorage
+        self.oauthService = oauthService
     }
 
     func addAuthorization(
@@ -18,12 +21,32 @@ final class AuthorizationProvider: AuthorizationProvidingProtocol {
             return request
 
         case .accessToken:
-            guard let token = tokenStorage.accessToken,
-                token.isEmpty == false
-            else {
-                return request
+            // Try to get a valid access token, refreshing if needed
+            if let token = await validAccessToken(), !token.isEmpty {
+                return requestAddingBearer(token, to: request)
             }
-            return requestAddingBearer(token, to: request)
+            return request
+        }
+    }
+
+    // MARK: - Token refresh
+    private func validAccessToken() async -> String? {
+        if let token = tokenStorage.accessToken, !token.isEmpty {
+            return token
+        }
+        // Attempt silent refresh
+        guard let refreshToken = tokenStorage.refreshToken, !refreshToken.isEmpty else {
+            return nil
+        }
+        do {
+            let response = try await oauthService.refreshAccessToken(refreshToken: refreshToken)
+            tokenStorage.accessToken = response.accessToken
+            if let newRefresh = response.refreshToken {
+                tokenStorage.refreshToken = newRefresh
+            }
+            return response.accessToken
+        } catch {
+            return nil
         }
     }
 }

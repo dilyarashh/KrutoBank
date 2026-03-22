@@ -20,5 +20,11 @@ extension CreditsViewModel {
         var takeAmount: Double = 10_000
         var repayAmount: Double = 1_000
         var tariffName: String = ""
+
+        // Overdue & rating
+        var overduePayments: [OverduePaymentResponse] = []
+        var creditRating: CreditRatingResponse? = nil
+        var isRatingLoading: Bool = false
+        var ratingErrorText: String? = nil
     }
 }

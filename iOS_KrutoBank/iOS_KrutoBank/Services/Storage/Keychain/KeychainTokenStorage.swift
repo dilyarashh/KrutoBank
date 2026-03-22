@@ -34,7 +34,25 @@ final class KeychainTokenStorage: TokenStorageProtocol {
         }
     }
 
+    var refreshToken: String? {
+        get {
+            if let data = try? store.get(for: KeychainConstants.refreshToken) {
+                return String(data: data, encoding: .utf8)
+            } else {
+                return nil
+            }
+        }
+        set {
+            if let value = newValue {
+                try? store.set(Data(value.utf8), for: KeychainConstants.refreshToken)
+            } else {
+                try? store.delete(for: KeychainConstants.refreshToken)
+            }
+        }
+    }
+
     func clear() {
         try? store.delete(for: KeychainConstants.accessToken)
+        try? store.delete(for: KeychainConstants.refreshToken)
     }
 }

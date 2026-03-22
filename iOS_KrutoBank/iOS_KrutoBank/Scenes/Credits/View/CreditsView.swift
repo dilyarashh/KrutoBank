@@ -42,12 +42,110 @@ private extension CreditsView {
     var content: some View {
         ScrollView(.vertical) {
             VStack(spacing: 12) {
+                creditRatingCard
+                overduePaymentsCard
                 takeLoanCard
                 loansListCard
                 errorBlock
             }
         }
         .scrollIndicators(.hidden)
+    }
+
+    // MARK: - Credit Rating Card
+
+    var creditRatingCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Кредитный рейтинг")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(Color.AppColor.primaryDark)
+
+            if viewModel.state.isRatingLoading {
+                HStack {
+                    ProgressView().tint(Color.AppColor.primaryPink).scaleEffect(0.8)
+                    Text("Загружаем рейтинг...").font(.system(size: 13)).foregroundStyle(Color.AppColor.textSecondary)
+                }
+            } else if let rating = viewModel.state.creditRating {
+                HStack(alignment: .center, spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .stroke(Color.AppColor.backgroundAlt, lineWidth: 6)
+                            .frame(width: 60, height: 60)
+                        Circle()
+                            .trim(from: 0, to: CGFloat(rating.score) / 100)
+                            .stroke(ratingColor(rating.rating), style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                            .frame(width: 60, height: 60)
+                            .rotationEffect(.degrees(-90))
+                        Text("\(rating.score)")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(Color.AppColor.textPrimary)
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(rating.rating.label)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(ratingColor(rating.rating))
+                        Text(rating.description)
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color.AppColor.textSecondary)
+                    }
+                }
+            } else if let error = viewModel.state.ratingErrorText {
+                Text(error).font(.system(size: 13)).foregroundStyle(Color.AppColor.textSecondary)
+            }
+        }
+        .padding(16)
+        .background(Color.AppColor.primaryWhite)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    // MARK: - Overdue Payments Card
+
+    @ViewBuilder
+    var overduePaymentsCard: some View {
+        if !viewModel.state.overduePayments.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(Color.AppColor.textError)
+                    Text("Просроченные платежи")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.AppColor.textError)
+                }
+
+                ForEach(viewModel.state.overduePayments) { payment in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(payment.tariffName ?? "Кредит")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(Color.AppColor.textPrimary)
+                            Text("Срок: \(payment.formattedDate)")
+                                .font(.system(size: 11))
+                                .foregroundStyle(Color.AppColor.textSecondary)
+                        }
+                        Spacer()
+                        Text(formatMoney(payment.amount) + " ₽")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(Color.AppColor.textError)
+                    }
+                    .padding(10)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color.AppColor.textError.opacity(0.05)))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.AppColor.textError.opacity(0.2), lineWidth: 1))
+                }
+            }
+            .padding(16)
+            .background(Color.AppColor.primaryWhite)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        }
+    }
+
+    private func ratingColor(_ level: CreditRatingResponse.RatingLevel) -> Color {
+        switch level {
+        case .excellent: return Color.AppColor.textSuccess
+        case .good:      return Color.AppColor.primaryPink
+        case .average:   return Color.AppColor.textWarning
+        case .poor:      return Color.AppColor.textError
+        }
     }
 
     // MARK: - Take loan

@@ -7,8 +7,8 @@ final class AccountsRepository: AccountsRepositoryProtocol {
         self.networkService = networkService
     }
 
-    func openAccount(with name: String) async throws {
-        let dto = OpenAccountRequest(name: name)
+    func openAccount(with name: String, currency: String) async throws {
+        let dto = OpenAccountRequest(name: name, currency: currency)
         let endPoint = OpenAccountEndPoint(body: dto)
         return try await networkService.request(endPoint)
     }
@@ -27,6 +27,12 @@ final class AccountsRepository: AccountsRepositoryProtocol {
     func withdrawFromAccount(with accountId: String, amount: Double) async throws {
         let dto = AccountBalanceRequest(accountId: accountId, amount: amount)
         let endPoint = WithdrawFromAccountEndPoint(body: dto)
+        try await networkService.request(endPoint)
+    }
+
+    func transferMoney(from fromId: String, to toId: String, amount: Double, currency: String) async throws {
+        let dto = TransferRequest(fromAccountId: fromId, toAccountId: toId, amount: amount, currency: currency)
+        let endPoint = TransferEndPoint(body: dto)
         try await networkService.request(endPoint)
     }
 

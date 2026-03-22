@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AccountsView: View {
     @ObservedObject private var viewModel: AccountsViewModel
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     init(viewModel: AccountsViewModel) {
         self.viewModel = viewModel
@@ -65,12 +66,26 @@ private extension AccountsView {
                 textContentType: .none
             )
 
+            // Currency picker
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Валюта счёта")
+                    .font(.system(size: 13))
+                    .foregroundStyle(Color.AppColor.textSecondary)
+
+                Picker("Валюта", selection: $viewModel.state.selectedCurrency) {
+                    ForEach(Currency.allCases, id: \.self) { currency in
+                        Text(currency.displayName).tag(currency)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
+
             CommonButton(
                 title: AppStrings.Accounts.openAccount,
                 style: .primary,
                 isLoading: viewModel.state.isActionLoading,
                 disabled: viewModel.state.openAccountName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                || viewModel.state.isActionLoading
+                    || viewModel.state.isActionLoading
             ) {
                 viewModel.openAccount()
             }
@@ -84,23 +99,36 @@ private extension AccountsView {
 
     var accountsListCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Мои счета")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Color.AppColor.primaryDark)
+            HStack {
+                Text("Мои счета")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Color.AppColor.primaryDark)
+
+                Spacer()
+
+                // Toggle hidden accounts visibility
+                Button {
+                    viewModel.state.showHiddenAccounts.toggle()
+                } label: {
+                    Image(systemName: viewModel.state.showHiddenAccounts ? "eye.fill" : "eye.slash")
+                        .font(.system(size: 14))
+                        .foregroundStyle(Color.AppColor.textSecondary)
+                }
+            }
 
             if viewModel.state.isLoading {
                 ProgressView()
                     .tint(Color.AppColor.primaryPink)
                     .padding(.top, 8)
-            } else if viewModel.state.accounts.isEmpty {
-                Text("У вас пока нет счетов")
+            } else if viewModel.visibleAccounts.isEmpty {
+                Text(viewModel.state.accounts.isEmpty ? "У вас пока нет счетов" : "Все счета скрыты")
                     .font(.system(size: 13))
                     .foregroundStyle(Color.AppColor.textSecondary)
                     .padding(.top, 4)
                     .frame(maxWidth: .infinity)
             } else {
                 VStack(spacing: 10) {
-                    ForEach(viewModel.state.accounts, id: \.accountId) { account in
+                    ForEach(viewModel.visibleAccounts) { account in
                         accountRow(account)
                     }
                 }
@@ -115,13 +143,27 @@ private extension AccountsView {
         Button {
             viewModel.selectAccount(accountId: account.accountId)
         } label: {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(account.accountName.isEmpty == false ? account.accountName : "Без названия")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.AppColor.textPrimary)
+            HStack {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(account.accountName.isEmpty ? "Без названия" : account.accountName)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.AppColor.textPrimary)
 
-                Text("Баланс: \(formatMoney(account.balance)) ₽")
-                    .font(.system(size: 13))
+                    Text("Баланс: \(formatMoney(account.balance)) \(account.currencySymbol)")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color.AppColor.textSecondary)
+                }
+                Spacer()
+
+                // Hidden indicator
+                if themeManager.isHidden(account.accountId) {
+                    Image(systemName: "eye.slash")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Color.AppColor.textSecondary)
+                }
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
                     .foregroundStyle(Color.AppColor.textSecondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -133,15 +175,6 @@ private extension AccountsView {
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .buttonStyle(.plain)
-    }
-
-    // MARK: - Sheet
-
-    var accountDetailsSheet: some View {
-        AccountDetailsSheet(viewModel: viewModel)
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-            .background(Color.AppColor.backgroundMain.ignoresSafeArea())
     }
 
     // MARK: - Error
