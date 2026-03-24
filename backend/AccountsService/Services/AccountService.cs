@@ -7,6 +7,7 @@ using AccountsService.Kafka;
 using AccountsService.Kafka.Events;
 using AccountsService.Repositories;
 using System.Security.Principal;
+using System.Linq;
 
 namespace AccountsService.Services;
 
@@ -138,7 +139,9 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
         if (from.IsClosed)
             throw new BadRequestException("Счет отправителя закрыт");
 
-        var user = await _usersClient.GetByPhoneAsync(request.ToPhone);
+        var normalizedPhone = PhoneHelper.Normalize(request.ToPhone);
+
+        var user = await _usersClient.GetByPhoneAsync(normalizedPhone);
 
         if (user == null)
             throw new NotFoundException("Пользователь не найден");
@@ -365,5 +368,24 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             Balance = account.Balance,
             Currency = account.Currency
         };
+    }
+}
+
+public static class PhoneHelper
+{
+    public static string Normalize(string phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone))
+            return phone;
+
+        var digits = new string(phone.Where(char.IsDigit).ToArray());
+
+        if (digits.StartsWith("8"))
+            digits = "7" + digits.Substring(1);
+
+        if (!digits.StartsWith("7"))
+            digits = "7" + digits;
+
+        return digits;
     }
 }
