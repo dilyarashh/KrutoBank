@@ -106,7 +106,7 @@ public class AuthorizationController : Controller
 
         foreach (var scope in scopes)
         {
-            if (scope is "users_api" or "accounts_api" or "credits_api")
+            if (scope is "users_api" or "accounts_api" or "credits_api" or "settings_api")
             {
                 resources.Add(scope);
             }
