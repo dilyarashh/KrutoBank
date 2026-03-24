@@ -158,6 +158,21 @@ static async Task SeedOpenIddictAsync(IServiceProvider services)
         redirectUris: ["http://localhost:4200/auth/callback"],
         postLogoutRedirectUris: ["http://localhost:4200"],
         permissions: ["users_api", "accounts_api", "credits_api", "roles", "settings_api"]);
+
+    await CreateClientIfMissing(applicationManager,
+        clientId: "bank-client-ios",
+        displayName: "KrutoBank Client Web",
+        redirectUris: [
+            "http://localhost:3000/auth/callback",
+            "http://localhost:5173/auth/callback",
+            "krutobank://callback"
+        ],
+        postLogoutRedirectUris: [
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "krutobank://callback"
+        ],
+        permissions: ["users_api", "accounts_api", "credits_api", "roles", "settings_api"]);
 }
 
 static async Task CreateScopeIfMissing(IOpenIddictScopeManager scopeManager, string name, string displayName)
