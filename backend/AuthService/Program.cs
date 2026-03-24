@@ -85,7 +85,7 @@ builder.Services.AddOpenIddict()
         options.RequireProofKeyForCodeExchange();
         options.DisableAccessTokenEncryption();
 
-        options.RegisterScopes(Scopes.OpenId, Scopes.Profile, "roles", "users_api", "accounts_api", "credits_api");
+        options.RegisterScopes(Scopes.OpenId, Scopes.Profile, "roles", "users_api", "accounts_api", "credits_api", "settings_api");
 
         options.SetAccessTokenLifetime(TimeSpan.FromMinutes(60));
         options.SetRefreshTokenLifetime(TimeSpan.FromDays(7));
@@ -143,20 +143,21 @@ static async Task SeedOpenIddictAsync(IServiceProvider services)
     await CreateScopeIfMissing(scopeManager, "accounts_api", "Accounts API");
     await CreateScopeIfMissing(scopeManager, "credits_api", "Credits API");
     await CreateScopeIfMissing(scopeManager, "roles", "User roles");
+    await CreateScopeIfMissing(scopeManager, "settings_api", "Settings API");
 
     await CreateClientIfMissing(applicationManager,
         clientId: "bank-client-web",
         displayName: "KrutoBank Client Web",
         redirectUris: ["http://localhost:3000/auth/callback", "http://localhost:5173/auth/callback"],
         postLogoutRedirectUris: ["http://localhost:3000", "http://localhost:5173"],
-        permissions: ["users_api", "accounts_api", "credits_api", "roles"]);
+        permissions: ["users_api", "accounts_api", "credits_api", "roles", "settings_api"]);
 
     await CreateClientIfMissing(applicationManager,
         clientId: "bank-employee-web",
         displayName: "KrutoBank Employee Web",
         redirectUris: ["http://localhost:4200/auth/callback"],
         postLogoutRedirectUris: ["http://localhost:4200"],
-        permissions: ["users_api", "accounts_api", "credits_api", "roles"]);
+        permissions: ["users_api", "accounts_api", "credits_api", "roles", "settings_api"]);
 }
 
 static async Task CreateScopeIfMissing(IOpenIddictScopeManager scopeManager, string name, string displayName)
