@@ -13,6 +13,7 @@ public class UserSettingsController(UserSettingsManager service, ICurrentUser cu
 {
     /// Получить настройки
     [HttpGet("me")]
+    [Authorize]
     public async Task<ActionResult<UserSettingsDto>> GetCustomization()
     {
         var userId = currentUser.GetUserId();
@@ -22,6 +23,7 @@ public class UserSettingsController(UserSettingsManager service, ICurrentUser cu
 
     /// Обновить тему
     [HttpPatch("theme")]
+    [Authorize]
     public async Task<IActionResult> UpdateTheme([FromBody] Theme theme)
     {
         var userId = currentUser.GetUserId();
@@ -31,6 +33,7 @@ public class UserSettingsController(UserSettingsManager service, ICurrentUser cu
 
     /// Обновить скрытые счета
     [HttpPatch("hidden-accounts")]
+    [Authorize]
     public async Task<IActionResult> UpdateHidden([FromBody] List<Guid> accountIds)
     {
         var userId = currentUser.GetUserId();
