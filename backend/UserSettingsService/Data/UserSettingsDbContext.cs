@@ -11,8 +11,18 @@ namespace UserSettingsService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserSettings>()
-                .HasKey(x => x.UserId);
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserSettings>(entity =>
+            {
+                entity.HasKey(x => x.UserId);
+
+                entity.Property(x => x.Theme)
+                    .HasConversion<string>();
+
+                entity.Property(x => x.HiddenAccountIdsJson)
+                    .IsRequired();
+            });
         }
     }
 }
