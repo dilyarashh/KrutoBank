@@ -3,7 +3,7 @@
   max-width: 1500px;
   border-radius: 20px;
 
-  background: rgba(255, 255, 255, 0.78);
+  background: var(--surface);
   backdrop-filter: blur(10px);
 
   box-shadow: 0 10px 28px rgba(216, 27, 96, 0.10);
@@ -51,7 +51,7 @@
 
 .name {
   font-weight: 900;
-  color: rgba(33, 33, 33, 0.92);
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -64,7 +64,7 @@
 }
 
 .phone {
-  color: rgba(33, 33, 33, 0.75);
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -80,14 +80,18 @@
 
 .chip {
   border-radius: 999px;
+  color: var(--text-primary) !important;
+  font-weight: 800;
 }
 
 .chip-client {
-  background: rgba(236, 64, 122, 0.12);
+  background: var(--chip-role-client-bg) !important;
+  color: var(--chip-role-client-text) !important;
 }
 
 .chip-employee {
-  background: rgba(156, 39, 176, 0.10);
+  background: var(--chip-role-employee-bg) !important;
+  color: var(--chip-role-employee-text) !important;
 }
 
 .actions {
@@ -100,5 +104,11 @@
 }
 
 .blocked-btn {
-  opacity: 1 !important; 
+  opacity: 1 !important;
+  background: var(--chip-danger-bg) !important;
+  color: var(--chip-danger-text) !important;
+}
+
+.blocked-btn mat-icon {
+  color: inherit;
 }

@@ -8,7 +8,7 @@
 .nav,
 .num {
   border: 1px solid rgba(194, 24, 91, 0.20);
-  background: rgba(255, 255, 255, 0.70);
+  background: var(--surface-soft);
   backdrop-filter: blur(8px);
   cursor: pointer;
 
@@ -18,7 +18,7 @@
 
   border-radius: 14px;
   font-weight: 800;
-  color: rgba(33, 33, 33, 0.82);
+  color: var(--text-primary);
 
   transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
 }

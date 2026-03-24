@@ -10,10 +10,11 @@
   max-width: 420px;
   padding: 28px;
   border-radius: 20px;
-  background: #ffffffcc;
+  background: var(--surface-glass);
   backdrop-filter: blur(8px);
   box-shadow:
     0 8px 24px rgba(216, 27, 96, 0.15);
+  border: 1px solid var(--surface-border);
 }
 
 .title {
@@ -26,7 +27,7 @@
 
 .subtitle {
   margin: 0 0 20px;
-  color: #6b7280;
+  color: var(--login-subtitle);
   font-size: 14px;
   text-align: center;
 }
@@ -53,7 +54,7 @@
 
 .hint {
   margin-top: 14px;
-  color: #94a3b8;
+  color: var(--login-hint);
   font-size: 12px;
   text-align: center;
 }

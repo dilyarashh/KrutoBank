@@ -1,18 +1,20 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { CreditDto, CreditOperationDto } from './credits.models';
+import { CreditDto, CreditOperationDto, CreditScoreDto } from './credits.models';
+import { CreditsApi } from './credits.api';
 
 @Injectable({ providedIn: 'root' })
 export class CreditsService {
-  private http = inject(HttpClient);
+  private readonly api = inject(CreditsApi);
 
   getLoansByUserId(userId: string) {
-    return this.http.get<CreditDto[]>(`http://localhost:5173/api/Credits/users/${userId}/loans`);
+    return this.api.getLoansByUserId(userId);
   }
 
   getCreditOperations(userId: string, loanId: string) {
-    return this.http.get<CreditOperationDto[]>(
-      `http://localhost:5173/api/Credits/users/${userId}/loans/${loanId}/operations`,
-    );
+    return this.api.getCreditOperations(userId, loanId);
+  }
+
+  getCreditScore(userId: string) {
+    return this.api.getCreditScore(userId);
   }
 }

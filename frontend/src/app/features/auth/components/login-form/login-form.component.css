@@ -21,8 +21,8 @@
   align-items: center;
 
   border-radius: 18px;
-  background: rgba(255, 240, 245, 0.85);
-  border: 1px solid rgba(194, 24, 91, 0.25);
+  background: var(--surface-accent);
+  border: 1px solid var(--brand-soft-border);
 
   transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
 }
@@ -32,9 +32,9 @@
 }
 
 .control:focus-within {
-  border-color: #ec407a;
+  border-color: var(--brand-focus);
   box-shadow: 0 0 0 4px rgba(236, 64, 122, 0.18);
-  background: rgba(255, 240, 245, 1);
+  background: var(--surface-accent-strong);
 }
 
 .control.invalid {
@@ -50,13 +50,13 @@
 
   padding: 14px 44px 14px 14px;
   font-size: 14px;
-  color: rgba(33, 33, 33, 0.92);
+  color: var(--text-primary);
 
-  caret-color: #c2185b;
+  caret-color: var(--brand);
 }
 
 .input::placeholder {
-  color: rgba(0, 0, 0, 0.35);
+  color: var(--text-subtle);
 }
 
 .icon {
@@ -114,7 +114,7 @@
 }
 
 .icon-btn:hover mat-icon {
-  color: rgba(0, 0, 0, 0.65);
+  color: var(--text-muted);
 }
 
 .full {

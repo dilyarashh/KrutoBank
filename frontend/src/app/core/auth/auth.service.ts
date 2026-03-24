@@ -1,29 +1,8 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
-
-export type RegisterRequest = {
-  firstName: string;
-  lastName: string;
-  middleName?: string;
-  phone: string;
-  email?: string;
-  birthday: string; // ISO date
-  password: string;
-  role: 'Client' | 'Employee';
-};
-
-export type OAuthTokenResponse = {
-  access_token: string;
-  refresh_token?: string;
-  expires_in: number;
-  token_type: 'Bearer';
-  scope: string;
-};
-
-export type RegisterResponse = {
-  userId: string;
-};
+import { API_ENDPOINTS } from '../../shared/api/api-endpoints';
+import { AuthApi } from './auth.api';
+import { RegisterRequest, RegisterResponse } from './auth.models';
 
 const TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
@@ -35,9 +14,9 @@ export class AuthService {
 
   readonly isAuthenticated = computed(() => !!this.token());
 
-  private readonly http = inject(HttpClient);
+  private readonly authApi = inject(AuthApi);
 
-  private readonly authServer = 'http://localhost:5270';
+  private readonly authServer = API_ENDPOINTS.auth;
 
   private get clientId() {
     return window.location.origin.includes('4200')
@@ -59,7 +38,7 @@ export class AuthService {
         client_id: this.clientId,
         redirect_uri: this.redirectUri,
         response_type: 'code',
-        scope: 'openid profile roles users_api accounts_api credits_api offline_access',
+        scope: 'openid profile roles users_api accounts_api credits_api settings_api offline_access',
         code_challenge: codeChallenge,
         code_challenge_method: 'S256',
         state: returnUrl ?? '/users',
@@ -85,11 +64,7 @@ export class AuthService {
       code_verifier: codeVerifier,
     });
 
-    const token = await firstValueFrom(
-      this.http.post<OAuthTokenResponse>(`${this.authServer}/connect/token`, body.toString(), {
-        headers: new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
-      })
-    );
+    const token = await firstValueFrom(this.authApi.exchangeCode(body));
 
     this.setToken(token.access_token);
 
@@ -111,7 +86,7 @@ export class AuthService {
   }
 
   register(payload: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.authServer}/account/register`, payload);
+    return this.authApi.register(payload);
   }
 
   getToken(): string | null {

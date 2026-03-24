@@ -1,0 +1,19 @@
+<ng-container *ngIf="loading; else loaded">
+  <div class="async-card">{{ loadingText }}</div>
+</ng-container>
+
+<ng-template #loaded>
+  <ng-container *ngIf="error; else resolved">
+    <div class="async-card error">{{ error }}</div>
+  </ng-container>
+</ng-template>
+
+<ng-template #resolved>
+  <ng-container *ngIf="empty; else content">
+    <div class="async-card">{{ emptyText }}</div>
+  </ng-container>
+</ng-template>
+
+<ng-template #content>
+  <ng-content></ng-content>
+</ng-template>

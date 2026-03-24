@@ -49,6 +49,6 @@
 .paginator {
   width: 100%;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.65);
+  background: var(--surface-soft);
   backdrop-filter: blur(8px);
 }

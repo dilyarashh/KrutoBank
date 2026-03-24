@@ -1,0 +1,5 @@
+<div class="backdrop" (click)="onBackdropClick()" (keydown)="onKeydown($event)" tabindex="0">
+  <div class="modal" [style.max-width]="maxWidth" (click)="$event.stopPropagation()">
+    <ng-content></ng-content>
+  </div>
+</div>

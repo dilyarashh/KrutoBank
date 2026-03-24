@@ -1,25 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-
-export interface CreateTariffRequest {
-  name: string;
-  interestRate: number;
-}
-
-export interface TariffDto {
-  id: string;
-  name: string;
-  interestRate: number;
-}
+import { TariffsApi } from './tariffs.api';
+import { CreateTariffRequest, TariffDto } from './tariff.models';
 
 @Injectable({ providedIn: 'root' })
 export class TariffsService {
-  private http = inject(HttpClient);
+  private readonly api = inject(TariffsApi);
 
   createTariff(dto: CreateTariffRequest) {
-    return this.http.post<TariffDto>(
-      'http://localhost:5173/api/Credits/tariffs',
-      dto
-    );
+    return this.api.createTariff(dto);
   }
 }
