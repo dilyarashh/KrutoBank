@@ -12,6 +12,9 @@ final class ProfileViewModel: ObservableObject {
     @DIInject(\.usersRepository, container: DI.container)
     private var usersRepository: UsersRepositoryProtocol
 
+    @DIInject(\.oauthService, container: DI.container)
+    private var oauthService: OAuthServiceProtocol
+
     @Published
     var state = State()
 
@@ -41,14 +44,15 @@ final class ProfileViewModel: ObservableObject {
         state.errorText = nil
 
         Task {
-//            do {
-//                try await usersRepository.logout()
-//                state.isLogoutLoading = false
-//                delegate?.profileViewModelDidLogout(self)
-//            } catch {
-//                state.isLogoutLoading = false
-//                state.errorText = AppStrings.Common.error
-//            }
+            do {
+                print("gfhgfffds")
+                try await oauthService.logout()
+                state.isLogoutLoading = false
+                delegate?.profileViewModelDidLogout(self)
+            } catch {
+                state.isLogoutLoading = false
+                state.errorText = AppStrings.Common.error
+            }
         }
     }
 }

@@ -83,9 +83,6 @@ final class OAuthService: OAuthServiceProtocol {
     }
 
     func logout() async throws {
-        guard let networkService else { return }
-        try await networkService.request(LogoutEndPoint())
-
         tokenStorage.accessToken = nil
         tokenStorage.refreshToken = nil
     }

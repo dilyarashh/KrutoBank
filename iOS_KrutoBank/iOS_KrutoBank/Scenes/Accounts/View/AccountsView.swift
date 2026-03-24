@@ -12,7 +12,6 @@ struct AccountsView: View {
         VStack(spacing: 16) {
             title
             content
-            Spacer(minLength: 0)
         }
         .background(background)
         .padding(.horizontal, 20)

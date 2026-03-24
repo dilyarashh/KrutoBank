@@ -2,7 +2,6 @@ import Foundation
 
 // MARK: - Protocol
 protocol AccountOperationsWebSocketProtocol: AnyObject {
-    /// Called when the server signals that operations changed (push-invalidation pattern)
     var onInvalidate: (() -> Void)? { get set }
     var onError: ((Error) -> Void)? { get set }
     var isConnected: Bool { get }
@@ -13,7 +12,7 @@ protocol AccountOperationsWebSocketProtocol: AnyObject {
 
 // MARK: - WebSocket message from server
 private struct WSMessage: Decodable {
-    let type: String   // "invalidate" | "ping"
+    let type: String
 }
 
 // MARK: - Implementation
@@ -39,7 +38,6 @@ final class AccountOperationsWebSocket: NSObject, AccountOperationsWebSocketProt
 
         var wsURL = APIConstants.accountOperationsWebSocket(accountId: accountId)
 
-        // Attach token as query param since WS handshake can't easily set headers
         if let token = tokenStorage.accessToken {
             var components = URLComponents(url: wsURL, resolvingAgainstBaseURL: false)!
             components.queryItems = [URLQueryItem(name: "access_token", value: token)]

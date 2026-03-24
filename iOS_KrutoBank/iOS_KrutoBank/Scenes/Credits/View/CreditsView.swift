@@ -12,7 +12,7 @@ struct CreditsView: View {
         VStack(spacing: 16) {
             title
             content
-            Spacer(minLength: 0)
+//            Spacer(minLength: 0)
         }
         .background(background)
         .padding(.horizontal, 20)
@@ -93,6 +93,7 @@ private extension CreditsView {
                 Text(error).font(.system(size: 13)).foregroundStyle(Color.AppColor.textSecondary)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
         .background(Color.AppColor.primaryWhite)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
