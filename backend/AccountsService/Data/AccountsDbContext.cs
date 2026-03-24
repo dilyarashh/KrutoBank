@@ -162,6 +162,104 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
                 CreatedAt = Utc(2024, 3, 10),
                 Type = OperationType.Deposit,
                 Amount = 50000
+            },
+            new AccountOperation
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb6"),
+                AccountId = acc3,
+                CreatedAt = Utc(2024, 3, 15),
+                Type = OperationType.TransferOut,
+                Amount = 10000,
+                Currency = Currency.RUB
+            },
+            new AccountOperation
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb7"),
+                AccountId = acc4,
+                CreatedAt = Utc(2024, 3, 15),
+                Type = OperationType.TransferIn,
+                Amount = 10000,
+                Currency = Currency.USD
+            },
+
+            // client2 → client3
+            new AccountOperation
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb8"),
+                AccountId = acc4,
+                CreatedAt = Utc(2024, 3, 18),
+                Type = OperationType.TransferOut,
+                Amount = 5000,
+                Currency = Currency.USD
+            },
+            new AccountOperation
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb9"),
+                AccountId = acc5,
+                CreatedAt = Utc(2024, 3, 18),
+                Type = OperationType.TransferIn,
+                Amount = 5000,
+                Currency = Currency.USD
+            },
+
+            // client1 (второй счет acc6) → employee1 (acc1)
+            new AccountOperation
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-000000000010"),
+                AccountId = acc6,
+                CreatedAt = Utc(2024, 3, 20),
+                Type = OperationType.TransferOut,
+                Amount = 7000,
+                Currency = Currency.RUB
+            },
+            new AccountOperation
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-000000000011"),
+                AccountId = acc1,
+                CreatedAt = Utc(2024, 3, 20),
+                Type = OperationType.TransferIn,
+                Amount = 7000,
+                Currency = Currency.RUB
+            },
+
+            // employee1 → client1
+            new AccountOperation
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-000000000012"),
+                AccountId = acc1,
+                CreatedAt = Utc(2024, 3, 22),
+                Type = OperationType.TransferOut,
+                Amount = 3000,
+                Currency = Currency.RUB
+            },
+            new AccountOperation
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-000000000013"),
+                AccountId = acc3,
+                CreatedAt = Utc(2024, 3, 22),
+                Type = OperationType.TransferIn,
+                Amount = 3000,
+                Currency = Currency.RUB
+            },
+
+            // client3 → client1
+            new AccountOperation
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-000000000014"),
+                AccountId = acc5,
+                CreatedAt = Utc(2024, 3, 25),
+                Type = OperationType.TransferOut,
+                Amount = 2000,
+                Currency = Currency.USD
+            },
+            new AccountOperation
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-000000000015"),
+                AccountId = acc3,
+                CreatedAt = Utc(2024, 3, 25),
+                Type = OperationType.TransferIn,
+                Amount = 2000,
+                Currency = Currency.RUB
             }
         );
     }
