@@ -17,7 +17,7 @@ struct AppDependency {
 
     static func build() -> AppDependency {
         let tokenStorage = KeychainTokenStorage()
-        let oauthService = OAuthService()
+        let oauthService = OAuthService(tokenStorage: tokenStorage)
         let authorizationProvider = AuthorizationProvider(
             tokenStorage: tokenStorage,
             oauthService: oauthService
@@ -27,6 +27,9 @@ struct AppDependency {
             networkTransport: HTTPClient(authorizationProvider: authorizationProvider),
             sessionService: sessionService
         )
+
+        oauthService.networkService = networkService
+
         let usersRepository = UsersRepository(
             networkService: networkService,
             tokenStorage: tokenStorage

@@ -5,9 +5,7 @@ struct UserAccount: Identifiable {
     let name: String
     let balance: Double
     let currency: String
-    let openedAt: String
     let isClosed: Bool
-    let closedAt: String?
 
     var currencySymbol: String {
         CurrencyFormatter.symbol(for: currency)

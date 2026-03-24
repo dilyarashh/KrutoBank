@@ -15,6 +15,14 @@
 		5DB44127982994BFF2710475 /* KeychainTokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCEC9E2F6FA69400EC380D /* KeychainTokenStorage.swift */; };
 		72E9EAC9BB5A1C7F00EF62EB /* DIInject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCEC982F6FA69400EC380D /* DIInject.swift */; };
 		823E12440BCFBAB568CC3B9C /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECE92F6FA69400EC380D /* AppError.swift */; };
+		880476DA2F7278580008FF2A /* SetInitialPasswordRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476D92F7278580008FF2A /* SetInitialPasswordRequest.swift */; };
+		880476DC2F7278710008FF2A /* ChangePasswordRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476DB2F7278710008FF2A /* ChangePasswordRequest.swift */; };
+		880476DE2F7278870008FF2A /* AuthRegisterRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476DD2F7278870008FF2A /* AuthRegisterRequest.swift */; };
+		880476E32F727CA80008FF2A /* RegisterEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476E22F727CA80008FF2A /* RegisterEndPoint.swift */; };
+		880476E52F727CAF0008FF2A /* SetInitialPasswordEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476E42F727CAF0008FF2A /* SetInitialPasswordEndPoint.swift */; };
+		880476E72F727CB70008FF2A /* ChangePasswordEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476E62F727CB70008FF2A /* ChangePasswordEndPoint.swift */; };
+		880476E92F727CBE0008FF2A /* LogoutEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476E82F727CBE0008FF2A /* LogoutEndPoint.swift */; };
+		880476EB2F727CC50008FF2A /* TokenEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476EA2F727CC50008FF2A /* TokenEndPoint.swift */; };
 		882119972F60A8110073396D /* Notification+userDidLogout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882119962F60A8110073396D /* Notification+userDidLogout.swift */; };
 		8838CC7C2F542DFC00B46A23 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8838CC762F542DFC00B46A23 /* LaunchScreen.storyboard */; };
 		8838CC7D2F542DFC00B46A23 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8838CC722F542DFC00B46A23 /* AppDelegate.swift */; };
@@ -101,7 +109,6 @@
 		88DCED0B2F6FA69400EC380D /* GetLoansEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECC72F6FA69400EC380D /* GetLoansEndPoint.swift */; };
 		88DCED0C2F6FA69400EC380D /* UsersRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECE42F6FA69400EC380D /* UsersRepository.swift */; };
 		88DCED0D2F6FA69400EC380D /* CloseAccountEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECB62F6FA69400EC380D /* CloseAccountEndPoint.swift */; };
-		88DCED0E2F6FA69400EC380D /* LogoutEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECDE2F6FA69400EC380D /* LogoutEndPoint.swift */; };
 		88DCED0F2F6FA69400EC380D /* QueryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECFA2F6FA69400EC380D /* QueryItem.swift */; };
 		88DCED102F6FA69400EC380D /* RepayLoanEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECC92F6FA69400EC380D /* RepayLoanEndPoint.swift */; };
 		88DCED112F6FA69400EC380D /* UsersRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DCECE52F6FA69400EC380D /* UsersRepositoryProtocol.swift */; };
@@ -179,6 +186,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		880476D92F7278580008FF2A /* SetInitialPasswordRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetInitialPasswordRequest.swift; sourceTree = "<group>"; };
+		880476DB2F7278710008FF2A /* ChangePasswordRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordRequest.swift; sourceTree = "<group>"; };
+		880476DD2F7278870008FF2A /* AuthRegisterRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRegisterRequest.swift; sourceTree = "<group>"; };
+		880476E22F727CA80008FF2A /* RegisterEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterEndPoint.swift; sourceTree = "<group>"; };
+		880476E42F727CAF0008FF2A /* SetInitialPasswordEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetInitialPasswordEndPoint.swift; sourceTree = "<group>"; };
+		880476E62F727CB70008FF2A /* ChangePasswordEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordEndPoint.swift; sourceTree = "<group>"; };
+		880476E82F727CBE0008FF2A /* LogoutEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutEndPoint.swift; sourceTree = "<group>"; };
+		880476EA2F727CC50008FF2A /* TokenEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenEndPoint.swift; sourceTree = "<group>"; };
 		882119962F60A8110073396D /* Notification+userDidLogout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+userDidLogout.swift"; sourceTree = "<group>"; };
 		8838CC3E2F54019000B46A23 /* iOS_KrutoBank.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS_KrutoBank.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8838CC542F54019200B46A23 /* iOS_KrutoBankTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOS_KrutoBankTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -311,7 +326,6 @@
 		88DCECD92F6FA69400EC380D /* SessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionService.swift; sourceTree = "<group>"; };
 		88DCECDB2F6FA69400EC380D /* CommonError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonError.swift; sourceTree = "<group>"; };
 		88DCECDD2F6FA69400EC380D /* GetMyInfoEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMyInfoEndPoint.swift; sourceTree = "<group>"; };
-		88DCECDE2F6FA69400EC380D /* LogoutEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutEndPoint.swift; sourceTree = "<group>"; };
 		88DCECE02F6FA69400EC380D /* UserResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserResponse.swift; sourceTree = "<group>"; };
 		88DCECE12F6FA69400EC380D /* TokenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenResponse.swift; sourceTree = "<group>"; };
 		88DCECE42F6FA69400EC380D /* UsersRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersRepository.swift; sourceTree = "<group>"; };
@@ -373,6 +387,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		880476D72F7278430008FF2A /* Responses */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Responses;
+			sourceTree = "<group>";
+		};
+		880476D82F72784E0008FF2A /* Requests */ = {
+			isa = PBXGroup;
+			children = (
+				880476DD2F7278870008FF2A /* AuthRegisterRequest.swift */,
+				880476DB2F7278710008FF2A /* ChangePasswordRequest.swift */,
+				880476D92F7278580008FF2A /* SetInitialPasswordRequest.swift */,
+			);
+			path = Requests;
+			sourceTree = "<group>";
+		};
+		880476DF2F7278B70008FF2A /* EndPoints */ = {
+			isa = PBXGroup;
+			children = (
+				880476EA2F727CC50008FF2A /* TokenEndPoint.swift */,
+				880476E82F727CBE0008FF2A /* LogoutEndPoint.swift */,
+				880476E62F727CB70008FF2A /* ChangePasswordEndPoint.swift */,
+				880476E42F727CAF0008FF2A /* SetInitialPasswordEndPoint.swift */,
+				880476E22F727CA80008FF2A /* RegisterEndPoint.swift */,
+			);
+			path = EndPoints;
+			sourceTree = "<group>";
+		};
 		8838CC352F54019000B46A23 = {
 			isa = PBXGroup;
 			children = (
@@ -810,6 +853,8 @@
 		88CEA2D42F7025F700515031 /* DTO */ = {
 			isa = PBXGroup;
 			children = (
+				880476D82F72784E0008FF2A /* Requests */,
+				880476D72F7278430008FF2A /* Responses */,
 				88CEA2D52F70260200515031 /* OAuthTokenResponse.swift */,
 			);
 			path = DTO;
@@ -940,6 +985,7 @@
 		88DCECB02F6FA69400EC380D /* Auth */ = {
 			isa = PBXGroup;
 			children = (
+				880476DF2F7278B70008FF2A /* EndPoints */,
 				88CEA2DE2F7026AF00515031 /* OAuthService */,
 				88CEA2D92F70264D00515031 /* Error */,
 				88CEA2D42F7025F700515031 /* DTO */,
@@ -1094,7 +1140,6 @@
 			isa = PBXGroup;
 			children = (
 				88DCECDD2F6FA69400EC380D /* GetMyInfoEndPoint.swift */,
-				88DCECDE2F6FA69400EC380D /* LogoutEndPoint.swift */,
 			);
 			path = EndPoints;
 			sourceTree = "<group>";
@@ -1403,11 +1448,11 @@
 				88DCED462F6FB0D500EC380D /* AccountResponse.swift in Sources */,
 				88DCED132F6FA69400EC380D /* CommonError.swift in Sources */,
 				88DCED1E2F6FA69400EC380D /* KeychainStore.swift in Sources */,
-				88DCED0E2F6FA69400EC380D /* LogoutEndPoint.swift in Sources */,
 				88DCED142F6FA69400EC380D /* AuthorizationProvidingProtocol.swift in Sources */,
 				8838CD2C2F542E3700B46A23 /* UIApplication+safeAreaInsets.swift in Sources */,
 				8838CD2D2F542E3700B46A23 /* TabBarController.swift in Sources */,
 				8838CD842F54345700B46A23 /* AccountsView.swift in Sources */,
+				880476E72F727CB70008FF2A /* ChangePasswordEndPoint.swift in Sources */,
 				88A38F342F6BE1B6004C7E29 /* CommonButtonStyle.swift in Sources */,
 				88DCED442F6FB06C00EC380D /* AccountOperationResponse.swift in Sources */,
 				88A38F352F6BE1B6004C7E29 /* ToastView.swift in Sources */,
@@ -1423,6 +1468,7 @@
 				88A38F392F6BE1B6004C7E29 /* ToastStore.swift in Sources */,
 				88DCED332F6FA9AE00EC380D /* UserAccountResponse.swift in Sources */,
 				88DCED252F6FA69400EC380D /* LoanOperationResponse.swift in Sources */,
+				880476DE2F7278870008FF2A /* AuthRegisterRequest.swift in Sources */,
 				88DCED0A2F6FA69400EC380D /* NetworkServiceProtocol.swift in Sources */,
 				88DCED172F6FA69400EC380D /* OpenAccountEndPoint.swift in Sources */,
 				88CEA2C82F701B3300515031 /* UpdateThemeEndPoint.swift in Sources */,
@@ -1439,6 +1485,7 @@
 				8838CD362F542E3700B46A23 /* AppStrings.swift in Sources */,
 				88CEA2BA2F700FD100515031 /* LoanOperation.swift in Sources */,
 				8838CD372F542E3700B46A23 /* TabBar.swift in Sources */,
+				880476DA2F7278580008FF2A /* SetInitialPasswordRequest.swift in Sources */,
 				88CEA2B62F700BA200515031 /* Tariff.swift in Sources */,
 				88DCED422F6FAEB700EC380D /* AccountOperation.swift in Sources */,
 				88DCED202F6FA69400EC380D /* HTTPClient.swift in Sources */,
@@ -1449,6 +1496,7 @@
 				88CEA2CC2F701E9300515031 /* AccountCurrency.swift in Sources */,
 				88CEA2DD2F70269800515031 /* PresentationContextProvider.swift in Sources */,
 				88CEA2DB2F70265000515031 /* OAuthError.swift in Sources */,
+				880476E52F727CAF0008FF2A /* SetInitialPasswordEndPoint.swift in Sources */,
 				88A38F452F6BE1F4004C7E29 /* PhoneValidator.swift in Sources */,
 				88DCED522F6FEB8A00EC380D /* OAuthService.swift in Sources */,
 				88A38F462F6BE1F4004C7E29 /* Constants.swift in Sources */,
@@ -1500,9 +1548,11 @@
 				88CEA2C62F701B1400515031 /* AppSettings.swift in Sources */,
 				8838CDAC2F549A5C00B46A23 /* LoanOperationsList.swift in Sources */,
 				88DCED4A2F6FB22C00EC380D /* CurrencyFormatter.swift in Sources */,
+				880476EB2F727CC50008FF2A /* TokenEndPoint.swift in Sources */,
 				882119972F60A8110073396D /* Notification+userDidLogout.swift in Sources */,
 				88DCED162F6FA69400EC380D /* HTTPStatusCode.swift in Sources */,
 				88DCEC952F6FA61100EC380D /* UserProfile.swift in Sources */,
+				880476DC2F7278710008FF2A /* ChangePasswordRequest.swift in Sources */,
 				88A38EFD2F6BDF79004C7E29 /* OAuthLoginView.swift in Sources */,
 				8838CD8C2F54348600B46A23 /* ProfileView.swift in Sources */,
 				8838CC7E2F542DFC00B46A23 /* SceneDelegate.swift in Sources */,
@@ -1512,11 +1562,13 @@
 				4B64D85C4A5E5D0059706AD5 /* KeychainStoreFactory.swift in Sources */,
 				3A74CF244DEC91B093A3C9DD /* KeyValueStoreProtocol.swift in Sources */,
 				ADD24B718D2C34BAF4E78FC1 /* KeychainConstants.swift in Sources */,
+				880476E92F727CBE0008FF2A /* LogoutEndPoint.swift in Sources */,
 				5DB44127982994BFF2710475 /* KeychainTokenStorage.swift in Sources */,
 				B8A10C687E4E88A06DD53F40 /* GetLoanHistoryEndPoint.swift in Sources */,
 				C7E1076F953B67E83768888D /* CreditResponse.swift in Sources */,
 				F3C9F7FE12525A7BD821C32B /* RepayLoanRequest.swift in Sources */,
 				88CEA2D82F70262300515031 /* OAuthServiceProtocol.swift in Sources */,
+				880476E32F727CA80008FF2A /* RegisterEndPoint.swift in Sources */,
 				25761191FAE89AA5F076CEAE /* SessionService.swift in Sources */,
 				3E1C7AE06BD0CBF863BC1BC1 /* UserResponse.swift in Sources */,
 				823E12440BCFBAB568CC3B9C /* AppError.swift in Sources */,

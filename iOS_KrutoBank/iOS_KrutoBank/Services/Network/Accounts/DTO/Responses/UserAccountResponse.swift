@@ -3,13 +3,12 @@ import Foundation
 // MARK: - DTO
 
 struct UserAccountResponse: Decodable {
-    let id: String
-    let name: String?
+    let userId: String
+    let accountId: String
+    let accountName: String
     let balance: Double
     let currency: AccountCurrency
-    let openedAt: String
     let isClosed: Bool
-    let closedAt: String?
 }
 
 // MARK: - Mapper
@@ -17,13 +16,11 @@ struct UserAccountResponse: Decodable {
 extension UserAccountResponse {
     func toDomain() -> UserAccount {
         UserAccount(
-            id: id,
-            name: name ?? "",
+            id: accountId,
+            name: accountName,
             balance: balance,
             currency: currency.rawValue,
-            openedAt: openedAt,
-            isClosed: isClosed,
-            closedAt: closedAt
+            isClosed: isClosed
         )
     }
 }

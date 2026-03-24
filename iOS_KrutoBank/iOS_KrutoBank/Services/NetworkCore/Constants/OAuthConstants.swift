@@ -3,15 +3,18 @@ import Foundation
 enum OAuthConstants {
     static let authorize = "/connect/authorize"
     static let token     = "/connect/token"
-    static let logout    = "/connect/logout"
+    static let logout    = "/connect/logout" // This is for connect/logout
+    static let accountLogout = "/account/logout"
     static let register  = "/account/register"
+    static let setInitialPassword = "/api/passwords/set-initial"
+    static let changePassword = "/api/passwords/change"
 
-    static let clientId       = "bank-client-web"
-    static let redirectURI    = "http://localhost:3000/auth/callback"
+    static let clientId       = "bank-client-ios"
+    static let redirectURI    = "krutobank://callback"
     static let responseType   = "code"
     static let grantType      = "authorization_code"
     static let refreshGrant   = "refresh_token"
-    static let scope          = "openid profile offline_access"
+    static let scope = "openid profile roles users_api accounts_api credits_api settings_api offline_access"
     static let callbackScheme = "krutobank"
 
     private static var baseURL: URL { APIConstants.authServiceBaseURL }
@@ -57,4 +60,3 @@ enum OAuthConstants {
         return c.url!
     }
 }
-

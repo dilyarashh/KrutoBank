@@ -19,11 +19,26 @@ final class HTTPClient: NetworkTransport {
             requirement: endpoint.authorization
         )
 
+        print("--------------------------------------------------")
+        print("🚀 [Request] \(request.httpMethod ?? "UNKNOWN") \(request.url?.absoluteString ?? "NO URL")")
+        if let headers = request.allHTTPHeaderFields {
+            print("📝 [Headers]: \(headers)")
+        }
+        if let body = request.httpBody {
+            print("📦 [Body]: \(String(data: body, encoding: .utf8) ?? "Unable to print body")")
+        }
+
         do {
             let (data, response) = try await session.data(for: request)
             guard let http = response as? HTTPURLResponse else {
                 throw NetworkError.noResponse
             }
+
+            print("📥 [Response] Status: \(http.statusCode)")
+            if let dataString = String(data: data, encoding: .utf8) {
+                print("📄 [Data]: \(dataString)")
+            }
+            print("--------------------------------------------------")
 
             if HTTPStatusCode.isSuccess(http.statusCode) {
                 return data
@@ -37,9 +52,11 @@ final class HTTPClient: NetworkTransport {
             throw NetworkError.serverError(code: http.statusCode, message: message)
         }
         catch let error as NetworkError {
+            print("❌ [NetworkError]: \(error)")
             throw error
         }
         catch {
+            print("❌ [Error]: \(error)")
             throw NetworkError.transportError(underlying: error)
         }
     }

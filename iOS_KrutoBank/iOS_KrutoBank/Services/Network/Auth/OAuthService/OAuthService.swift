@@ -2,6 +2,12 @@ import Foundation
 import AuthenticationServices
 
 final class OAuthService: OAuthServiceProtocol {
+    private var tokenStorage: TokenStorageProtocol
+    var networkService: NetworkServiceProtocol?
+
+    init(tokenStorage: TokenStorageProtocol) {
+        self.tokenStorage = tokenStorage
+    }
 
     private var authSession: ASWebAuthenticationSession?
 
@@ -44,7 +50,10 @@ final class OAuthService: OAuthServiceProtocol {
         }
 
         let code = try extractCode(from: callbackURL, expectedState: state)
-        return try await exchangeCode(code, codeVerifier: codeVerifier)
+        let tokenResponse = try await exchangeCode(code, codeVerifier: codeVerifier)
+        tokenStorage.accessToken = tokenResponse.accessToken
+        tokenStorage.refreshToken = tokenResponse.refreshToken
+        return tokenResponse
     }
 
     func refreshAccessToken(refreshToken: String) async throws -> OAuthTokenResponse {
@@ -52,7 +61,33 @@ final class OAuthService: OAuthServiceProtocol {
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = OAuthConstants.refreshBody(refreshToken: refreshToken).urlEncoded
-        return try await performTokenRequest(request)
+        let tokenResponse = try await performTokenRequest(request)
+        tokenStorage.accessToken = tokenResponse.accessToken
+        tokenStorage.refreshToken = tokenResponse.refreshToken
+        return tokenResponse
+    }
+
+    func register(_ request: AuthRegisterRequest) async throws {
+        guard let networkService else { return }
+        try await networkService.request(RegisterEndPoint(body: request))
+    }
+
+    func setInitialPassword(_ request: SetInitialPasswordRequest) async throws {
+        guard let networkService else { return }
+        try await networkService.request(SetInitialPasswordEndPoint(body: request))
+    }
+
+    func changePassword(_ request: ChangePasswordRequest) async throws {
+        guard let networkService else { return }
+        try await networkService.request(ChangePasswordEndPoint(body: request))
+    }
+
+    func logout() async throws {
+        guard let networkService else { return }
+        try await networkService.request(LogoutEndPoint())
+
+        tokenStorage.accessToken = nil
+        tokenStorage.refreshToken = nil
     }
 }
 

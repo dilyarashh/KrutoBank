@@ -34,14 +34,59 @@ enum CurrencyFormatter {
 // MARK: - Date
 
 enum DateTimeFormatter {
-    static func format(_ dateString: String, dateStyle: DateFormatter.Style = .short, timeStyle: DateFormatter.Style = .short) -> String {
-        let iso = ISO8601DateFormatter()
-        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        guard let date = iso.date(from: dateString) else { return dateString }
-        let formatter = DateFormatter()
+    static func format(
+        _ date: Date,
+        dateStyle: Foundation.DateFormatter.Style = .short,
+        timeStyle: Foundation.DateFormatter.Style = .short
+    ) -> String {
+        let formatter = Foundation.DateFormatter()
         formatter.dateStyle = dateStyle
         formatter.timeStyle = timeStyle
         formatter.locale = Locale(identifier: "ru_RU")
         return formatter.string(from: date)
     }
+
+    static func format(
+        _ dateString: String,
+        dateStyle: Foundation.DateFormatter.Style = .short,
+        timeStyle: Foundation.DateFormatter.Style = .short
+    ) -> String {
+        guard let date = parse(dateString) else { return dateString }
+        return format(date, dateStyle: dateStyle, timeStyle: timeStyle)
+    }
+
+    static func parse(_ value: String) -> Date? {
+        if let date = iso8601WithFractionalSeconds.date(from: value) {
+            return date
+        }
+
+        if let date = iso8601.date(from: value) {
+            return date
+        }
+
+        if let date = ruFormatter.date(from: value) {
+            return date
+        }
+
+        return nil
+    }
+
+    private static let iso8601WithFractionalSeconds: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private static let iso8601: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
+
+    private static let ruFormatter: Foundation.DateFormatter = {
+        let formatter = Foundation.DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "dd.MM.yyyy, HH:mm"
+        return formatter
+    }()
 }

@@ -44,6 +44,29 @@ enum URLRequestBuilder {
 
         case .requestUrlParameters(let parameters):
             request.url = try addQuery(parameters, to: request.url)
+
+        case .requestFormUrlEncoded(let parameters):
+            if request.value(forHTTPHeaderField: HTTPHeader.contentType) == nil {
+                request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: HTTPHeader.contentType)
+            }
+            let bodyString = parameters.map { k, v in
+                "\(k)=\(String(describing: v).addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+            }.joined(separator: "&")
+            request.httpBody = bodyString.data(using: .utf8)
+
+        case .requestMultipart(let parameters):
+            let boundary = "Boundary-\(UUID().uuidString)"
+            if request.value(forHTTPHeaderField: HTTPHeader.contentType) == nil {
+                request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: HTTPHeader.contentType)
+            }
+            var body = Data()
+            for (key, value) in parameters {
+                body.append("--\(boundary)\r\n".data(using: .utf8)!)
+                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!)
+                body.append("\(String(describing: value))\r\n".data(using: .utf8)!)
+            }
+            body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+            request.httpBody = body
         }
 
         return request

@@ -177,7 +177,7 @@ final class AccountsViewModel: ObservableObject {
         Task {
             do {
                 // TODO: поправить логику перевода средств со счета на счет
-                try await accountsRepository.depositAccount(data: .init(fromAccountId: accountId, toAccountId: accountId, amount: amount))
+                try await accountsRepository.depositAccount(data: .init(accountId: accountId, amount: amount))
                 state.isActionLoading = false
                 toastStore.show(.success("Пополнение выполнено"))
                 await reloadAccountsAfterChange(keepSelection: true)
@@ -198,7 +198,7 @@ final class AccountsViewModel: ObservableObject {
 
         Task {
             do {
-                try await accountsRepository.withdrawFromAccount(data: .init(fromAccountId: accountId, toAccountId: accountId, amount: amount))
+                try await accountsRepository.withdrawFromAccount(data: .init(accountId: accountId, amount: amount))
                 state.isActionLoading = false
                 toastStore.show(.success("Списание выполнено"))
                 await reloadAccountsAfterChange(keepSelection: true)

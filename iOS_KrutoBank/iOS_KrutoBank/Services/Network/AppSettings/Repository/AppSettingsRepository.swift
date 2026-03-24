@@ -14,12 +14,18 @@ final class AppSettingsRepository: AppSettingsRepositoryProtocol {
     }
 
     func updateTheme(theme: String) async throws -> AppSettings {
-        let response = try await networkService.requestDecodable(UpdateThemeEndPoint(theme: theme), as: AppSettingsResponse.self)
-        return response.toDomain()
+        try await networkService.request(
+            UpdateThemeEndPoint(theme: theme)
+        )
+
+        return try await getSettings()
     }
 
     func updateHiddenAccounts(hiddenAccounts: [String]) async throws -> AppSettings {
-        let response = try await networkService.requestDecodable(UpdateHiddenAccountsEndPoint(hiddenAccountIds: hiddenAccounts), as: AppSettingsResponse.self)
-        return response.toDomain()
+        try await networkService.request(
+            UpdateHiddenAccountsEndPoint(hiddenAccountIds: hiddenAccounts)
+        )
+
+        return try await getSettings()
     }
 }

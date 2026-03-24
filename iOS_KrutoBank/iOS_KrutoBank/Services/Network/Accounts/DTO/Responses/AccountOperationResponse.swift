@@ -3,12 +3,9 @@ import Foundation
 // MARK: - DTO
 
 struct AccountOperationResponse: Decodable {
-    let id: String
-    let accountId: String
     let createdAt: String
     let type: OperationTypeDTO
     let amount: Double
-    let account: AccountInOperationResponse?
 }
 
 struct AccountInOperationResponse: Decodable {
@@ -24,6 +21,8 @@ struct AccountInOperationResponse: Decodable {
 enum OperationTypeDTO: String, Decodable {
     case deposit = "Deposit"
     case withdraw = "Withdraw"
+    case transferIn = "TransferIn"
+    case transferOut = "TransferOut"
 }
 
 // MARK: - Mapper
@@ -31,12 +30,9 @@ enum OperationTypeDTO: String, Decodable {
 extension AccountOperationResponse {
     func toDomain() -> AccountOperation {
         AccountOperation(
-            id: id,
-            accountId: accountId,
-            createdAt: createdAt,
+            createdAt: DateTimeFormatter.parse(createdAt) ?? .now,
             type: type.toDomain(),
-            amount: amount,
-            currency: account?.currency ?? "RUB"
+            amount: amount
         )
     }
 }
@@ -44,8 +40,14 @@ extension AccountOperationResponse {
 private extension OperationTypeDTO {
     func toDomain() -> AccountOperationType {
         switch self {
-        case .deposit:  return .deposit
-        case .withdraw: return .withdraw
+        case .deposit:
+            return .deposit
+        case .withdraw:
+            return .withdraw
+        case .transferIn:
+            return .transferIn
+        case .transferOut:
+            return .transferOut
         }
     }
 }

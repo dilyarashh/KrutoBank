@@ -34,20 +34,7 @@ final class AuthorizationProvider: AuthorizationProvidingProtocol {
         if let token = tokenStorage.accessToken, !token.isEmpty {
             return token
         }
-        // Attempt silent refresh
-        guard let refreshToken = tokenStorage.refreshToken, !refreshToken.isEmpty else {
-            return nil
-        }
-        do {
-            let response = try await oauthService.refreshAccessToken(refreshToken: refreshToken)
-            tokenStorage.accessToken = response.accessToken
-            if let newRefresh = response.refreshToken {
-                tokenStorage.refreshToken = newRefresh
-            }
-            return response.accessToken
-        } catch {
-            return nil
-        }
+        return nil
     }
 }
 
