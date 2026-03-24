@@ -3,16 +3,16 @@ export interface LoanDto {
   name: string;
   balance: number;
   currency: string;
-  openedAt: string;  
+  openedAt: string;
   isClosed: boolean;
   closedAt: string | null;
 }
 
 export interface LoanOperationDto {
-  id: string;
-  accountId: string;
-  createdAt: string; 
-  type: string;      
+  id?: string;
+  accountId?: string;
+  createdAt: string;
+  type: string;
   amount: number;
   account?: unknown;
 }
