@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import {
   CreateUserRequest,
@@ -9,40 +8,23 @@ import {
   UsersListResponse,
 } from './users.models';
 import { AuthService } from '../auth/auth.service';
+import { UsersApi } from './users.api';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
-  private readonly http = inject(HttpClient);
+  private readonly usersApi = inject(UsersApi);
   private readonly auth = inject(AuthService);
-  private readonly baseUrl = 'http://localhost:5260/api/users';
 
   getUsersList(req: UsersListRequest): Observable<UsersListResponse> {
-    const params = this.buildListParams(req);
-    return this.http.get<UsersListResponse>(`${this.baseUrl}/list`, { params });
+    return this.usersApi.getUsersList(req);
   }
 
-   getById(id: string) {
-    return this.http.get<UserDto>(`${this.baseUrl}/${id}`);
-  }
-
-  private buildListParams(req: UsersListRequest): HttpParams {
-    let params = new HttpParams()
-      .set('Page', String(req.page))
-      .set('PageSize', String(req.pageSize));
-
-    if (req.sortBy && req.sortBy.trim().length > 0) {
-      params = params.set('SortBy', req.sortBy.trim());
-    }
-
-    if (req.ascending !== undefined) {
-      params = params.set('Ascending', String(req.ascending));
-    }
-
-    return params;
+  getById(id: string): Observable<UserDto> {
+    return this.usersApi.getById(id);
   }
 
   blockUser(id: string): Observable<void> {
-    return this.http.patch<void>(`${this.baseUrl}/block/${id}`, {});
+    return this.usersApi.blockUser(id);
   }
 
   createUser(payload: CreateUserRequest): Observable<CreateUserResponse> {
@@ -56,7 +38,7 @@ export class UsersService {
       password: payload.password,
       role: payload.role,
     }).pipe(
-      map(res => ({ id: res.userId }))
+      map((res) => ({ id: res.userId }))
     );
   }
 }

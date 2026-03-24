@@ -1,0 +1,11 @@
+.async-card {
+  border-radius: 18px;
+  padding: 16px;
+  background: var(--surface-soft);
+  backdrop-filter: blur(8px);
+  color: var(--text-muted);
+}
+
+.async-card.error {
+  color: #d81b60;
+}

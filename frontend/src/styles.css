@@ -1,0 +1,177 @@
+:root {
+  --header-bg: #c2185b;
+  --header-text: #ffffff;
+  --header-hover: rgba(255, 255, 255, 0.18);
+  --header-outline: rgba(255, 255, 255, 0.28);
+  --header-shadow: rgba(194, 24, 91, 0.35);
+
+  --app-bg: linear-gradient(135deg, #fff0f5 0%, #ffe4ec 50%, #fff7fa 100%);
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-strong: rgba(255, 255, 255, 0.92);
+  --surface-soft: rgba(255, 255, 255, 0.65);
+  --surface-glass: rgba(255, 255, 255, 0.8);
+  --surface-accent: rgba(255, 240, 245, 0.85);
+  --surface-accent-strong: rgba(255, 240, 245, 1);
+  --surface-border: rgba(194, 24, 91, 0.18);
+  --surface-divider: rgba(0, 0, 0, 0.06);
+  --overlay-bg: rgba(0, 0, 0, 0.35);
+  --ghost-bg: rgba(0, 0, 0, 0.06);
+
+  --text-primary: rgba(33, 33, 33, 0.92);
+  --text-secondary: rgba(33, 33, 33, 0.75);
+  --text-muted: rgba(0, 0, 0, 0.65);
+  --text-subtle: rgba(0, 0, 0, 0.55);
+  --login-subtitle: #6b7280;
+  --login-hint: #94a3b8;
+
+  --brand: #c2185b;
+  --brand-strong: #d81b60;
+  --brand-soft-border: rgba(194, 24, 91, 0.25);
+  --brand-focus: #ec407a;
+  --chip-role-client-bg: rgba(236, 64, 122, 0.16);
+  --chip-role-client-text: #9d174d;
+  --chip-role-employee-bg: rgba(156, 39, 176, 0.16);
+  --chip-role-employee-text: #6b21a8;
+  --chip-success-bg: rgba(76, 175, 80, 0.16);
+  --chip-success-text: #166534;
+  --chip-neutral-bg: rgba(100, 116, 139, 0.16);
+  --chip-neutral-text: #334155;
+  --chip-danger-bg: rgba(216, 27, 96, 0.16);
+  --chip-danger-text: #9f1239;
+  --button-ghost-bg: rgba(0, 0, 0, 0.06);
+  --button-ghost-text: rgba(33, 33, 33, 0.92);
+  --button-ghost-border: rgba(0, 0, 0, 0.12);
+  --button-primary-bg: #c2185b;
+  --button-primary-text: #ffffff;
+  --button-primary-border: #c2185b;
+  --button-primary-hover: #d81b60;
+  --button-warn-bg: rgba(216, 27, 96, 0.16);
+  --button-warn-text: #9f1239;
+  --button-warn-border: rgba(216, 27, 96, 0.28);
+}
+
+body[data-theme='dark'] {
+  --header-bg: #111111;
+  --header-text: #f8fafc;
+  --header-hover: rgba(255, 255, 255, 0.08);
+  --header-outline: rgba(255, 255, 255, 0.72);
+  --header-shadow: rgba(0, 0, 0, 0.45);
+
+  --app-bg: linear-gradient(135deg, #050505 0%, #101010 55%, #161616 100%);
+  --surface: rgba(10, 10, 10, 0.82);
+  --surface-strong: rgba(12, 12, 12, 0.94);
+  --surface-soft: rgba(20, 20, 20, 0.78);
+  --surface-glass: rgba(18, 18, 18, 0.84);
+  --surface-accent: rgba(38, 12, 24, 0.92);
+  --surface-accent-strong: rgba(48, 14, 30, 0.98);
+  --surface-border: rgba(255, 255, 255, 0.88);
+  --surface-divider: rgba(255, 255, 255, 0.74);
+  --overlay-bg: rgba(0, 0, 0, 0.55);
+  --ghost-bg: rgba(255, 255, 255, 0.08);
+
+  --text-primary: rgba(255, 255, 255, 0.98);
+  --text-secondary: rgba(255, 255, 255, 0.92);
+  --text-muted: rgba(255, 255, 255, 0.88);
+  --text-subtle: rgba(255, 255, 255, 0.82);
+  --login-subtitle: rgba(255, 255, 255, 0.9);
+  --login-hint: rgba(255, 255, 255, 0.82);
+  --brand-soft-border: rgba(255, 255, 255, 0.86);
+  --chip-role-client-bg: rgba(236, 64, 122, 0.28);
+  --chip-role-client-text: #ffffff;
+  --chip-role-employee-bg: rgba(168, 85, 247, 0.28);
+  --chip-role-employee-text: #ffffff;
+  --chip-success-bg: rgba(34, 197, 94, 0.24);
+  --chip-success-text: #ffffff;
+  --chip-neutral-bg: rgba(148, 163, 184, 0.22);
+  --chip-neutral-text: #ffffff;
+  --chip-danger-bg: rgba(244, 63, 94, 0.24);
+  --chip-danger-text: #ffffff;
+  --button-ghost-bg: rgba(255, 255, 255, 0.08);
+  --button-ghost-text: rgba(255, 255, 255, 0.96);
+  --button-ghost-border: rgba(255, 255, 255, 0.82);
+  --button-primary-bg: #ffffff;
+  --button-primary-text: #000000;
+  --button-primary-border: rgba(255, 255, 255, 0.94);
+  --button-primary-hover: rgba(255, 255, 255, 0.88);
+  --button-warn-bg: rgba(255, 255, 255, 0.12);
+  --button-warn-text: #ffffff;
+  --button-warn-border: rgba(255, 255, 255, 0.82);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--app-bg);
+  color: var(--text-primary);
+  transition: background 180ms ease, color 180ms ease;
+}
+
+body[data-theme='dark'] .mat-mdc-raised-button:not(:disabled),
+body[data-theme='dark'] .mat-mdc-unelevated-button:not(:disabled),
+body[data-theme='dark'] .btn.primary:not(:disabled),
+body[data-theme='dark'] .primary:not(:disabled),
+body[data-theme='dark'] .full:not(:disabled) {
+  background: var(--button-primary-bg) !important;
+  color: var(--button-primary-text) !important;
+  border-color: var(--button-primary-border) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18), 0 10px 24px rgba(0, 0, 0, 0.32) !important;
+}
+
+body[data-theme='dark'] .mat-mdc-raised-button:not(:disabled):hover,
+body[data-theme='dark'] .mat-mdc-unelevated-button:not(:disabled):hover,
+body[data-theme='dark'] .btn.primary:not(:disabled):hover,
+body[data-theme='dark'] .primary:not(:disabled):hover,
+body[data-theme='dark'] .full:not(:disabled):hover {
+  background: var(--button-primary-hover) !important;
+}
+
+body[data-theme='dark'] .mat-mdc-stroked-button:not(:disabled),
+body[data-theme='dark'] .btn.ghost:not(:disabled),
+body[data-theme='dark'] .add:not(:disabled),
+body[data-theme='dark'] .tab:not(:disabled) {
+  background: var(--button-ghost-bg) !important;
+  color: var(--button-ghost-text) !important;
+  border-color: var(--button-ghost-border) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+}
+
+body[data-theme='dark'] .mat-mdc-stroked-button:not(:disabled):hover,
+body[data-theme='dark'] .btn.ghost:not(:disabled):hover,
+body[data-theme='dark'] .add:not(:disabled):hover,
+body[data-theme='dark'] .tab:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+}
+
+body[data-theme='dark'] .mat-mdc-icon-button,
+body[data-theme='dark'] .icon-btn,
+body[data-theme='dark'] .x,
+body[data-theme='dark'] .close {
+  color: var(--button-ghost-text) !important;
+}
+
+body[data-theme='dark'] .mat-mdc-icon-button:hover,
+body[data-theme='dark'] .icon-btn:hover,
+body[data-theme='dark'] .x:hover,
+body[data-theme='dark'] .close:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+body[data-theme='dark'] .blocked-btn:not(:disabled),
+body[data-theme='dark'] .mat-mdc-raised-button.mat-warn:not(:disabled),
+body[data-theme='dark'] .mat-mdc-raised-button[color='warn']:not(:disabled) {
+  background: var(--button-warn-bg) !important;
+  color: var(--button-warn-text) !important;
+  border-color: var(--button-warn-border) !important;
+}
+
+body[data-theme='dark'] .mat-mdc-button-disabled,
+body[data-theme='dark'] button:disabled {
+  opacity: 0.72 !important;
+}
+
+body[data-theme='dark'] .mat-icon {
+  color: inherit;
+}

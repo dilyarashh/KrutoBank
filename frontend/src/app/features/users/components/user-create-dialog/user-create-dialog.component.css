@@ -2,53 +2,6 @@
   display: block;
 }
 
-.dialog-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-
-  padding: 20px 20px 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  background: #ffffffcc;
-  backdrop-filter: blur(8px);
-}
-
-.dialog-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.title-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-
-  background: rgba(255, 240, 245, 0.85);
-  border: 1px solid rgba(194, 24, 91, 0.25);
-  color: rgba(194, 24, 91, 0.85);
-}
-
-.title-text h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 750;
-  color: rgba(0, 0, 0, 0.733);
-}
-
-.close {
-  margin-top: -6px;
-}
-
-.dialog-content {
-  padding: 16px 20px 20px;
-  max-height: min(70vh, 720px);
-  overflow: auto;
-}
-
 .form {
   display: grid;
   gap: 16px;
@@ -81,8 +34,8 @@
   align-items: center;
 
   border-radius: 18px;
-  background: rgba(255, 240, 245, 0.85);
-  border: 1px solid rgba(194, 24, 91, 0.25);
+  background: var(--surface-accent);
+  border: 1px solid var(--brand-soft-border);
 
   transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
 }
@@ -92,9 +45,9 @@
 }
 
 .control:focus-within {
-  border-color: #ec407a;
+  border-color: var(--brand-focus);
   box-shadow: 0 0 0 4px rgba(236, 64, 122, 0.18);
-  background: rgba(255, 240, 245, 1);
+  background: var(--surface-accent-strong);
 }
 
 .control.invalid {
@@ -111,13 +64,13 @@
 
   padding: 14px 44px 14px 14px;
   font-size: 14px;
-  color: rgba(33, 33, 33, 0.92);
+  color: var(--text-primary);
 
-  caret-color: #c2185b;
+  caret-color: var(--brand);
 }
 
 .input::placeholder {
-  color: rgba(0, 0, 0, 0.35);
+  color: var(--text-subtle);
 }
 
 .select {
@@ -163,13 +116,13 @@
 }
 
 .icon-btn:hover mat-icon {
-  color: rgba(0, 0, 0, 0.65);
+  color: var(--text-muted);
 }
 
 .hint {
   font-size: 12px;
   line-height: 1.2;
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--text-subtle);
 }
 
 .error {
@@ -177,13 +130,9 @@
 }
 
 .dialog-actions {
-  padding: 12px 20px 16px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-  background: #ffffffcc;
-  backdrop-filter: blur(8px);
-
   display: flex;
   gap: 10px;
+  justify-content: flex-end;
 }
 
 .primary {

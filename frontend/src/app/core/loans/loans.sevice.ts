@@ -1,24 +1,20 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { LoanDto, LoanOperationDto, UserAccountListItemDto } from './loans.models';
+import { LoansApi } from './loans.api';
 
 @Injectable({ providedIn: 'root' })
 export class LoansService {
-  private http = inject(HttpClient);
+  private readonly api = inject(LoansApi);
 
   getAccountsByUserId(userId: string, onlyOpened?: boolean) {
-    const q = onlyOpened === undefined ? '' : `?onlyOpened=${onlyOpened}`;
-    return this.http.get<UserAccountListItemDto[]>(
-      `http://localhost:5251/api/accounts/user/${userId}`,
-    );
+    void onlyOpened;
+    return this.api.getAccountsByUserId(userId);
   }
   getById(accountId: string) {
-    return this.http.get<LoanDto>(`http://localhost:5251/api/accounts/${accountId}`);
+    return this.api.getById(accountId);
   }
 
   getOperations(accountId: string) {
-    return this.http.get<LoanOperationDto | LoanOperationDto[]>(
-      `http://localhost:5251/api/accounts/${accountId}/operations`,
-    );
+    return this.api.getOperations(accountId);
   }
 }

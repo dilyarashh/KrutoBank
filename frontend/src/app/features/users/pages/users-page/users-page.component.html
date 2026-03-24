@@ -14,16 +14,23 @@
         Добавить пользователя
       </button>
     </div>
-    <p class="state error" *ngIf="error()">{{ error() }}</p>
 
-    <div class="list" *ngIf="!loading()">
-      <app-user-card
-        *ngFor="let u of items()"
-        [user]="u"
-        (open)="onOpenUser($event)"
-        (toggleBlock)="onToggleBlock($event)"
-      ></app-user-card>
-    </div>
+    <app-async-state
+      [loading]="loading()"
+      [error]="error()"
+      [empty]="!loading() && items().length === 0"
+      loadingText="Загрузка пользователей…"
+      emptyText="Пользователи пока не найдены."
+    >
+      <div class="list">
+        <app-user-card
+          *ngFor="let u of items()"
+          [user]="u"
+          (open)="onOpenUser($event)"
+          (toggleBlock)="onToggleBlock($event)"
+        ></app-user-card>
+      </div>
+    </app-async-state>
 
     <app-pagination
       [page]="page()"

@@ -16,12 +16,13 @@ html {
 
 body {
   color-scheme: light;
-
-  background: linear-gradient(135deg, #fff0f5 0%, #ffe4ec 50%, #fff7fa 100%);
-
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
 
   margin: 0;
   height: 100%;
+}
+
+body[data-theme='dark'] {
+  color-scheme: dark;
 }

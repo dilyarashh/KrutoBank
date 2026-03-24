@@ -1,13 +1,23 @@
 <header class="header">
   <div class="left">КрутоБанк</div>
 
-  
-  <button class="right" type="button" (click)="openCreateTariff()">
-    Новый тариф
-  </button>
+  <div class="actions">
+    <button class="right" type="button" (click)="openCreateTariff()">
+      Новый тариф
+    </button>
+
+     <button
+      class="theme-toggle"
+      type="button"
+      (click)="toggleTheme()"
+      [attr.aria-label]="themeService.isDark() ? 'Включить светлую тему' : 'Включить тёмную тему'"
+    >
+      <mat-icon>{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+  </div>
 </header>
 
 <app-create-tariff-modal
   *ngIf="modalOpen()"
-    (closed)="onModalClosed($event)"
+  (closed)="onModalClosed($event)"
 ></app-create-tariff-modal>

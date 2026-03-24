@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CreateUserRequest } from '../../../../core/users/users.models';
+import { DialogFrameComponent } from '../../../../shared/components/dialog-frame/dialog-frame.component';
 
 type DialogResult = CreateUserRequest;
 
@@ -36,6 +37,7 @@ function toIsoDateOnly(d: Date): string {
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    DialogFrameComponent,
   ],
   templateUrl: './user-create-dialog.component.html',
   styleUrl: './user-create-dialog.component.css',

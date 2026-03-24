@@ -2,6 +2,7 @@ export interface LoanDto {
   id: string;
   name: string;
   balance: number;
+  currency: string;
   openedAt: string;  
   isClosed: boolean;
   closedAt: string | null;
@@ -21,5 +22,6 @@ export interface UserAccountListItemDto {
   accountId: string;
   accountName: string;
   balance: number;
+  currency: string;
   isClosed: boolean;
 }

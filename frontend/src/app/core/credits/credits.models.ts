@@ -14,3 +14,11 @@ export interface CreditOperationDto {
   operationDate: string;
   operationType: string; 
 }
+
+export interface CreditScoreDto {
+  userId: string;
+  score: number;
+  activeLoans: number;
+  closedLoans: number;
+  overduePayments: number;
+}

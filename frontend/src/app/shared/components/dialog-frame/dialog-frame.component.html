@@ -1,0 +1,28 @@
+<div class="frame" [class.compact]="compact">
+  <div class="frame-header">
+    <div class="frame-title-group">
+      <div class="frame-icon" *ngIf="icon">
+        <mat-icon>{{ icon }}</mat-icon>
+      </div>
+
+      <div class="frame-copy">
+        <h2>{{ title }}</h2>
+        <p *ngIf="subtitle">{{ subtitle }}</p>
+      </div>
+    </div>
+
+    <button class="frame-close" type="button" (click)="onClose()" aria-label="Закрыть">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="frame-body">
+    <ng-content select="[dialog-body]"></ng-content>
+  </div>
+
+  <div class="frame-footer" *ngIf="!compact">
+    <ng-content select="[dialog-footer]"></ng-content>
+  </div>
+
+  <ng-content *ngIf="compact"></ng-content>
+</div>

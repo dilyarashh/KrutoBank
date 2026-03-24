@@ -1,0 +1,11 @@
+<div class="error-shell">
+  <div class="error-card">
+    <div class="eyebrow">{{ isNotFound() ? '404' : 'Ошибка' }}</div>
+    <h1>{{ title() }}</h1>
+    <p>{{ message() }}</p>
+
+    <div class="actions">
+      <button mat-stroked-button type="button" routerLink="/users">На главную</button>
+    </div>
+  </div>
+</div>

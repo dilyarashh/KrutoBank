@@ -1,0 +1,13 @@
+<div class="stack" *ngIf="feedback.items().length > 0">
+  <div class="toast" *ngFor="let item of feedback.items()" [attr.data-kind]="item.kind">
+    <div class="toast-icon">
+      <mat-icon>{{ icon(item.kind) }}</mat-icon>
+    </div>
+
+    <div class="toast-message">{{ item.message }}</div>
+
+    <button class="toast-close" type="button" (click)="dismiss(item.id)" aria-label="Закрыть">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>

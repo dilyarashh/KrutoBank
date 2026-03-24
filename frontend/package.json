@@ -23,6 +23,7 @@
   "private": true,
   "packageManager": "npm@10.9.2",
   "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
     "@angular/cdk": "~21.1.5",
     "@angular/common": "^21.1.0",
     "@angular/compiler": "^21.1.0",
