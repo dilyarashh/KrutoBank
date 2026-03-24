@@ -25,7 +25,7 @@ public class UsersController(IUserService service) : ControllerBase
     /// Получить информацию о пользователе
     /// </summary>
     [Authorize]
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(UserDto), 200)]
     public async Task<ActionResult<UserDto>> Get(Guid id)
     {
@@ -61,7 +61,7 @@ public class UsersController(IUserService service) : ControllerBase
     /// Получить пользователя по телефону
     /// </summary>
     [Authorize]
-    [HttpGet("by-phone")]
+    [HttpGet("phone/{phone}")]
     public async Task<ActionResult<UserDto>> GetByPhone([FromQuery] string phone)
     {
         var user = await service.GetByPhoneAsync(phone);

@@ -6,6 +6,7 @@ using UsersService.Infrastructure.Auth;
 using UsersService.Infrastructure.Errors.Exceptions;
 using UsersService.Infrastructure.Mappers;
 using UsersService.Infrastructure.Repositories;
+using UsersService.Infrastructure.Helpers;
 using ValidationException = UsersService.Infrastructure.Errors.Exceptions.ValidationException;
 
 namespace UsersService.Services;
@@ -24,7 +25,9 @@ public class UserService(
 
     public async Task<User> CreateUserAsync(CreateUserRequest dto)
     {
-        var existingByPhone = await _userRepository.ExistsByPhoneAsync(dto.Phone);
+        var normalizedPhone = PhoneHelper.Normalize(dto.Phone);
+
+        var existingByPhone = await _userRepository.ExistsByPhoneAsync(normalizedPhone);
         if (existingByPhone)
         {
             throw new BadRequestException("Пользователь с таким номером уже существует");
@@ -48,18 +51,16 @@ public class UserService(
 
             throw new ValidationException(errors);
         }
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             MiddleName = dto.MiddleName,
-            Phone = dto.Phone,
+            Phone = normalizedPhone,
             Email = dto.Email,
             Birthday = dto.Birthday,
-            // Password operations are managed in AuthService only.
-            // New users receive a random hash placeholder until initial password is set via AuthService.
             HashPassword = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString("N")),
             Role = dto.Role,
             IsBlocked = false,
@@ -157,7 +158,9 @@ public class UserService(
 
     public async Task<UserDto?> GetByPhoneAsync(string phone)
     {
-        var user = await _userRepository.GetByPhoneAsync(phone);
+        var normalizedPhone = PhoneHelper.Normalize(phone);
+
+        var user = await _userRepository.GetByPhoneAsync(normalizedPhone);
 
         if (user == null)
             throw new NotFoundException("Пользователь не найден");
