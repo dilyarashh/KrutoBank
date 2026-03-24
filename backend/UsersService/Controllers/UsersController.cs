@@ -60,11 +60,23 @@ public class UsersController(IUserService service) : ControllerBase
     /// <summary>
     /// Получить пользователя по телефону
     /// </summary>
+    [Authorize]
     [HttpGet("by-phone")]
     public async Task<ActionResult<UserDto>> GetByPhone([FromQuery] string phone)
     {
         var user = await service.GetByPhoneAsync(phone);
 
+        return Ok(user);
+    }
+
+    [HttpGet("internal/{id}")]
+    public async Task<ActionResult<UserDto>> GetInternal(Guid id,
+    [FromHeader(Name = "X-Internal-Api-Key")] string apiKey)
+    {
+        if (apiKey != "KRUTOBANK_INTERNAL_KEY_2026")
+            return Unauthorized();
+
+        var user = await service.GetById(id);
         return Ok(user);
     }
 }
