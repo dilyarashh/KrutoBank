@@ -1,5 +1,13 @@
-import { ChangeDetectionStrategy, Component, Input, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnDestroy,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,8 +23,9 @@ import { AsyncStateComponent } from '../../../shared/components/async-state/asyn
   styleUrls: ['./loan-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoanCardComponent {
+export class LoanCardComponent implements OnDestroy {
   private readonly loansService = inject(LoansService);
+  private opsSubscription?: Subscription;
 
   @Input({ required: true }) accountId!: string;
 
@@ -34,12 +43,16 @@ export class LoanCardComponent {
     this.loadAccount();
   }
 
+  ngOnDestroy() {
+    this.opsSubscription?.unsubscribe();
+  }
+
   toggle() {
     const next = !this.expanded();
     this.expanded.set(next);
 
     if (next) {
-      this.loadOpsIfNeeded();
+      this.connectOperationsRealtime();
     }
   }
 
@@ -59,21 +72,21 @@ export class LoanCardComponent {
     });
   }
 
-  private loadOpsIfNeeded() {
-    if (this.ops() !== null || this.opsLoading()) return;
+  private connectOperationsRealtime() {
+    if (this.opsSubscription) {
+      return;
+    }
 
     this.opsLoading.set(true);
     this.opsError.set(null);
 
-    this.loansService.getOperations(this.accountId).subscribe({
-      next: (res) => {
-        const items = Array.isArray(res) ? res : [res];
-        const sorted = [...items].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
-        this.ops.set(sorted);
+    this.opsSubscription = this.loansService.watchOperations(this.accountId).subscribe({
+      next: (items) => {
+        this.ops.set(items);
         this.opsLoading.set(false);
       },
       error: () => {
-        this.opsError.set('Не удалось загрузить операции');
+        this.opsError.set('Не удалось подключить обновление операций');
         this.opsLoading.set(false);
       },
     });
