@@ -9,12 +9,16 @@ struct AccountsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            title
-            content
+        ZStack {
+            screenBackgroundColor
+                .ignoresSafeArea()
+
+            VStack(spacing: 16) {
+                title
+                content
+            }
+            .padding(.horizontal, 20)
         }
-        .background(background)
-        .padding(.horizontal, 20)
         .onAppear { viewModel.load() }
         .sheet(isPresented: $viewModel.state.isDetailsSheetPresented) {
             AccountDetailsSheet(viewModel: viewModel)
@@ -26,14 +30,46 @@ struct AccountsView: View {
 }
 
 private extension AccountsView {
+    var isDark: Bool {
+        themeManager.theme == .dark
+    }
+
+    var screenBackgroundColor: Color {
+        isDark ? Color.black : Color.AppColor.backgroundMain
+    }
+
+    var cardBackgroundColor: Color {
+        isDark ? Color(.systemGray6).opacity(0.18) : Color.AppColor.primaryWhite
+    }
+
+    var primaryTextColor: Color {
+        isDark ? Color.white : Color.AppColor.textPrimary
+    }
+
+    var secondaryTextColor: Color {
+        isDark ? Color.white.opacity(0.7) : Color.AppColor.textSecondary
+    }
+
+    var titleTextColor: Color {
+        isDark ? Color.white : Color.AppColor.primaryDark
+    }
+
+    var borderColor: Color {
+        isDark ? Color.white.opacity(0.12) : Color.AppColor.primaryPink.opacity(0.5)
+    }
+
+    var rowBackgroundColor: Color {
+        isDark ? Color.white.opacity(0.04) : Color.clear
+    }
+
     var background: some View {
-        Color.AppColor.backgroundMain.ignoresSafeArea()
+        screenBackgroundColor.ignoresSafeArea()
     }
 
     var title: some View {
         Text(AppStrings.Tabs.accounts.localization)
             .font(.system(size: 28, weight: .bold))
-            .foregroundStyle(Color.AppColor.textPrimary)
+            .foregroundStyle(primaryTextColor)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.top, 16)
     }
@@ -45,6 +81,7 @@ private extension AccountsView {
                 accountsListCard
                 errorBlock
             }
+            .padding(.bottom, 16)
         }
         .scrollIndicators(.hidden)
     }
@@ -55,21 +92,22 @@ private extension AccountsView {
         VStack(alignment: .leading, spacing: 12) {
             Text("Открыть новый счёт")
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Color.AppColor.primaryDark)
+                .foregroundStyle(titleTextColor)
 
             TextInput(
                 text: $viewModel.state.openAccountName,
                 placeholder: "Название (например: Основной)",
                 type: .text,
+                backgroundColor: isDark ? Color.white.opacity(0.04) : Color.AppColor.backgroundMain,
+                textColor: isDark ? Color.white : Color.AppColor.textPrimary,
                 keyboardType: .default,
                 textContentType: .none
             )
 
-            // Currency picker
             VStack(alignment: .leading, spacing: 6) {
                 Text("Валюта счёта")
                     .font(.system(size: 13))
-                    .foregroundStyle(Color.AppColor.textSecondary)
+                    .foregroundStyle(secondaryTextColor)
 
                 Picker("Валюта", selection: $viewModel.state.selectedCurrency) {
                     ForEach(AccountCurrency.allCases, id: \.self) { currency in
@@ -77,6 +115,7 @@ private extension AccountsView {
                     }
                 }
                 .pickerStyle(.segmented)
+                .colorScheme(isDark ? .dark : .light)
             }
 
             CommonButton(
@@ -90,8 +129,18 @@ private extension AccountsView {
             }
         }
         .padding(16)
-        .background(Color.AppColor.primaryWhite)
+        .background(cardBackgroundColor)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(borderColor, lineWidth: isDark ? 1 : 0)
+        )
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(
+            color: isDark ? .clear : Color.black.opacity(0.04),
+            radius: 10,
+            x: 0,
+            y: 4
+        )
     }
 
     // MARK: - Accounts List
@@ -101,17 +150,16 @@ private extension AccountsView {
             HStack {
                 Text("Мои счета")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.AppColor.primaryDark)
+                    .foregroundStyle(titleTextColor)
 
                 Spacer()
 
-                // Toggle hidden accounts visibility
                 Button {
                     viewModel.state.showHiddenAccounts.toggle()
                 } label: {
                     Image(systemName: viewModel.state.showHiddenAccounts ? "eye.fill" : "eye.slash")
                         .font(.system(size: 14))
-                        .foregroundStyle(Color.AppColor.textSecondary)
+                        .foregroundStyle(secondaryTextColor)
                 }
             }
 
@@ -122,7 +170,7 @@ private extension AccountsView {
             } else if viewModel.visibleAccounts.isEmpty {
                 Text(viewModel.state.accounts.isEmpty ? "У вас пока нет счетов" : "Все счета скрыты")
                     .font(.system(size: 13))
-                    .foregroundStyle(Color.AppColor.textSecondary)
+                    .foregroundStyle(secondaryTextColor)
                     .padding(.top, 4)
                     .frame(maxWidth: .infinity)
             } else {
@@ -134,8 +182,18 @@ private extension AccountsView {
             }
         }
         .padding(16)
-        .background(Color.AppColor.primaryWhite)
+        .background(cardBackgroundColor)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(borderColor, lineWidth: isDark ? 1 : 0)
+        )
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(
+            color: isDark ? .clear : Color.black.opacity(0.04),
+            radius: 10,
+            x: 0,
+            y: 4
+        )
     }
 
     func accountRow(_ account: UserAccount) -> some View {
@@ -146,30 +204,31 @@ private extension AccountsView {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(account.name.isEmpty ? "Без названия" : account.name)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(Color.AppColor.textPrimary)
+                        .foregroundStyle(primaryTextColor)
 
                     Text("Баланс: \(formatMoney(account.balance)) \(account.currencySymbol)")
                         .font(.system(size: 13))
-                        .foregroundStyle(Color.AppColor.textSecondary)
+                        .foregroundStyle(secondaryTextColor)
                 }
+
                 Spacer()
 
-                // Hidden indicator
                 if themeManager.isHidden(account.id) {
                     Image(systemName: "eye.slash")
                         .font(.system(size: 12))
-                        .foregroundStyle(Color.AppColor.textSecondary)
+                        .foregroundStyle(secondaryTextColor)
                 }
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
-                    .foregroundStyle(Color.AppColor.textSecondary)
+                    .foregroundStyle(secondaryTextColor)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(12)
+            .background(rowBackgroundColor)
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.AppColor.primaryPink.opacity(0.5), lineWidth: 1.5)
+                    .stroke(borderColor, lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }

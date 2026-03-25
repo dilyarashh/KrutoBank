@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LoanDetailsSheet: View {
     @ObservedObject private var viewModel: CreditsViewModel
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var showHistory = true
 
     init(viewModel: CreditsViewModel) {
@@ -9,43 +10,47 @@ struct LoanDetailsSheet: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
+        ZStack {
+            screenBackgroundColor
+                .ignoresSafeArea()
 
-            if let loan = viewModel.selectedLoan {
-                loanInfoCard(loan)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
+            VStack(spacing: 0) {
+                header
 
-                tabSelector
+                if let loan = viewModel.selectedLoan {
+                    loanInfoCard(loan)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 8)
 
-                if showHistory {
-                    LoanOperationsList(
-                        operations: viewModel.state.loanOperations,
-                        isLoading: viewModel.state.isOperationsLoading,
-                        errorText: viewModel.state.operationsErrorText,
-                        onRetry: {
-                            viewModel.loadLoanHistory()
-                        }
-                    )
-                    .transition(.opacity)
-                } else {
-                    repaymentPanel(loan: loan)
+                    tabSelector
+
+                    if showHistory {
+                        LoanOperationsList(
+                            operations: viewModel.state.loanOperations,
+                            isLoading: viewModel.state.isOperationsLoading,
+                            errorText: viewModel.state.operationsErrorText,
+                            onRetry: {
+                                viewModel.loadLoanHistory()
+                            }
+                        )
                         .transition(.opacity)
+                    } else {
+                        repaymentPanel(loan: loan)
+                            .transition(.opacity)
+                    }
+                } else {
+                    VStack(spacing: 16) {
+                        Spacer()
+                        Text("Нет данных по кредиту")
+                            .font(.system(size: 13))
+                            .foregroundStyle(secondaryTextColor)
+                        Spacer()
+                    }
                 }
-            } else {
-                VStack(spacing: 16) {
-                    Spacer()
-                    Text("Нет данных по кредиту")
-                        .font(.system(size: 13))
-                        .foregroundStyle(Color.AppColor.textSecondary)
-                    Spacer()
-                }
-            }
 
-            detailsErrorBlock
+                detailsErrorBlock
+            }
         }
-        .background(Color.AppColor.backgroundMain.ignoresSafeArea())
         .onAppear {
             viewModel.loadLoanHistory()
         }
@@ -54,18 +59,73 @@ struct LoanDetailsSheet: View {
 }
 
 private extension LoanDetailsSheet {
+    var isDark: Bool {
+        themeManager.theme == .dark
+    }
+
+    var screenBackgroundColor: Color {
+        isDark ? .black : Color.AppColor.backgroundMain
+    }
+
+    var cardBackgroundColor: Color {
+        isDark ? Color(.systemGray6).opacity(0.16) : Color.AppColor.primaryWhite
+    }
+
+    var secondaryCardBackgroundColor: Color {
+        isDark ? Color.white.opacity(0.05) : Color.AppColor.primaryWhite
+    }
+
+    var primaryTextColor: Color {
+        isDark ? .white : Color.AppColor.textPrimary
+    }
+
+    var secondaryTextColor: Color {
+        isDark ? Color.white.opacity(0.7) : Color.AppColor.textSecondary
+    }
+
+    var titleTextColor: Color {
+        isDark ? .white : Color.AppColor.primaryDark
+    }
+
+    var cardBorderColor: Color {
+        isDark ? Color.white.opacity(0.10) : Color.AppColor.primaryPink.opacity(0.3)
+    }
+
+    var subtleBorderColor: Color {
+        isDark ? Color.white.opacity(0.12) : Color.AppColor.primaryPink.opacity(0.2)
+    }
+
+    var successTintBackground: Color {
+        isDark ? Color.AppColor.textSuccess.opacity(0.18) : Color.AppColor.textSuccess.opacity(0.1)
+    }
+
+    var errorTintBackground: Color {
+        isDark ? Color.AppColor.textError.opacity(0.18) : Color.AppColor.textError.opacity(0.1)
+    }
+
+    var pinkTintBackground: Color {
+        isDark ? Color.AppColor.primaryPink.opacity(0.18) : Color.AppColor.primaryPink.opacity(0.1)
+    }
+
+    var shadowColor: Color {
+        isDark ? .clear : Color.black.opacity(0.04)
+    }
+
     var header: some View {
         HStack {
             Spacer()
+
             Text("Детали кредита")
                 .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(Color.AppColor.textPrimary)
+                .foregroundStyle(primaryTextColor)
+
             Spacer()
+
             Button {
                 viewModel.dismissDetails()
             } label: {
                 Image(systemName: "xmark")
-                    .foregroundStyle(Color.AppColor.textSecondary)
+                    .foregroundStyle(secondaryTextColor)
             }
             .buttonStyle(.plain)
         }
@@ -78,18 +138,18 @@ private extension LoanDetailsSheet {
             HStack {
                 Text(loan.tariffName ?? "Кредит")
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(Color.AppColor.textPrimary)
+                    .foregroundStyle(primaryTextColor)
 
                 Spacer()
 
                 Text(loan.isActive ? "Активен" : "Закрыт")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(loan.isActive ? Color.AppColor.textSuccess : Color.AppColor.textSecondary)
+                    .foregroundStyle(loan.isActive ? Color.AppColor.textSuccess : secondaryTextColor)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(
                         Capsule()
-                            .fill((loan.isActive ? Color.AppColor.textSuccess : Color.AppColor.textSecondary).opacity(0.1))
+                            .fill((loan.isActive ? successTintBackground : secondaryTextColor.opacity(isDark ? 0.18 : 0.1)))
                     )
             }
 
@@ -97,7 +157,8 @@ private extension LoanDetailsSheet {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Сумма кредита")
                         .font(.system(size: 11))
-                        .foregroundStyle(Color.AppColor.textSecondary)
+                        .foregroundStyle(secondaryTextColor)
+
                     Text(formatMoney(loan.initialAmount))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(Color.AppColor.primaryPink)
@@ -105,11 +166,13 @@ private extension LoanDetailsSheet {
 
                 Divider()
                     .frame(height: 30)
+                    .overlay(subtleBorderColor)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Остаток")
                         .font(.system(size: 11))
-                        .foregroundStyle(Color.AppColor.textSecondary)
+                        .foregroundStyle(secondaryTextColor)
+
                     Text(formatMoney(loan.remainingAmount))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(loan.remainingAmount > 0 ? Color.AppColor.textError : Color.AppColor.textSuccess)
@@ -122,11 +185,13 @@ private extension LoanDetailsSheet {
                     HStack {
                         Text("Погашено")
                             .font(.system(size: 11))
-                            .foregroundStyle(Color.AppColor.textSecondary)
+                            .foregroundStyle(secondaryTextColor)
+
                         Spacer()
+
                         Text("\(Int((loan.initialAmount - loan.remainingAmount) / loan.initialAmount * 100))%")
                             .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(Color.AppColor.textPrimary)
+                            .foregroundStyle(primaryTextColor)
                     }
                 }
             }
@@ -137,7 +202,7 @@ private extension LoanDetailsSheet {
                     icon: { Image(systemName: "percent") }
                 )
                 .font(.system(size: 12))
-                .foregroundStyle(Color.AppColor.textSecondary)
+                .foregroundStyle(secondaryTextColor)
 
                 Spacer()
 
@@ -146,18 +211,19 @@ private extension LoanDetailsSheet {
                     icon: { Image(systemName: "calendar") }
                 )
                 .font(.system(size: 12))
-                .foregroundStyle(Color.AppColor.textSecondary)
+                .foregroundStyle(secondaryTextColor)
             }
         }
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.AppColor.primaryWhite)
+                .fill(cardBackgroundColor)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.AppColor.primaryPink.opacity(0.3), lineWidth: 1)
+                .stroke(cardBorderColor, lineWidth: 1)
         )
+        .shadow(color: shadowColor, radius: 10, x: 0, y: 4)
     }
 
     var tabSelector: some View {
@@ -193,7 +259,7 @@ private extension LoanDetailsSheet {
                     .fill(isSelected ? Color.AppColor.primaryPink : Color.clear)
                     .frame(height: 2)
             }
-            .foregroundStyle(isSelected ? Color.AppColor.primaryPink : Color.AppColor.textSecondary)
+            .foregroundStyle(isSelected ? Color.AppColor.primaryPink : secondaryTextColor)
         }
         .frame(maxWidth: .infinity)
     }
@@ -205,13 +271,13 @@ private extension LoanDetailsSheet {
                     HStack {
                         Text("Доступно для погашения:")
                             .font(.system(size: 13))
-                            .foregroundStyle(Color.AppColor.textSecondary)
+                            .foregroundStyle(secondaryTextColor)
 
                         Spacer()
 
                         Text(formatMoney(loan.remainingAmount))
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundStyle(Color.AppColor.textPrimary)
+                            .foregroundStyle(primaryTextColor)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
@@ -219,7 +285,7 @@ private extension LoanDetailsSheet {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Сумма погашения")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(Color.AppColor.textPrimary)
+                            .foregroundStyle(primaryTextColor)
                             .padding(.horizontal, 20)
 
                         amountSliderPanel
@@ -243,11 +309,11 @@ private extension LoanDetailsSheet {
 
                         Text("Кредит полностью погашен")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color.AppColor.textPrimary)
+                            .foregroundStyle(primaryTextColor)
 
                         Text("Операции по погашению недоступны")
                             .font(.system(size: 13))
-                            .foregroundStyle(Color.AppColor.textSecondary)
+                            .foregroundStyle(secondaryTextColor)
                             .multilineTextAlignment(.center)
                     }
                     .frame(maxWidth: .infinity)
@@ -261,7 +327,7 @@ private extension LoanDetailsSheet {
 
                         Text("Кредит погашен")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color.AppColor.textPrimary)
+                            .foregroundStyle(primaryTextColor)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
@@ -299,25 +365,25 @@ private extension LoanDetailsSheet {
             HStack {
                 Text("100 ₽")
                     .font(.system(size: 11))
-                    .foregroundStyle(Color.AppColor.textSecondary)
+                    .foregroundStyle(secondaryTextColor)
 
                 Spacer()
 
                 if let loan = viewModel.selectedLoan {
                     Text(formatMoney(loan.remainingAmount))
                         .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(Color.AppColor.textPrimary)
+                        .foregroundStyle(primaryTextColor)
                 }
             }
         }
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.AppColor.primaryWhite)
+                .fill(cardBackgroundColor)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.AppColor.primaryPink.opacity(0.2), lineWidth: 1)
+                .stroke(subtleBorderColor, lineWidth: 1)
         )
         .padding(.horizontal, 20)
     }
@@ -335,7 +401,7 @@ private extension LoanDetailsSheet {
                 .padding(.vertical, 4)
                 .background(
                     Capsule()
-                        .fill(Color.AppColor.primaryPink.opacity(0.1))
+                        .fill(pinkTintBackground)
                 )
         }
         .buttonStyle(.plain)
@@ -352,23 +418,10 @@ private extension LoanDetailsSheet {
                 .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.AppColor.textError.opacity(0.1))
+                        .fill(errorTintBackground)
                 )
                 .padding(.horizontal, 20)
                 .padding(.bottom, 8)
-        }
-    }
-
-    // MARK: - Helpers
-
-    func progressColor(loan: CreditResponse) -> Color {
-        let progress = (loan.initialAmount - loan.remainingAmount) / loan.initialAmount
-        if progress < 0.3 {
-            return Color.AppColor.textError
-        } else if progress < 0.7 {
-            return Color.AppColor.primaryPink
-        } else {
-            return Color.AppColor.textSuccess
         }
     }
 

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CreditsView: View {
     @ObservedObject private var viewModel: CreditsViewModel
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var selectedTariffId: String?
 
     init(viewModel: CreditsViewModel) {
@@ -9,13 +10,16 @@ struct CreditsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            title
-            content
-//            Spacer(minLength: 0)
+        ZStack {
+            screenBackgroundColor
+                .ignoresSafeArea()
+
+            VStack(spacing: 16) {
+                title
+                content
+            }
+            .padding(.horizontal, 20)
         }
-        .background(background)
-        .padding(.horizontal, 20)
         .onAppear {
             viewModel.load()
             viewModel.getTariffs()
@@ -27,14 +31,54 @@ struct CreditsView: View {
 }
 
 private extension CreditsView {
-    var background: some View {
-        Color.AppColor.backgroundMain.ignoresSafeArea()
+    var isDark: Bool {
+        themeManager.theme == .dark
+    }
+
+    var screenBackgroundColor: Color {
+        isDark ? .black : Color.AppColor.backgroundMain
+    }
+
+    var cardBackgroundColor: Color {
+        isDark ? Color(.systemGray6).opacity(0.16) : Color.AppColor.primaryWhite
+    }
+
+    var secondaryCardBackgroundColor: Color {
+        isDark ? Color.white.opacity(0.05) : Color.AppColor.backgroundMain
+    }
+
+    var primaryTextColor: Color {
+        isDark ? .white : Color.AppColor.textPrimary
+    }
+
+    var secondaryTextColor: Color {
+        isDark ? Color.white.opacity(0.7) : Color.AppColor.textSecondary
+    }
+
+    var titleTextColor: Color {
+        isDark ? .white : Color.AppColor.primaryDark
+    }
+
+    var cardBorderColor: Color {
+        isDark ? Color.white.opacity(0.10) : Color.AppColor.primaryPink.opacity(0.25)
+    }
+
+    var subtleBorderColor: Color {
+        isDark ? Color.white.opacity(0.14) : Color.AppColor.textSecondary.opacity(0.3)
+    }
+
+    var rowBackgroundColor: Color {
+        isDark ? Color.white.opacity(0.04) : Color.clear
+    }
+
+    var shadowColor: Color {
+        isDark ? .clear : Color.black.opacity(0.04)
     }
 
     var title: some View {
         Text(AppStrings.Tabs.credits.localization)
             .font(.system(size: 28, weight: .bold))
-            .foregroundStyle(Color.AppColor.textPrimary)
+            .foregroundStyle(primaryTextColor)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.top, 16)
     }
@@ -47,6 +91,7 @@ private extension CreditsView {
                 loansListCard
                 errorBlock
             }
+            .padding(.bottom, 16)
         }
         .scrollIndicators(.hidden)
     }
@@ -57,46 +102,61 @@ private extension CreditsView {
         VStack(alignment: .leading, spacing: 8) {
             Text("Кредитный рейтинг")
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Color.AppColor.primaryDark)
+                .foregroundStyle(titleTextColor)
 
             if viewModel.state.isRatingLoading {
                 HStack {
-                    ProgressView().tint(Color.AppColor.primaryPink).scaleEffect(0.8)
-                    Text("Загружаем рейтинг...").font(.system(size: 13)).foregroundStyle(Color.AppColor.textSecondary)
+                    ProgressView()
+                        .tint(Color.AppColor.primaryPink)
+                        .scaleEffect(0.8)
+
+                    Text("Загружаем рейтинг...")
+                        .font(.system(size: 13))
+                        .foregroundStyle(secondaryTextColor)
                 }
             } else if let rating = viewModel.state.creditRating {
                 HStack(alignment: .center, spacing: 16) {
                     ZStack {
                         Circle()
-                            .stroke(Color.AppColor.backgroundAlt, lineWidth: 6)
+                            .stroke(isDark ? Color.white.opacity(0.12) : Color.AppColor.backgroundAlt, lineWidth: 6)
                             .frame(width: 60, height: 60)
+
                         Circle()
                             .trim(from: 0, to: CGFloat(rating.score) / 100)
                             .stroke(ratingColor(rating.rating), style: StrokeStyle(lineWidth: 6, lineCap: .round))
                             .frame(width: 60, height: 60)
                             .rotationEffect(.degrees(-90))
+
                         Text("\(rating.score)")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(Color.AppColor.textPrimary)
+                            .foregroundStyle(primaryTextColor)
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(rating.rating.label)
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(ratingColor(rating.rating))
+
                         Text(rating.description)
                             .font(.system(size: 12))
-                            .foregroundStyle(Color.AppColor.textSecondary)
+                            .foregroundStyle(secondaryTextColor)
                     }
                 }
             } else if let error = viewModel.state.ratingErrorText {
-                Text(error).font(.system(size: 13)).foregroundStyle(Color.AppColor.textSecondary)
+                Text(error)
+                    .font(.system(size: 13))
+                    .foregroundStyle(secondaryTextColor)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(Color.AppColor.primaryWhite)
+        .background(cardBackgroundColor)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(cardBorderColor, lineWidth: 1)
+        )
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: shadowColor, radius: 10, x: 0, y: 4)
     }
 
     private func ratingColor(_ level: CreditRating.RatingLevel) -> Color {
@@ -114,9 +174,8 @@ private extension CreditsView {
         VStack(alignment: .leading, spacing: 16) {
             Text("Взять кредит")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color.AppColor.primaryDark)
+                .foregroundStyle(titleTextColor)
 
-            // Picker для выбора тарифа
             tariffPicker
 
             amountStepper(
@@ -138,24 +197,30 @@ private extension CreditsView {
             }
         }
         .padding(16)
-        .background(Color.AppColor.primaryWhite)
+        .background(cardBackgroundColor)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(cardBorderColor, lineWidth: 1)
+        )
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: shadowColor, radius: 10, x: 0, y: 4)
     }
 
     var tariffPicker: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Выберите тариф")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(Color.AppColor.textSecondary)
+                .foregroundStyle(secondaryTextColor)
 
             if viewModel.state.tariffs.isEmpty {
                 HStack {
                     ProgressView()
                         .tint(Color.AppColor.primaryPink)
                         .scaleEffect(0.8)
+
                     Text("Загрузка тарифов...")
                         .font(.system(size: 13))
-                        .foregroundStyle(Color.AppColor.textSecondary)
+                        .foregroundStyle(secondaryTextColor)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 8)
@@ -170,9 +235,10 @@ private extension CreditsView {
                                 VStack(alignment: .leading) {
                                     Text(tariff.name)
                                         .font(.system(size: 14, weight: .medium))
+
                                     Text("\(Int(tariff.interestRate * 100))% годовых")
                                         .font(.system(size: 12))
-                                        .foregroundStyle(Color.AppColor.textSecondary)
+                                        .foregroundStyle(secondaryTextColor)
                                 }
 
                                 if selectedTariffId == tariff.id {
@@ -190,31 +256,32 @@ private extension CreditsView {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(selected.name)
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundStyle(Color.AppColor.textPrimary)
+                                    .foregroundStyle(primaryTextColor)
+
                                 Text("\(Int(selected.interestRate * 100))% годовых")
                                     .font(.system(size: 12))
-                                    .foregroundStyle(Color.AppColor.textSecondary)
+                                    .foregroundStyle(secondaryTextColor)
                             }
                         } else {
                             Text("Выберите тариф")
                                 .font(.system(size: 16))
-                                .foregroundStyle(Color.AppColor.textSecondary)
+                                .foregroundStyle(secondaryTextColor)
                         }
 
                         Spacer()
 
                         Image(systemName: "chevron.down")
                             .font(.system(size: 14))
-                            .foregroundStyle(Color.AppColor.textSecondary)
+                            .foregroundStyle(secondaryTextColor)
                     }
                     .padding(12)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.AppColor.backgroundMain)
+                            .fill(secondaryCardBackgroundColor)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.AppColor.textSecondary.opacity(0.3), lineWidth: 1)
+                            .stroke(subtleBorderColor, lineWidth: 1)
                     )
                 }
             }
@@ -227,7 +294,7 @@ private extension CreditsView {
         VStack(alignment: .leading, spacing: 12) {
             Text("Мои кредиты")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color.AppColor.primaryDark)
+                .foregroundStyle(titleTextColor)
 
             if viewModel.state.isLoading {
                 ProgressView()
@@ -236,7 +303,7 @@ private extension CreditsView {
             } else if viewModel.state.loans.isEmpty {
                 Text("У вас пока нет кредитов")
                     .font(.system(size: 14))
-                    .foregroundStyle(Color.AppColor.textSecondary)
+                    .foregroundStyle(secondaryTextColor)
                     .padding(.top, 4)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.vertical, 20)
@@ -249,8 +316,13 @@ private extension CreditsView {
             }
         }
         .padding(16)
-        .background(Color.AppColor.primaryWhite)
+        .background(cardBackgroundColor)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(cardBorderColor, lineWidth: 1)
+        )
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: shadowColor, radius: 10, x: 0, y: 4)
     }
 
     func loanRow(_ loan: Credit) -> some View {
@@ -261,18 +333,18 @@ private extension CreditsView {
                 HStack {
                     Text(loan.tariffName ?? "Кредит")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(Color.AppColor.textPrimary)
+                        .foregroundStyle(primaryTextColor)
 
                     Spacer()
 
                     Text(loan.isActive ? "Активен" : "Закрыт")
                         .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(loan.isActive ? Color.AppColor.textSuccess : Color.AppColor.textSecondary)
+                        .foregroundStyle(loan.isActive ? Color.AppColor.textSuccess : secondaryTextColor)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(
                             Capsule()
-                                .fill((loan.isActive ? Color.AppColor.textSuccess : Color.AppColor.textSecondary).opacity(0.1))
+                                .fill((loan.isActive ? Color.AppColor.textSuccess : secondaryTextColor).opacity(isDark ? 0.18 : 0.1))
                         )
                 }
 
@@ -280,10 +352,11 @@ private extension CreditsView {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Сумма")
                             .font(.system(size: 11))
-                            .foregroundStyle(Color.AppColor.textSecondary)
+                            .foregroundStyle(secondaryTextColor)
+
                         Text(formatMoney(loan.initialAmount))
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(Color.AppColor.textPrimary)
+                            .foregroundStyle(primaryTextColor)
                     }
 
                     Spacer()
@@ -291,7 +364,8 @@ private extension CreditsView {
                     VStack(alignment: .trailing, spacing: 4) {
                         Text("Остаток")
                             .font(.system(size: 11))
-                            .foregroundStyle(Color.AppColor.textSecondary)
+                            .foregroundStyle(secondaryTextColor)
+
                         Text(formatMoney(loan.remainingAmount))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundStyle(loan.remainingAmount > 0 ? Color.AppColor.textError : Color.AppColor.textSuccess)
@@ -299,9 +373,10 @@ private extension CreditsView {
                 }
             }
             .padding(12)
+            .background(rowBackgroundColor)
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.AppColor.primaryPink.opacity(0.5), lineWidth: 1.5)
+                    .stroke(Color.AppColor.primaryPink.opacity(isDark ? 0.25 : 0.5), lineWidth: 1.2)
             )
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
@@ -314,7 +389,6 @@ private extension CreditsView {
         LoanDetailsSheet(viewModel: viewModel)
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
-            .background(Color.AppColor.backgroundMain.ignoresSafeArea())
     }
 
     // MARK: - Error
@@ -336,7 +410,7 @@ private extension CreditsView {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(Color.AppColor.textSecondary)
+                .foregroundStyle(secondaryTextColor)
 
             HStack {
                 Text("\(Int(value.wrappedValue)) ₽")
@@ -351,7 +425,11 @@ private extension CreditsView {
             .padding(8)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.AppColor.backgroundMain)
+                    .fill(secondaryCardBackgroundColor)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(subtleBorderColor, lineWidth: 1)
             )
         }
     }

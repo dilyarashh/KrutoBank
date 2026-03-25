@@ -11,6 +11,8 @@ struct TextInput: View {
     private let placeholder: String
     private let title: String?
     private let type: InputType
+    private let backgroundColor: Color
+    private let textColor: Color
     private let validator: TextInputValidator?
     private let formatter: TextInputFormatter?
     private let keyboardType: UIKeyboardType
@@ -24,6 +26,8 @@ struct TextInput: View {
         placeholder: String,
         title: String? = nil,
         type: InputType = .text,
+        backgroundColor: Color = .white,
+        textColor: Color = .primary,
         validator: TextInputValidator? = nil,
         formatter: TextInputFormatter? = nil,
         keyboardType: UIKeyboardType = .default,
@@ -33,6 +37,8 @@ struct TextInput: View {
         self.placeholder = placeholder
         self.title = title
         self.type = type
+        self.backgroundColor = backgroundColor
+        self.textColor = textColor
         self.validator = validator
         self.formatter = formatter
         self.keyboardType = keyboardType
@@ -44,19 +50,23 @@ struct TextInput: View {
         return isFocused ? .AppColor.primaryPink : .AppColor.primaryLight.opacity(0.6)
     }
 
+    private var titleColor: Color {
+        textColor.opacity(0.7)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             if let title {
                 Text(title)
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundStyle(Color.AppColor.textSecondary)
+                    .foregroundStyle(titleColor)
                     .padding(.horizontal, 8)
             }
 
             inputField
                 .padding(.horizontal, 16)
                 .frame(height: 52)
-                .background(Color.AppColor.primaryWhite)
+                .background(backgroundColor)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .overlay {
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -92,6 +102,7 @@ struct TextInput: View {
         case .text:
             TextField(placeholder.localization, text: $text)
                 .focused($isFocused)
+                .foregroundStyle(textColor)
                 .keyboardType(keyboardType)
                 .textContentType(textContentType)
                 .textInputAutocapitalization(.never)
@@ -100,6 +111,7 @@ struct TextInput: View {
         case .password:
             SecureField(placeholder.localization, text: $text)
                 .focused($isFocused)
+                .foregroundStyle(textColor)
                 .keyboardType(keyboardType)
                 .textContentType(textContentType)
                 .textInputAutocapitalization(.never)

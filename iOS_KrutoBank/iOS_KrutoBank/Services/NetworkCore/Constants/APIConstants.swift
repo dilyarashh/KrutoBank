@@ -9,8 +9,14 @@ enum APIConstants {
     static let appSettingsServiceBaseURL = URL(string: "http://localhost:5165")!
 
     // MARK: - WebSocket
-    static func accountOperationsWebSocket(accountId: String) -> URL {
-        URL(string: "ws://localhost:5251/ws/accounts/\(accountId)/operations")!
+    static func accountOperationsHubURL(accessToken: String? = nil) -> URL {
+        var components = URLComponents(string: "http://localhost:5251/ws/account-operations")!
+        if let accessToken, !accessToken.isEmpty {
+            components.queryItems = [
+                URLQueryItem(name: "access_token", value: accessToken)
+            ]
+        }
+        return components.url!
     }
 
     // MARK: - Users

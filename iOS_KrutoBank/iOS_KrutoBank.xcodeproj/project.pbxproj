@@ -23,6 +23,7 @@
 		880476E72F727CB70008FF2A /* ChangePasswordEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476E62F727CB70008FF2A /* ChangePasswordEndPoint.swift */; };
 		880476E92F727CBE0008FF2A /* LogoutEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476E82F727CBE0008FF2A /* LogoutEndPoint.swift */; };
 		880476EB2F727CC50008FF2A /* TokenEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880476EA2F727CC50008FF2A /* TokenEndPoint.swift */; };
+		880476F42F736EEA0008FF2A /* SignalRClient in Frameworks */ = {isa = PBXBuildFile; productRef = 880476F32F736EEA0008FF2A /* SignalRClient */; };
 		882119972F60A8110073396D /* Notification+userDidLogout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882119962F60A8110073396D /* Notification+userDidLogout.swift */; };
 		8838CC7C2F542DFC00B46A23 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8838CC762F542DFC00B46A23 /* LaunchScreen.storyboard */; };
 		8838CC7D2F542DFC00B46A23 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8838CC722F542DFC00B46A23 /* AppDelegate.swift */; };
@@ -366,6 +367,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				880476F42F736EEA0008FF2A /* SignalRClient in Frameworks */,
 				8838CD7E2F542E8900B46A23 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1304,6 +1306,7 @@
 			name = iOS_KrutoBank;
 			packageProductDependencies = (
 				8838CD7D2F542E8900B46A23 /* SnapKit */,
+				880476F32F736EEA0008FF2A /* SignalRClient */,
 			);
 			productName = iOS_KrutoBank;
 			productReference = 8838CC3E2F54019000B46A23 /* iOS_KrutoBank.app */;
@@ -1379,6 +1382,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				8838CD7C2F542E8900B46A23 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				880476F22F736EEA0008FF2A /* XCRemoteSwiftPackageReference "signalr-client-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8838CC3F2F54019000B46A23 /* Products */;
@@ -1932,6 +1936,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		880476F22F736EEA0008FF2A /* XCRemoteSwiftPackageReference "signalr-client-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dotnet/signalr-client-swift";
+			requirement = {
+				branch = dev;
+				kind = branch;
+			};
+		};
 		8838CD7C2F542E8900B46A23 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
@@ -1943,6 +1955,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		880476F32F736EEA0008FF2A /* SignalRClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 880476F22F736EEA0008FF2A /* XCRemoteSwiftPackageReference "signalr-client-swift" */;
+			productName = SignalRClient;
+		};
 		8838CD7D2F542E8900B46A23 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8838CD7C2F542E8900B46A23 /* XCRemoteSwiftPackageReference "SnapKit" */;

@@ -1,6 +1,8 @@
 import Foundation
+import SignalRClient
 
 // MARK: - Protocol
+
 protocol AccountOperationsWebSocketProtocol: AnyObject {
     var onInvalidate: (() -> Void)? { get set }
     var onError: ((Error) -> Void)? { get set }
@@ -10,107 +12,146 @@ protocol AccountOperationsWebSocketProtocol: AnyObject {
     func disconnect()
 }
 
-// MARK: - WebSocket message from server
-private struct WSMessage: Decodable {
-    let type: String
-}
-
 // MARK: - Implementation
-final class AccountOperationsWebSocket: NSObject, AccountOperationsWebSocketProtocol {
+
+final class AccountOperationsWebSocket: AccountOperationsWebSocketProtocol {
+
+    // MARK: - Public
+
     var onInvalidate: (() -> Void)?
     var onError: ((Error) -> Void)?
 
     private(set) var isConnected: Bool = false
 
-    private var webSocketTask: URLSessionWebSocketTask?
-    private var urlSession: URLSession?
-    private var currentAccountId: String?
+    // MARK: - Private properties
+
     private let tokenStorage: TokenStorageProtocol
+    private var connection: HubConnection?
+    private var currentAccountId: String?
+
+    // MARK: - Init
 
     init(tokenStorage: TokenStorageProtocol) {
         self.tokenStorage = tokenStorage
-        super.init()
     }
+
+    // MARK: - Public methods
 
     func connect(accountId: String) {
         disconnect()
         currentAccountId = accountId
 
-        var wsURL = APIConstants.accountOperationsWebSocket(accountId: accountId)
-
-        if let token = tokenStorage.accessToken {
-            var components = URLComponents(url: wsURL, resolvingAgainstBaseURL: false)!
-            components.queryItems = [URLQueryItem(name: "access_token", value: token)]
-            wsURL = components.url ?? wsURL
+        guard let token = tokenStorage.accessToken, !token.isEmpty else {
+            onError?(SignalRError.missingAccessToken)
+            return
         }
 
-        let session = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
-        self.urlSession = session
-        let task = session.webSocketTask(with: wsURL)
-        self.webSocketTask = task
-        task.resume()
-        isConnected = true
-        receiveNext()
+        let hubURL = APIConstants.accountOperationsHubURL(accessToken: token)
+
+        let connection = HubConnectionBuilder()
+            .withUrl(url: hubURL.absoluteString)
+            .withAutomaticReconnect()
+            .build()
+
+        registerHandlers(on: connection)
+
+        // MARK: - Connection lifecycle
+
+        connection.onReconnecting { [weak self] (error: Error?) in
+            self?.isConnected = false
+            if let error {
+                self?.onError?(error)
+            }
+        }
+
+        connection.onReconnected { [weak self] in
+            guard let self else { return }
+            self.isConnected = true
+
+            if let accountId = self.currentAccountId {
+                Task {
+                    do {
+                        try await connection.invoke(method: "SubscribeAccount", arguments: accountId)
+                    } catch {
+                        self.onError?(error)
+                    }
+                }
+            }
+        }
+
+        connection.onClosed { [weak self] (error: Error?) in
+            self?.isConnected = false
+            if let error {
+                self?.onError?(error)
+            }
+        }
+
+        self.connection = connection
+
+        // MARK: - Start connection
+
+        Task {
+            do {
+                try await connection.start()
+                isConnected = true
+                try await connection.invoke(method: "SubscribeAccount", arguments: accountId)
+            } catch {
+                isConnected = false
+                onError?(error)
+            }
+        }
     }
 
     func disconnect() {
-        webSocketTask?.cancel(with: .goingAway, reason: nil)
-        webSocketTask = nil
-        urlSession = nil
-        isConnected = false
-        currentAccountId = nil
-    }
+        let accountId = currentAccountId
+        let connection = connection
 
-    // MARK: - Receive loop
-    private func receiveNext() {
-        webSocketTask?.receive { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .failure(let error):
-                self.isConnected = false
-                self.onError?(error)
-            case .success(let message):
-                self.handleMessage(message)
-                self.receiveNext()
+        currentAccountId = nil
+        isConnected = false
+        self.connection = nil
+
+        guard let connection else { return }
+
+        Task {
+            do {
+                if let accountId {
+                    try? await connection.invoke(method: "UnsubscribeAccount", arguments: accountId)
+                }
+                try await connection.stop()
+            } catch {
+                onError?(error)
             }
         }
     }
 
-    private func handleMessage(_ message: URLSessionWebSocketTask.Message) {
-        switch message {
-        case .string(let text):
-            guard let data = text.data(using: .utf8),
-                  let wsMessage = try? JSONDecoder().decode(WSMessage.self, from: data) else {
-                // Unknown message format — treat as invalidation signal
-                onInvalidate?()
-                return
+    // MARK: - Handlers
+
+    private func registerHandlers(on connection: HubConnection) {
+        Task {
+            await connection.on("OperationsSnapshot") { [weak self] (_: String, _: [OperationDTO]) in
+                self?.onInvalidate?()
             }
-            if wsMessage.type == "invalidate" {
-                onInvalidate?()
-            }
-        case .data(let data):
-            if let wsMessage = try? JSONDecoder().decode(WSMessage.self, from: data),
-               wsMessage.type == "invalidate" {
-                onInvalidate?()
-            }
-        @unknown default:
-            break
         }
     }
 }
 
-// MARK: - URLSessionWebSocketDelegate
-extension AccountOperationsWebSocket: URLSessionWebSocketDelegate {
-    func urlSession(_ session: URLSession,
-                    webSocketTask: URLSessionWebSocketTask,
-                    didOpenWithProtocol protocol: String?) {
-        isConnected = true
-    }
+// MARK: - DTO
 
-    func urlSession(_ session: URLSession,
-                    webSocketTask: URLSessionWebSocketTask,
-                    didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
-                    reason: Data?) {
-        isConnected = false
+private struct OperationDTO: Decodable {
+    let createdAt: String
+    let type: String
+    let amount: Double
+}
+
+// MARK: - Errors
+
+enum SignalRError: LocalizedError {
+    case missingAccessToken
+
+    var errorDescription: String? {
+        switch self {
+        case .missingAccessToken:
+            return "Нет access token для SignalR-подключения"
+        }
     }
 }
