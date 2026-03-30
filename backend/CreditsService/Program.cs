@@ -137,6 +137,7 @@ app.UseSwaggerUI();
 
 app.UseCors("FrontCors");
 
+app.UseMiddleware<UnstableServiceMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
