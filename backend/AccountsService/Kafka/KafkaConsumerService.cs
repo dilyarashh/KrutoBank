@@ -19,6 +19,8 @@ namespace AccountsService.Kafka
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            await Task.Yield();
+
             var config = new ConsumerConfig
             {
                 BootstrapServers = "localhost:9092",
@@ -47,6 +49,7 @@ namespace AccountsService.Kafka
                     using var scope = _scopeFactory.CreateScope();
                     var repo = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
                     var notifier = scope.ServiceProvider.GetRequiredService<IOperationRealtimeNotifier>();
+                    var pushNotifier = scope.ServiceProvider.GetRequiredService<IOperationPushNotifier>();
 
                     var account = await repo.GetByIdAsync(message.AccountId);
 
@@ -83,6 +86,13 @@ namespace AccountsService.Kafka
                     await repo.UpdateAsync(account);
                     await repo.SaveChangesAsync();
                     await notifier.NotifyOperationChangedAsync(account.Id, stoppingToken);
+                    await pushNotifier.NotifyOperationCreatedAsync(
+                        account.Id,
+                        message.OperationId,
+                        message.Amount,
+                        message.Type,
+                        message.Currency,
+                        stoppingToken);
                 }
                 catch (ConsumeException ex)
                 {

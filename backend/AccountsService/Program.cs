@@ -48,7 +48,10 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IPushSubscriptionService, PushSubscriptionService>();
 builder.Services.AddSingleton<IOperationRealtimeNotifier, SignalROperationRealtimeNotifier>();
+builder.Services.AddSingleton<IPushNotificationSender, FirebasePushNotificationSender>();
+builder.Services.AddScoped<IOperationPushNotifier, OperationPushNotifier>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountValidator>();
 builder.Services.AddSignalR();
 
@@ -98,9 +101,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {

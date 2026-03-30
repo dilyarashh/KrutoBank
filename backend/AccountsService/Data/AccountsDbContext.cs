@@ -11,6 +11,7 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<UserAccount> UserAccounts => Set<UserAccount>();
     public DbSet<AccountOperation> AccountOperations => Set<AccountOperation>();
+    public DbSet<PushSubscription> PushSubscriptions => Set<PushSubscription>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,6 +30,10 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
             .HasOne(x => x.Account)
             .WithMany(x => x.Operations)
             .HasForeignKey(x => x.AccountId);
+
+        modelBuilder.Entity<PushSubscription>()
+            .HasIndex(x => x.Token)
+            .IsUnique();
 
         // GUID пользователей
         var employee1 = Guid.Parse("11111111-1111-1111-1111-111111111111");

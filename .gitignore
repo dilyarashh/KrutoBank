@@ -36,3 +36,6 @@ bld/
 # KrutoBankSolution
 **/KrutoBankSolution/obj/
 **/KrutoBankSolution/bin/
+
+# Local secrets
+backend/AccountsService/Secrets/

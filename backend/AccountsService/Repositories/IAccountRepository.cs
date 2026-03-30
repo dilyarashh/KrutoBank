@@ -1,5 +1,6 @@
 using AccountsService.DTO;
 using AccountsService.Entities;
+using AccountsService.Entities.Enums;
 
 namespace AccountsService.Repositories;
 
@@ -22,4 +23,8 @@ public interface IAccountRepository
     Task<IEnumerable<Account>> GetUserAccountsByUserIdAsync(Guid userId);
     Task<bool> OperationExists(Guid operationId);
     Task<Account?> GetPrimaryAccountByUserIdAsync(Guid userId);
+    Task UpsertPushSubscriptionAsync(Guid userId, PushPlatform platform, PushAudience audience, string token);
+    Task RemovePushSubscriptionAsync(Guid userId, string token);
+    Task<IReadOnlyCollection<string>> GetPushTokensForAccountOwnersAsync(Guid accountId, PushAudience audience);
+    Task<IReadOnlyCollection<string>> GetPushTokensByAudienceAsync(PushAudience audience);
 }

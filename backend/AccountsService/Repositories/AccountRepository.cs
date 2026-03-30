@@ -1,6 +1,7 @@
 using AccountsService.Data;
 using AccountsService.DTO;
 using AccountsService.Entities;
+using AccountsService.Entities.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountsService.Repositories;
@@ -164,5 +165,66 @@ public class AccountRepository(AccountsDbContext db) : IAccountRepository
             .Where(a => accountIds.Contains(a.Id) && !a.IsClosed)
             .OrderBy(a => a.OpenedAt)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task UpsertPushSubscriptionAsync(Guid userId, PushPlatform platform, PushAudience audience, string token)
+    {
+        var existing = await db.PushSubscriptions
+            .FirstOrDefaultAsync(x => x.Token == token);
+
+        if (existing is null)
+        {
+            db.PushSubscriptions.Add(new PushSubscription
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Platform = platform,
+                Audience = audience,
+                Token = token,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            });
+
+            return;
+        }
+
+        existing.UserId = userId;
+        existing.Platform = platform;
+        existing.Audience = audience;
+        existing.UpdatedAt = DateTime.UtcNow;
+    }
+
+    public async Task RemovePushSubscriptionAsync(Guid userId, string token)
+    {
+        var existing = await db.PushSubscriptions
+            .FirstOrDefaultAsync(x => x.UserId == userId && x.Token == token);
+
+        if (existing is not null)
+        {
+            db.PushSubscriptions.Remove(existing);
+        }
+    }
+
+    public async Task<IReadOnlyCollection<string>> GetPushTokensForAccountOwnersAsync(Guid accountId, PushAudience audience)
+    {
+        var ownerIds = await db.UserAccounts
+            .Where(x => x.AccountId == accountId)
+            .Select(x => x.UserId)
+            .ToListAsync();
+
+        return await db.PushSubscriptions
+            .Where(x => ownerIds.Contains(x.UserId) && x.Audience == audience)
+            .Select(x => x.Token)
+            .Distinct()
+            .ToListAsync();
+    }
+
+    public async Task<IReadOnlyCollection<string>> GetPushTokensByAudienceAsync(PushAudience audience)
+    {
+        return await db.PushSubscriptions
+            .Where(x => x.Audience == audience)
+            .Select(x => x.Token)
+            .Distinct()
+            .ToListAsync();
     }
 }
