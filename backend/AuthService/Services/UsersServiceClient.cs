@@ -11,7 +11,7 @@ public class UsersServiceClient(HttpClient httpClient, IConfiguration configurat
 
     public async Task<InternalUserAuthDto?> GetByPhoneAsync(string phone, CancellationToken ct = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/internal/users/by-phone?phone={Uri.EscapeDataString(phone)}");
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/users/internal/by-phone?phone={Uri.EscapeDataString(phone)}");
         AddInternalHeader(request);
 
         using var response = await httpClient.SendAsync(request, ct);
@@ -26,7 +26,7 @@ public class UsersServiceClient(HttpClient httpClient, IConfiguration configurat
 
     public async Task<InternalUserAuthDto?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/internal/users/{id}");
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/users/internal/{id}");
         AddInternalHeader(request);
 
         using var response = await httpClient.SendAsync(request, ct);

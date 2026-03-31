@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UsersService.Application.DTOs.Internal;
 using UsersService.DTOs;
+using UsersService.DTOs.Internal;
 using UsersService.Services;
 
 namespace UsersService.Controllers;
@@ -62,21 +64,54 @@ public class UsersController(IUserService service) : ControllerBase
     /// </summary>
     [Authorize]
     [HttpGet("phone/{phone}")]
-    public async Task<ActionResult<UserDto>> GetByPhone([FromQuery] string phone)
+    public async Task<ActionResult<UserDto>> GetByPhone([FromRoute] string phone)
     {
         var user = await service.GetByPhoneAsync(phone);
 
         return Ok(user);
     }
 
+    [HttpGet("internal/by-phone")]
+    public async Task<ActionResult<InternalUserAuthDto>> GetByPhoneInternal([FromQuery] string phone, [FromHeader(Name = "X-Internal-Api-Key")] string apiKey)
+    {
+        if (apiKey != "KRUTOBANK_INTERNAL_KEY_2026")
+            return Unauthorized();
+
+        var user = await service.GetInternalByPhoneAsync(phone);
+        return Ok(user);
+    }
+
     [HttpGet("internal/{id}")]
-    public async Task<ActionResult<UserDto>> GetInternal(Guid id,
+    public async Task<ActionResult<InternalUserAuthDto>> GetInternal(Guid id, [FromHeader(Name = "X-Internal-Api-Key")] string apiKey)
+    {
+        if (apiKey != "KRUTOBANK_INTERNAL_KEY_2026")
+            return Unauthorized();
+
+        var user = await service.GetInternalByIdAsync(id);
+        return Ok(user);
+    }
+
+    [HttpGet("internal/lookup/by-phone")]
+    public async Task<ActionResult<InternalUserLookupDto>> GetInternalLookupByPhone(
+    [FromQuery] string phone,
     [FromHeader(Name = "X-Internal-Api-Key")] string apiKey)
     {
         if (apiKey != "KRUTOBANK_INTERNAL_KEY_2026")
             return Unauthorized();
 
-        var user = await service.GetById(id);
+        var user = await service.GetInternalLookupByPhoneAsync(phone);
+        return Ok(user);
+    }
+
+    [HttpGet("internal/lookup/{id}")]
+    public async Task<ActionResult<InternalUserLookupDto>> GetInternalLookupById(
+        Guid id,
+        [FromHeader(Name = "X-Internal-Api-Key")] string apiKey)
+    {
+        if (apiKey != "KRUTOBANK_INTERNAL_KEY_2026")
+            return Unauthorized();
+
+        var user = await service.GetInternalLookupByIdAsync(id);
         return Ok(user);
     }
 }

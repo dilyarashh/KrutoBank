@@ -90,22 +90,18 @@ namespace CreditsService.Services
 
         public async Task<LoanInfoDto> TakeLoan(CreateLoanDto dto)
         {
-            var userExists = await _userClient.UserExists(dto.UserId);
-
-            if (!userExists)
-            {
-                throw new NotFoundException("Пользователь не существует");
-            }
-
             var currentUserId = _currentUser.GetUserId();
-            if (currentUserId != dto.UserId)
-            {
-                throw new ForbiddenException("Вы можете взять кредит только на свое имя");
-            }
 
             if (_currentUser.GetRole() != "Client")
             {
                 throw new ForbiddenException("Только клиенты могут брать кредиты");
+            }
+
+            var userExists = await _userClient.UserExists(currentUserId);
+
+            if (!userExists)
+            {
+                throw new NotFoundException("Пользователь не существует");
             }
 
             var isMyAccount = await _accountClient.IsMyAccount(dto.AccountId);
@@ -140,7 +136,7 @@ namespace CreditsService.Services
 
             var loan = new Loan
             {
-                UserId = dto.UserId,
+                UserId = currentUserId,
                 TariffId = tariff.Id,
                 InitialAmount = dto.Amount,
                 RemainingAmount = dto.Amount,
@@ -161,10 +157,11 @@ namespace CreditsService.Services
                 throw new InvalidOperationException("Не удалось оформить кредит. Попробуйте позже.");
             }
 
-            _logger.LogInformation("Пользователь {UserId} взял кредит ID {LoanId} на сумму {Amount:C} по тарифу {TariffName}",
-                dto.UserId, loan.Id, dto.Amount, tariff.Name);
+            _logger.LogInformation(
+                "Пользователь {UserId} взял кредит ID {LoanId} на сумму {Amount:C} по тарифу {TariffName}",
+                currentUserId, loan.Id, dto.Amount, tariff.Name);
 
-            var loanInfoDto = new LoanInfoDto
+            return new LoanInfoDto
             {
                 LoanId = loan.Id,
                 InitialAmount = loan.InitialAmount,
@@ -174,8 +171,6 @@ namespace CreditsService.Services
                 CreatedAt = loan.CreatedAt,
                 IsActive = loan.IsActive
             };
-
-            return loanInfoDto;
         }
 
         public async Task<LoanInfoDto> RepayLoan(RepayLoanDto dto)

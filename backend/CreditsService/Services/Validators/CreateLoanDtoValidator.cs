@@ -13,8 +13,8 @@ namespace CreditsService.Services.Validators
         {
             _dbContext = dbContext;
 
-            RuleFor(x => x.UserId)
-                .NotEmpty().WithMessage("ID пользователя обязателен");
+            RuleFor(x => x.AccountId)
+                .NotEmpty().WithMessage("ID счета обязателен");
 
             RuleFor(x => x.TariffName)
                 .NotEmpty().WithMessage("Название тарифа обязательно")
@@ -28,7 +28,9 @@ namespace CreditsService.Services.Validators
 
         private async Task<bool> BeActiveTariff(string tariffName, CancellationToken cancellationToken)
         {
-            return await _dbContext.Tariffs.AnyAsync(t => t.Name == tariffName && t.IsActive, cancellationToken);
+            return await _dbContext.Tariffs.AnyAsync(
+                t => t.Name == tariffName && t.IsActive,
+                cancellationToken);
         }
     }
 }

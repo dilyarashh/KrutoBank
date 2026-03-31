@@ -1,4 +1,4 @@
-﻿namespace UsersService.Application.Helper
+﻿namespace UsersService.Infrastructure.Helpers
 {
     public static class PhoneHelper
     {

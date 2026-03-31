@@ -1,12 +1,14 @@
 using FluentValidation;
+using System.Linq;
+using UsersService.Application.DTOs.Internal;
 using UsersService.Domain.Entities;
 using UsersService.Domain.Enums;
 using UsersService.DTOs;
+using UsersService.DTOs.Internal;
 using UsersService.Infrastructure.Auth;
 using UsersService.Infrastructure.Errors.Exceptions;
 using UsersService.Infrastructure.Mappers;
 using UsersService.Infrastructure.Repositories;
-using System.Linq;
 using ValidationException = UsersService.Infrastructure.Errors.Exceptions.ValidationException;
 
 namespace UsersService.Services;
@@ -166,6 +168,76 @@ public class UserService(
             throw new NotFoundException("Пользователь не найден");
 
         return user.ToDto();
+    }
+
+    public async Task<InternalUserAuthDto?> GetInternalByIdAsync(Guid id)
+    {
+        var user = await _userRepository.GetByIdAsync(id);
+
+        if (user == null)
+            throw new NotFoundException("Пользователя не существует");
+
+        return new InternalUserAuthDto
+        {
+            Id = user.Id,
+            Phone = user.Phone,
+            HashPassword = user.HashPassword,
+            Role = user.Role.ToString(),
+            IsBlocked = user.IsBlocked
+        };
+    }
+
+    public async Task<InternalUserAuthDto?> GetInternalByPhoneAsync(string phone)
+    {
+        var normalizedPhone = PhoneHelper.Normalize(phone);
+
+        var user = await _userRepository.GetByPhoneAsync(normalizedPhone);
+
+        if (user == null)
+            throw new NotFoundException("Пользователь не найден");
+
+        return new InternalUserAuthDto
+        {
+            Id = user.Id,
+            Phone = user.Phone,
+            HashPassword = user.HashPassword,
+            Role = user.Role.ToString(),
+            IsBlocked = user.IsBlocked
+        };
+    }
+
+    public async Task<InternalUserLookupDto?> GetInternalLookupByIdAsync(Guid id)
+    {
+        var user = await _userRepository.GetByIdAsync(id);
+
+        if (user == null)
+            throw new NotFoundException("Пользователя не существует");
+
+        return new InternalUserLookupDto
+        {
+            Id = user.Id,
+            Phone = user.Phone,
+            Role = user.Role.ToString(),
+            IsBlocked = user.IsBlocked
+        };
+    }
+
+    public async Task<InternalUserLookupDto?> GetInternalLookupByPhoneAsync(string phone)
+    {
+        var normalizedPhone = PhoneHelper.Normalize(phone);
+
+        var user = await _userRepository.GetByPhoneAsync(normalizedPhone);
+
+        if (user == null)
+            throw new NotFoundException("Пользователь не найден");
+
+        return new InternalUserLookupDto
+        {
+            Id = user.Id,
+            Phone = user.Phone,
+            Role = user.Role.ToString(),
+            IsBlocked = user.IsBlocked
+        };
     }
 }
 
