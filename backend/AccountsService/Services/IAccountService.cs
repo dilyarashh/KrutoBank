@@ -18,4 +18,6 @@ public interface IAccountService
     Task<IEnumerable<UserAccountDto>> GetMyAccountsAsync(bool? onlyOpened);
     Task<IEnumerable<UserAccountDto>> GetUserAccountsByUserIdAsync(Guid userId, bool? onlyOpened);
     Task<BankAccountInfoDto> GetMasterAccountInfoAsync();
+    Task<bool> WithdrawInternalAsync(Guid accountId, decimal amount);
+    Task TransferInternalAsync(Guid fromAccountId, Guid toAccountId, decimal amount);
 }

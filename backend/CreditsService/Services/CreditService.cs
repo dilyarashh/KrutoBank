@@ -104,7 +104,7 @@ namespace CreditsService.Services
                 throw new NotFoundException("Пользователь не существует");
             }
 
-            var isMyAccount = await _accountClient.IsMyAccount(dto.AccountId);
+            var isMyAccount = await _accountClient.IsAccountOwnedByUser(dto.AccountId, currentUserId);
 
             if (!isMyAccount)
             {
@@ -147,7 +147,7 @@ namespace CreditsService.Services
 
             try
             {
-                await _accountClient.TransferAsync(BankAccounts.MasterAccountId, dto.AccountId, dto.Amount);
+                await _accountClient.TransferInternalAsync(BankAccounts.MasterAccountId, dto.AccountId, dto.Amount);
 
                 _loanRepository.Add(loan);
                 await _loanRepository.SaveChangesAsync();
@@ -175,20 +175,28 @@ namespace CreditsService.Services
 
         public async Task<LoanInfoDto> RepayLoan(RepayLoanDto dto)
         {
-            var loan = await _loanRepository.GetByIdWithTariffAsync(dto.LoanId);
+            return await RepayLoanInternal(dto.LoanId, dto.AccountId, dto.Amount, true);
+        }
+
+        private async Task<LoanInfoDto> RepayLoanInternal(Guid loanId, Guid accountId, decimal amount, bool checkUserOwnership)
+        {
+            var loan = await _loanRepository.GetByIdWithTariffAsync(loanId);
             if (loan == null)
             {
-                throw new KeyNotFoundException($"Кредит {dto.LoanId} не найден");
-            }    
-
-            var currentUserId = _currentUser.GetUserId();
-
-            if (currentUserId != loan.UserId)
-            {
-                throw new ForbiddenException("Вы можете гасить только свои кредиты");
+                throw new KeyNotFoundException($"Кредит {loanId} не найден");
             }
 
-            var isOwnerAccount = await _accountClient.IsAccountOwnedByUser(dto.AccountId, loan.UserId);
+            if (checkUserOwnership)
+            {
+                var currentUserId = _currentUser.GetUserId();
+
+                if (currentUserId != loan.UserId)
+                {
+                    throw new ForbiddenException("Вы можете гасить только свои кредиты");
+                }
+            }
+
+            var isOwnerAccount = await _accountClient.IsAccountOwnedByUser(accountId, loan.UserId);
 
             if (!isOwnerAccount)
             {
@@ -200,20 +208,19 @@ namespace CreditsService.Services
                 throw new InvalidOperationException("Кредит уже погашен");
             }
 
-            if (dto.Amount <= 0)
+            if (amount <= 0)
             {
                 throw new ArgumentException("Сумма должна быть положительной");
             }
 
-            if (dto.Amount > loan.RemainingAmount)
+            if (amount > loan.RemainingAmount)
             {
                 throw new InvalidOperationException("Сумма превышает остаток");
             }
 
-            // списываем деньги
-            await _accountClient.WithdrawAsync(dto.AccountId, dto.Amount);
+            await _accountClient.WithdrawInternalAsync(accountId, amount);
 
-            loan.RemainingAmount -= dto.Amount;
+            loan.RemainingAmount -= amount;
 
             if (loan.RemainingAmount <= 0)
             {
@@ -226,13 +233,12 @@ namespace CreditsService.Services
             var operation = new LoanOperation
             {
                 LoanId = loan.Id,
-                Amount = dto.Amount,
+                Amount = amount,
                 OperationDate = DateTime.UtcNow,
                 Type = LoanOperationType.Repayment
             };
 
             _loanOperationRepository.Add(operation);
-
             await _loanOperationRepository.SaveChangesAsync();
 
             return new LoanInfoDto
@@ -323,7 +329,7 @@ namespace CreditsService.Services
                 throw new ForbiddenException("Это не ваш кредит");
             }
 
-            var isMyAccount = await _accountClient.IsMyAccount(dto.AccountId);
+            var isMyAccount = await _accountClient.IsAccountOwnedByUser(dto.AccountId, currentUserId);
 
             if (!isMyAccount)
             {
@@ -359,13 +365,7 @@ namespace CreditsService.Services
             {
                 try
                 {
-                    await RepayLoan(new RepayLoanDto
-                    {
-                        LoanId = payment.LoanId,
-                        AccountId = payment.AccountId,
-                        Amount = payment.Amount
-                    });
-
+                    await RepayLoanInternal(payment.LoanId, payment.AccountId, payment.Amount, false);
                     payment.NextExecutionDate = now.AddMinutes(payment.IntervalMinutes);
                 }
                 catch (Exception ex)

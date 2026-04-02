@@ -25,7 +25,7 @@ public class AccountsController(IAccountService service) : ControllerBase
         var id = await service.CreateAccountAsync(request);
         return Ok(id);
     }
-    
+
     /// <summary>
     /// Закрыть счет
     /// </summary>
@@ -37,7 +37,7 @@ public class AccountsController(IAccountService service) : ControllerBase
         await service.CloseAccountAsync(id);
         return NoContent();
     }
-    
+
     /// <summary>
     /// Пополнить счет
     /// </summary>
@@ -147,7 +147,7 @@ public class AccountsController(IAccountService service) : ControllerBase
             o.Amount
         }));
     }
-    
+
     /// <summary>
     /// Получить список своих счетов
     /// </summary>
@@ -159,7 +159,7 @@ public class AccountsController(IAccountService service) : ControllerBase
         var result = await service.GetMyAccountsAsync(onlyOpened);
         return Ok(result);
     }
-    
+
     /// <summary>
     /// Получить счета конкретного пользователя (только сотрудник)
     /// </summary>
@@ -194,6 +194,58 @@ public class AccountsController(IAccountService service) : ControllerBase
     {
         var result = await service.GetMasterAccountInfoAsync();
 
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("internal/user/{userId}/accounts")]
+    public async Task<ActionResult<IEnumerable<UserAccountDto>>> GetUserAccountsInternal(
+        Guid userId,
+        [FromQuery] bool? onlyOpened,
+        [FromHeader(Name = "X-Internal-Api-Key")] string apiKey)
+    {
+        if (apiKey != "KRUTOBANK_INTERNAL_KEY_2026")
+            return Unauthorized();
+
+        var result = await service.GetUserAccountsByUserIdAsync(userId, onlyOpened);
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("internal/withdraw")]
+    public async Task<IActionResult> InternalWithdraw(
+        [FromBody] MoneyOperationRequest request,
+        [FromHeader(Name = "X-Internal-Api-Key")] string apiKey)
+    {
+        if (apiKey != "KRUTOBANK_INTERNAL_KEY_2026")
+            return Unauthorized();
+
+        await service.WithdrawInternalAsync(request.AccountId, request.Amount);
+        return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("internal/transfer")]
+    public async Task<IActionResult> InternalTransfer(
+        [FromBody] InternalTransferRequest request,
+        [FromHeader(Name = "X-Internal-Api-Key")] string apiKey)
+    {
+        if (apiKey != "KRUTOBANK_INTERNAL_KEY_2026")
+            return Unauthorized();
+
+        await service.TransferInternalAsync(request.FromAccountId, request.ToAccountId, request.Amount);
+        return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("internal/bank/master")]
+    public async Task<IActionResult> GetMasterAccountInternal(
+    [FromHeader(Name = "X-Internal-Api-Key")] string apiKey)
+    {
+        if (apiKey != "KRUTOBANK_INTERNAL_KEY_2026")
+            return Unauthorized();
+
+        var result = await service.GetMasterAccountInfoAsync();
         return Ok(result);
     }
 }

@@ -369,6 +369,92 @@ public class AccountService(IAccountRepository accountRepository, ICurrentUser c
             Currency = account.Currency
         };
     }
+
+    public async Task<bool> WithdrawInternalAsync(Guid accountId, decimal amount)
+    {
+        if (amount <= 0)
+            throw new BadRequestException("Сумма должна быть больше нуля");
+
+        var account = await _accountRepository.GetByIdAsync(accountId);
+
+        if (account == null)
+            throw new NotFoundException("Счет не найден");
+
+        if (account.IsClosed)
+            throw new BadRequestException("Счет закрыт");
+
+        if (account.Balance < amount)
+            throw new BadRequestException("Недостаточно средств");
+
+        await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
+        {
+            OperationId = Guid.NewGuid(),
+            AccountId = account.Id,
+            Amount = amount,
+            Type = "Withdraw",
+            Currency = account.Currency.ToString()
+        });
+
+        return true;
+    }
+
+    public async Task TransferInternalAsync(Guid fromAccountId, Guid toAccountId, decimal amount)
+    {
+        if (amount <= 0)
+            throw new BadRequestException("Сумма должна быть больше нуля");
+
+        var from = await _accountRepository.GetByIdAsync(fromAccountId);
+        if (from == null)
+            throw new NotFoundException("Счет отправителя не найден");
+
+        var to = await _accountRepository.GetByIdAsync(toAccountId);
+        if (to == null)
+            throw new NotFoundException("Счет получателя не найден");
+
+        if (from.IsClosed)
+            throw new BadRequestException("Счет отправителя закрыт");
+
+        if (to.IsClosed)
+            throw new BadRequestException("Счет получателя закрыт");
+
+        if (from.Id == to.Id)
+            throw new BadRequestException("Нельзя перевести на тот же самый счет");
+
+        if (from.Balance < amount)
+            throw new BadRequestException("Недостаточно средств");
+
+        decimal depositAmount;
+
+        if (from.Currency != to.Currency)
+        {
+            depositAmount = await _currencyService.Convert(
+                amount,
+                from.Currency.ToString(),
+                to.Currency.ToString());
+        }
+        else
+        {
+            depositAmount = amount;
+        }
+
+        await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
+        {
+            OperationId = Guid.NewGuid(),
+            AccountId = from.Id,
+            Amount = amount,
+            Type = "Withdraw",
+            Currency = from.Currency.ToString()
+        });
+
+        await _kafkaProducer.SendAsync("account-operations", new AccountOperationEvent
+        {
+            OperationId = Guid.NewGuid(),
+            AccountId = to.Id,
+            Amount = depositAmount,
+            Type = "Deposit",
+            Currency = to.Currency.ToString()
+        });
+    }
 }
 
 public static class PhoneHelper
