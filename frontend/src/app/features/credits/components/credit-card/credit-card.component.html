@@ -1,0 +1,62 @@
+<mat-card class="card" (click)="toggle()" role="button" tabindex="0">
+  <div class="row">
+    <div class="avatar" aria-hidden="true">
+      <mat-icon>request_quote</mat-icon>
+    </div>
+
+    <div class="main">
+      <div class="title">
+        <span class="name">{{ loan.tariffName }}</span>
+        <mat-chip class="chip" [class.active]="loan.isActive" [class.inactive]="!loan.isActive">
+          {{ loan.isActive ? 'Активен' : 'Закрыт' }}
+        </mat-chip>
+      </div>
+
+      <div class="meta">
+        <span
+          >Ставка: <b>{{ loan.interestRate }}%</b></span
+        >
+        <span
+          >Создан: <b>{{ formatDate(loan.createdAt) }}</b></span
+        >
+      </div>
+    </div>
+
+    <div class="amounts">
+      <div class="amount">
+        <span class="k">Сумма</span>
+        <span class="v">{{ loan.initialAmount }} <span class="rub">₽</span></span>
+      </div>
+      <div class="amount">
+        <span class="k">Остаток</span>
+        <span class="v">{{ loan.remainingAmount }} <span class="rub">₽</span></span>
+      </div>
+    </div>
+
+    <div class="chev" aria-hidden="true">
+      <mat-icon>{{ expanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+  </div>
+
+  <div class="dropdown" *ngIf="expanded()">
+    <div class="dropdown" *ngIf="expanded()">
+      <p class="ops-state" *ngIf="opsLoading()">Загрузка операций…</p>
+      <p class="ops-state error" *ngIf="opsError()">{{ opsError() }}</p>
+
+      <div class="ops" *ngIf="!opsLoading() && ops() as items">
+        <div class="ops-empty" *ngIf="items.length === 0">Операций пока нет</div>
+
+        <div class="op" *ngFor="let op of items">
+          <div class="op-left">
+            <div class="op-type">{{ op.operationType }}</div>
+            <div class="op-date">{{ formatDate(op.operationDate) }}</div>
+          </div>
+
+          <div class="op-amount">
+            {{ formatAmount(op.amount) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card>

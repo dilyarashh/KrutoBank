@@ -1,0 +1,140 @@
+<div class="page">
+  <div class="content">
+    <div class="top">
+      <a class="back" routerLink="/users">
+        <mat-icon>arrow_back</mat-icon>
+        Назад
+      </a>
+    </div>
+
+    <p class="state error" *ngIf="userError()">{{ userError() }}</p>
+
+    <mat-card class="profile" *ngIf="!loadingUser() && user() as u">
+      <div class="profile-row">
+        <div class="avatar">{{ initials() }}</div>
+
+        <div class="info">
+          <div class="name">{{ fullName() }}</div>
+
+          <div class="meta">
+            <span><mat-icon>phone</mat-icon>{{ u.phone || '—' }}</span>
+            <span><mat-icon>mail</mat-icon>{{ u.email || '—' }}</span>
+            <span><mat-icon>cake</mat-icon>{{ u.birthday }}</span>
+          </div>
+        </div>
+
+        <div class="right">
+          <mat-chip
+            class="chip"
+            [class.client]="u.role === 'Client'"
+            [class.employee]="u.role === 'Employee'"
+          >
+            {{ roleText() }}
+          </mat-chip>
+
+          <mat-chip class="chip" [class.blocked]="u.isBlocked" [class.ok]="!u.isBlocked">
+            {{ statusText() }}
+          </mat-chip>
+        </div>
+      </div>
+    </mat-card>
+
+    <div class="tabs" *ngIf="user()">
+      <button
+        type="button"
+        class="tab"
+        [class.active]="tab() === 'accounts'"
+        (click)="selectTab('accounts')"
+      >
+        <mat-icon>account_balance_wallet</mat-icon>
+        Счета
+      </button>
+
+      <button
+        type="button"
+        class="tab"
+        [class.active]="tab() === 'loans'"
+        (click)="selectTab('loans')"
+      >
+        <mat-icon>payments</mat-icon>
+        Кредиты
+      </button>
+    </div>
+
+    <div class="section" *ngIf="tab() === 'accounts' && user()">
+      <app-async-state
+        [loading]="accountsLoading()"
+        [error]="accountsError()"
+        [empty]="!accountsLoading() && !!accounts() && accounts()!.length === 0"
+        loadingText="Загрузка счетов..."
+        emptyText="Счетов нет."
+      >
+        <div class="list" *ngIf="accounts() as items">
+          <app-loan-card *ngFor="let a of items" [accountId]="a.accountId"></app-loan-card>
+        </div>
+      </app-async-state>
+    </div>
+
+    <div class="section" *ngIf="tab() === 'loans' && user()">
+      <div class="credit-dashboard" *ngIf="creditScoreLoading() || creditScore()">
+        <div class="score-panel" [attr.data-tone]="creditScoreTone()">
+          <div class="score-visual">
+            <svg viewBox="0 0 120 120" class="score-ring" aria-hidden="true">
+              <circle class="score-ring__track" cx="60" cy="60" r="54"></circle>
+              <circle
+                class="score-ring__value"
+                cx="60"
+                cy="60"
+                r="54"
+                [style.strokeDashoffset]="scoreRingOffset()"
+              ></circle>
+            </svg>
+
+            <div class="score-number" *ngIf="creditScore() as score">{{ score.score }}</div>
+          </div>
+
+          <div class="score-copy">
+            <div class="eyebrow">Кредитный рейтинг</div>
+            <div class="score-title">
+              {{ creditScore() ? creditScoreLabel() : 'Собираем кредитную сводку' }}
+            </div>
+            <p class="score-text" *ngIf="creditScore()">
+            </p>
+            <p class="score-text" *ngIf="creditScoreLoading()">Анализируем профиль клиента...</p>
+          </div>
+        </div>
+
+        <div class="stats-grid" *ngIf="creditScore() as score">
+          <div class="stat-card">
+            <div class="stat-label">Просроченные платежи</div>
+            <div class="stat-value danger">{{ score.overduePayments }}</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Активные кредиты</div>
+            <div class="stat-value">{{ score.activeLoans }}</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Закрытые кредиты</div>
+            <div class="stat-value success">{{ score.closedLoans }}</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="state error" *ngIf="creditScoreError()">{{ creditScoreError() }}</p>
+
+      <app-async-state
+        [loading]="loansLoading()"
+        [error]="loansError()"
+        [empty]="!loansLoading() && !!loans() && loans()!.length === 0"
+        loadingText="Загрузка кредитов..."
+        emptyText="Кредиты отсутствуют."
+      >
+        <div class="list" *ngIf="loans() as items">
+          <app-credit-card *ngFor="let l of items" [loan]="l" [userId]="userId()"></app-credit-card>
+        </div>
+      </app-async-state>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  padding: 28px;
+  border-radius: 20px;
+  background: var(--surface-glass);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 8px 24px rgba(216, 27, 96, 0.15);
+  border: 1px solid var(--surface-border);
+}
+
+.title {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #c2185b;
+  text-align: center;
+}
+
+.subtitle {
+  margin: 0 0 20px;
+  color: var(--login-subtitle);
+  font-size: 14px;
+  text-align: center;
+}
+
+.sso-btn {
+  width: 100%;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  height: 44px;
+}
+
+.sso-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.icon {
+  font-size: 1.05rem;
+}
+
+.hint {
+  margin-top: 14px;
+  color: var(--login-hint);
+  font-size: 12px;
+  text-align: center;
+}

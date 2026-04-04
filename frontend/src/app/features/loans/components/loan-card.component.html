@@ -1,0 +1,65 @@
+<mat-card class="card" (click)="toggle()" role="button" tabindex="0">
+  <app-async-state [loading]="loading()" [error]="error()" loadingText="Загрузка счета...">
+    <ng-container *ngIf="account() as a">
+      <div class="row">
+        <div class="avatar" aria-hidden="true">
+          <mat-icon>account_balance</mat-icon>
+        </div>
+
+        <div class="main">
+          <div class="title">
+            <span class="name">{{ a.name }}</span>
+
+            <mat-chip class="chip" [class.open]="!a.isClosed" [class.closed]="a.isClosed">
+              {{ accountStatus(a) }}
+            </mat-chip>
+          </div>
+
+          <div class="meta">
+            <span>Открыт: <b>{{ formatDate(a.openedAt) }}</b></span>
+            <span *ngIf="a.isClosed && a.closedAt">Закрыт: <b>{{ formatDate(a.closedAt) }}</b></span>
+          </div>
+        </div>
+
+        <div class="amounts">
+          <div class="amount">
+            <span class="k">Баланс</span>
+            <span class="v">{{ formatMoney(a.balance, a.currency) }}</span>
+          </div>
+        </div>
+
+        <div class="chev" aria-hidden="true">
+          <mat-icon>{{ expanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </div>
+      </div>
+
+      <div class="dropdown" *ngIf="expanded()">
+        <app-async-state
+          [loading]="opsLoading()"
+          [error]="opsError()"
+          [empty]="!opsLoading() && !!ops() && ops()!.length === 0"
+          loadingText="Загрузка операций..."
+          emptyText="Операций пока нет."
+        >
+          <div class="ops" *ngIf="ops() as items">
+            <div class="op" *ngFor="let op of items">
+              <div class="op-left">
+                <div class="op-type-row">
+                  <span class="op-badge" [class]="operationTypeTone(op.type)">
+                    <mat-icon>{{ operationIcon(op.type) }}</mat-icon>
+                    {{ operationTypeText(op.type) }}
+                  </span>
+                </div>
+                <div class="op-date">{{ formatDate(op.createdAt) }}</div>
+              </div>
+
+              <div class="op-amount" [class]="operationTypeTone(op.type)">
+                {{ amountPrefix(op.type) }}{{ formatMoney(op.amount, a.currency) }}
+              </div>
+            </div>
+          </div>
+        </app-async-state>
+      </div>
+    </ng-container>
+  </app-async-state>
+</mat-card>

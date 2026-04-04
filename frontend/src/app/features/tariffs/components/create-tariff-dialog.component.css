@@ -1,0 +1,101 @@
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(194, 24, 91, 0.85);
+}
+
+.control {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  border-radius: 18px;
+  background: var(--surface-accent);
+  border: 1px solid var(--brand-soft-border);
+
+  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.control:focus-within {
+  border-color: var(--brand-focus);
+  box-shadow: 0 0 0 4px rgba(236, 64, 122, 0.18);
+  background: var(--surface-accent-strong);
+}
+
+.control.invalid {
+  border-color: rgba(216, 27, 96, 0.7);
+  box-shadow: 0 0 0 4px rgba(216, 27, 96, 0.12);
+}
+
+.input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--text-primary);
+  caret-color: var(--brand);
+}
+
+.hint {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.error {
+  margin: 0;
+  color: #d81b60;
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  border: none;
+  cursor: pointer;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-weight: 800;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn.ghost {
+  background: var(--ghost-bg);
+  color: var(--text-primary);
+}
+
+.btn.primary {
+  background: #c2185b;
+  color: #fff;
+}
+
+.btn.primary:hover:not(:disabled) {
+  background: #d81b60;
+}
+
+.success {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2e7d32;
+}
