@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authTokenInterceptor } from './core/auth/interceptor/auth-token.interceptor';
+import { idempotencyInterceptor } from './shared/api/idempotency.interceptor';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { GlobalErrorHandlerService } from './shared/errors/global-error-handler.service';
 
@@ -11,7 +12,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authTokenInterceptor])),
+    provideHttpClient(withInterceptors([idempotencyInterceptor, authTokenInterceptor])),
     provideNativeDateAdapter(),
     { provide: ErrorHandler, useClass: GlobalErrorHandlerService },
   ],
