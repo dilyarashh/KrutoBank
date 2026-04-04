@@ -13,6 +13,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([idempotencyInterceptor, authTokenInterceptor])),
+    provideHttpClient(withInterceptors([authTokenInterceptor])),
     provideNativeDateAdapter(),
     { provide: ErrorHandler, useClass: GlobalErrorHandlerService },
   ],
