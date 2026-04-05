@@ -6,6 +6,7 @@ using AccountsService.Idempotency;
 using AccountsService.Kafka;
 using AccountsService.Realtime;
 using AccountsService.Repositories;
+using AccountsService.Resilience;
 using AccountsService.Services;
 using AccountsService.Services.Validators;
 using FluentValidation;
@@ -65,11 +66,16 @@ builder.Services.AddHttpClient<CurrencyService>();
 builder.Services.AddSingleton<KafkaProducer>();
 builder.Services.AddSingleton<KafkaInitializer>();
 builder.Services.AddHostedService<KafkaConsumerService>();
+builder.Services.AddSingleton<ServiceCallCircuitState>();
 
 builder.Services.AddHttpClient<IUsersClient, UsersClient>(client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5001"); // UsersService
-});
+    client.BaseAddress = new Uri("http://localhost:5260");
+})
+    .AddHttpMessageHandler(sp => new ServiceCallResilienceHandler(
+        "UsersService",
+        sp.GetRequiredService<ServiceCallCircuitState>(),
+        sp.GetRequiredService<ILogger<ServiceCallResilienceHandler>>()));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

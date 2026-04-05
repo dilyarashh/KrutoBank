@@ -12,7 +12,7 @@ namespace AccountsService.Services
         {
             using var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/api/users/internal/lookup/by-phone?phone={Uri.EscapeDataString(phone)}");
+                $"/api/internal/users/by-phone?phone={Uri.EscapeDataString(phone)}");
 
             request.Headers.Add(InternalHeader, "KRUTOBANK_INTERNAL_KEY_2026");
 

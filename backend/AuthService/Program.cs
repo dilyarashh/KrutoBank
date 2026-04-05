@@ -1,4 +1,5 @@
 using AuthService.Helper;
+using AuthService.Resilience;
 using AuthService.Data;
 using AuthService.Middleware;
 using AuthService.Services;
@@ -42,7 +43,12 @@ builder.Services.AddDbContext<OpenIddictDbContext>(options =>
 builder.Services.AddHttpClient<IUsersServiceClient, UsersServiceClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["UsersService:BaseUrl"] ?? "http://localhost:5260");
-});
+})
+    .AddHttpMessageHandler(sp => new ServiceCallResilienceHandler(
+        "UsersService",
+        sp.GetRequiredService<ServiceCallCircuitState>(),
+        sp.GetRequiredService<ILogger<ServiceCallResilienceHandler>>()));
+builder.Services.AddSingleton<ServiceCallCircuitState>();
 
 builder.Services
     .AddAuthentication(options =>

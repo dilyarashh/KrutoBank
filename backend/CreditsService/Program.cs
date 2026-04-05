@@ -4,6 +4,7 @@ using CreditsService.Idempotency;
 using CreditsService.Data;
 using CreditsService.Errors.Exceptions;
 using CreditsService.Repositories;
+using CreditsService.Resilience;
 using CreditsService.Services;
 using CreditsService.Services.Validators;
 using FluentValidation;
@@ -79,13 +80,21 @@ builder.Services.AddScoped<ICreditService, CreditService>();
 builder.Services.AddHttpClient<IAccountClient, AccountClient>(client =>
 {
     client.BaseAddress = new Uri("http://localhost:5251");
-});
+})
+    .AddHttpMessageHandler(sp => new ServiceCallResilienceHandler(
+        "AccountsService",
+        new ServiceCallCircuitState(),
+        sp.GetRequiredService<ILogger<ServiceCallResilienceHandler>>()));
 
 
 builder.Services.AddHttpClient<IUserClient, UserClient>(client =>
 {
     client.BaseAddress = new Uri("http://localhost:5260");
-});
+})
+    .AddHttpMessageHandler(sp => new ServiceCallResilienceHandler(
+        "UsersService",
+        new ServiceCallCircuitState(),
+        sp.GetRequiredService<ILogger<ServiceCallResilienceHandler>>()));
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateTariffDtoValidator>();
 
