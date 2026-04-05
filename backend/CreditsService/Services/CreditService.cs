@@ -5,6 +5,7 @@ using CreditsService.Entities;
 using CreditsService.Entities.Enums;
 using CreditsService.Helper;
 using CreditsService.Repositories;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -353,6 +354,7 @@ namespace CreditsService.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        [DisableConcurrentExecution(600)]
         public async Task ProcessAutoPayments()
         {
             var now = DateTime.UtcNow;
@@ -401,6 +403,7 @@ namespace CreditsService.Services
             };
         }
 
+        [DisableConcurrentExecution(600)]
         public async Task AccrueInterestForAll()
         {
             var startTime = DateTime.UtcNow;
@@ -422,17 +425,39 @@ namespace CreditsService.Services
 
                 var totalInterestAmount = 0m;
                 var operations = new List<LoanOperation>();
+                var now = DateTime.UtcNow;
 
                 foreach (var loan in activeLoans)
                 {
                     try
                     {
-                        // Расчет процентов (остаток * процентная ставка тарифа)
-                        var interestAmount = loan.RemainingAmount * loan.Tariff!.InterestRate;
+                        var minutesPassed = (decimal)(now - loan.LastInterestApplicationDate).TotalMinutes;
+
+                        if (minutesPassed <= 0)
+                            continue;
+
+                        // Начисляем проценты пропорционально реально прошедшему времени
+                        // InterestRate считается как месячная ставка
+                        var interestAmount = loan.RemainingAmount
+                            * loan.Tariff!.InterestRate
+                            / 30m
+                            / 24m
+                            / 60m
+                            * minutesPassed;
+
+                        interestAmount = Math.Round(interestAmount, 2, MidpointRounding.AwayFromZero);
+
+                        if (interestAmount <= 0)
+                            continue;
 
                         var oldAmount = loan.RemainingAmount;
-                        loan.RemainingAmount += interestAmount;
-                        loan.LastInterestApplicationDate = DateTime.UtcNow;
+
+                        loan.RemainingAmount = Math.Round(
+                            loan.RemainingAmount + interestAmount,
+                            2,
+                            MidpointRounding.AwayFromZero);
+
+                        loan.LastInterestApplicationDate = now;
 
                         _loanRepository.Update(loan);
 
@@ -440,15 +465,20 @@ namespace CreditsService.Services
                         {
                             LoanId = loan.Id,
                             Amount = interestAmount,
-                            OperationDate = DateTime.UtcNow,
+                            OperationDate = now,
                             Type = LoanOperationType.Interest
                         };
 
                         operations.Add(operation);
                         totalInterestAmount += interestAmount;
 
-                        _logger.LogDebug("Кредит ID {loanId}: {oldAmount:C} -> {newAmount:C}, начислено {interest:C}",
-                            loan.Id, oldAmount, loan.RemainingAmount, interestAmount);
+                        _logger.LogInformation(
+                            "Кредит {loanId}: минут={minutesPassed}, было={oldAmount}, начислено={interestAmount}, стало={newAmount}",
+                            loan.Id,
+                            minutesPassed,
+                            oldAmount,
+                            interestAmount,
+                            loan.RemainingAmount);
                     }
                     catch (Exception ex)
                     {
@@ -456,14 +486,20 @@ namespace CreditsService.Services
                     }
                 }
 
-                _loanOperationRepository.AddRange(operations);
+                if (operations.Any())
+                {
+                    _loanOperationRepository.AddRange(operations);
+                    await _loanOperationRepository.SaveChangesAsync();
+                }
 
-                await _loanOperationRepository.SaveChangesAsync();
                 await transaction.CommitAsync();
 
                 var duration = DateTime.UtcNow - startTime;
-                _logger.LogInformation("=== НАЧИСЛЕНИЕ ЗАВЕРШЕНО: обработано {count} кредитов, всего начислено {totalInterest:C}, время: {duration} ===",
-                    activeLoans.Count, totalInterestAmount, duration);
+                _logger.LogInformation(
+                    "=== НАЧИСЛЕНИЕ ЗАВЕРШЕНО: обработано {count} кредитов, всего начислено {totalInterest:C}, время: {duration} ===",
+                    activeLoans.Count,
+                    totalInterestAmount,
+                    duration);
             }
             catch (Exception ex)
             {

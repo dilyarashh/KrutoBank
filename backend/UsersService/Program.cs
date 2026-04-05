@@ -1,20 +1,26 @@
-using System.Reflection;
-using System.Security.Claims;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using FluentValidation;
-using UsersService.Infrastructure.Auth;
 using Microsoft.OpenApi.Models;
 using Polly;
+using System.Diagnostics;
+using System.Reflection;
+using System.Security.Claims;
+using UsersService.Helper;
+using UsersService.Infrastructure.Auth;
+using UsersService.Infrastructure.Errors.Exceptions;
 using UsersService.Infrastructure.Repositories;
 using UsersService.Services;
-using UsersService.Infrastructure.Errors.Exceptions;
 using UsersService.Services.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddHttpClient("Monitoring", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5300");
+});
 
+builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
 {
@@ -114,13 +120,15 @@ using (var scope = app.Services.CreateScope())
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseMiddleware<TraceMiddleware>();
+app.UseMiddleware<RequestTimingMiddleware>();
 app.UseMiddleware<UnstableServiceMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors("FrontCors");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 
 app.Run();

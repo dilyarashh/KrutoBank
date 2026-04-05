@@ -18,6 +18,11 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpClient("Monitoring", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Monitoring:BaseUrl"]!);
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
@@ -151,6 +156,8 @@ using (var scope = app.Services.CreateScope())
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseMiddleware<TraceMiddleware>();
+app.UseMiddleware<RequestTimingMiddleware>();
 app.UseMiddleware<UnstableServiceMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 

@@ -4,6 +4,16 @@ public class UnstableServiceMiddleware(RequestDelegate next, ILogger<UnstableSer
 {
     public async Task InvokeAsync(HttpContext context)
     {
+        var path = context.Request.Path.Value?.ToLowerInvariant() ?? string.Empty;
+
+        if (path.StartsWith("/metrics") ||
+            path.StartsWith("/swagger") ||
+            path.StartsWith("/hangfire"))
+        {
+            await next(context);
+            return;
+        }
+
         var failureProbability = DateTime.Now.Minute % 2 == 0 ? 0.7 : 0.3;
 
         if (Random.Shared.NextDouble() < failureProbability)

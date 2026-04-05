@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11527.330 d18.3
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsersService", "UsersService\UsersService.csproj", "{E55BBF82-FC1C-42E8-BF40-34500EC4E3D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountsService", "AccountsService\AccountsService.csproj", "{6EC1797E-A80D-4BE4-A257-0582EC372102}"
@@ -10,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService", "AuthService\AuthService.csproj", "{C8425ED5-EFA8-4B78-8B70-9EE5CA7AD663}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserSettingsService", "UserSettingsService\UserSettingsService.csproj", "{FDEA9A0F-B8E1-4EFD-B673-D9749F83127D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitoringService", "MonitoringService\MonitoringService.csproj", "{77B615C4-8FB8-8776-B6AB-05E77E757320}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,5 +41,15 @@ Global
 		{FDEA9A0F-B8E1-4EFD-B673-D9749F83127D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDEA9A0F-B8E1-4EFD-B673-D9749F83127D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDEA9A0F-B8E1-4EFD-B673-D9749F83127D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77B615C4-8FB8-8776-B6AB-05E77E757320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77B615C4-8FB8-8776-B6AB-05E77E757320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77B615C4-8FB8-8776-B6AB-05E77E757320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77B615C4-8FB8-8776-B6AB-05E77E757320}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4E9A8723-4F68-466C-A591-678963DF57A3}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,6 @@
+using AuthService.Helper;
 using AuthService.Data;
+using AuthService.Middleware;
 using AuthService.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,6 +10,11 @@ using OpenIddict.Validation.AspNetCore;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpClient("Monitoring", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Monitoring:BaseUrl"]!);
+});
 
 builder.Services.AddControllersWithViews();
 
@@ -123,6 +130,9 @@ using (var scope = app.Services.CreateScope())
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseMiddleware<TraceMiddleware>();
+app.UseMiddleware<RequestTimingMiddleware>();
 
 app.UseCors("FrontCors");
 

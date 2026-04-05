@@ -1,17 +1,60 @@
 namespace UsersService.Infrastructure.Errors.Exceptions;
 
-public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+public class ExceptionMiddleware
 {
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IConfiguration _configuration;
+
+    public ExceptionMiddleware(
+        RequestDelegate next,
+        ILogger<ExceptionMiddleware> logger,
+        IHttpClientFactory httpClientFactory,
+        IConfiguration configuration)
+    {
+        _next = next;
+        _logger = logger;
+        _httpClientFactory = httpClientFactory;
+        _configuration = configuration;
+    }
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await next(context);
+            await _next(context);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, ex.Message);
+
+            await SendExceptionToMonitoringAsync(context, ex);
             await HandleExceptionAsync(context, ex);
+        }
+    }
+
+    private async Task SendExceptionToMonitoringAsync(HttpContext context, Exception ex)
+    {
+        try
+        {
+            var client = _httpClientFactory.CreateClient("Monitoring");
+
+            await client.PostAsJsonAsync("/api/monitoring/exceptions", new
+            {
+                ServiceName = _configuration["Monitoring:ServiceName"] ?? "UsersService",
+                Method = context.Request.Method,
+                Path = context.Request.Path.ToString(),
+                TraceId = context.Items["TraceId"]?.ToString(),
+                SpanId = context.Items["SpanId"]?.ToString(),
+                Message = ex.Message,
+                StackTrace = ex.StackTrace,
+                CreatedAt = DateTime.UtcNow
+            });
+        }
+        catch (Exception monitoringEx)
+        {
+            _logger.LogWarning(monitoringEx, "Не удалось отправить exception в MonitoringService");
         }
     }
 

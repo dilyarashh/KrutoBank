@@ -1,17 +1,60 @@
 namespace AccountsService.Errors.Exceptions;
 
-public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+public class ExceptionMiddleware
 {
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IConfiguration _configuration;
+
+    public ExceptionMiddleware(
+        RequestDelegate next,
+        ILogger<ExceptionMiddleware> logger,
+        IHttpClientFactory httpClientFactory,
+        IConfiguration configuration)
+    {
+        _next = next;
+        _logger = logger;
+        _httpClientFactory = httpClientFactory;
+        _configuration = configuration;
+    }
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await next(context);
+            await _next(context);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, ex.Message);
+
+            await SendExceptionToMonitoringAsync(context, ex);
             await HandleExceptionAsync(context, ex);
+        }
+    }
+
+    private async Task SendExceptionToMonitoringAsync(HttpContext context, Exception ex)
+    {
+        try
+        {
+            var client = _httpClientFactory.CreateClient("Monitoring");
+
+            await client.PostAsJsonAsync("/api/monitoring/exceptions", new
+            {
+                ServiceName = _configuration["Monitoring:ServiceName"] ?? "AccountsService",
+                Method = context.Request.Method,
+                Path = context.Request.Path.ToString(),
+                TraceId = context.Items["TraceId"]?.ToString(),
+                SpanId = context.Items["SpanId"]?.ToString(),
+                Message = ex.Message,
+                StackTrace = ex.StackTrace,
+                CreatedAt = DateTime.UtcNow
+            });
+        }
+        catch (Exception monitoringEx)
+        {
+            _logger.LogWarning(monitoringEx, "Не удалось отправить exception в MonitoringService");
         }
     }
 
@@ -23,12 +66,20 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
             ForbiddenException => CreateResponse(403, exception.Message),
             UnauthorizedException => CreateResponse(401, exception.Message),
             BadRequestException => CreateResponse(400, exception.Message),
-            ValidationException validationEx => new ErrorResponse
+            FluentValidation.ValidationException validationEx => new ErrorResponse
             {
-                Title = "Validation failed",
+                Title = validationEx.Message,
                 Status = 400,
                 Errors = validationEx.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.Select(e => e.ErrorMessage).ToArray()
+                    )
             },
+            InvalidOperationException => CreateResponse(400, exception.Message),
+            ArgumentException => CreateResponse(400, exception.Message),
+            KeyNotFoundException => CreateResponse(404, exception.Message),
             _ => CreateResponse(500, "Internal server error")
         };
 

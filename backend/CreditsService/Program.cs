@@ -1,6 +1,7 @@
 using AccountsService.Errors.Exceptions;
-using CreditsService.Data;
 using CreditsService.Helper;
+using CreditsService.Data;
+using CreditsService.Errors.Exceptions;
 using CreditsService.Repositories;
 using CreditsService.Services;
 using CreditsService.Services.Validators;
@@ -16,6 +17,11 @@ using System.Reflection;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpClient("Monitoring", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Monitoring:BaseUrl"]!);
+});
 
 builder.Services.AddControllers();
 
@@ -135,10 +141,12 @@ using (var scope = app.Services.CreateScope())
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors("FrontCors");
-
+app.UseMiddleware<TraceMiddleware>();
+app.UseMiddleware<RequestTimingMiddleware>();
 app.UseMiddleware<UnstableServiceMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseCors("FrontCors");
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -158,7 +166,7 @@ using (var scope = app.Services.CreateScope())
     recurringJobManager.AddOrUpdate<ICreditService>(
         "accrue-interest",
         job => job.AccrueInterestForAll(),
-        "*/1 * * * *", // Каждую минуту
+        "*/10 * * * *", // Каждые 10 минут
         new RecurringJobOptions
         {
             TimeZone = TimeZoneInfo.Utc
@@ -171,7 +179,7 @@ using (var scope = app.Services.CreateScope())
 );
 
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Задание начисления процентов настроено: выполняется каждую минуту");
+    logger.LogInformation("Задание начисления процентов настроено: выполняется каждые 10 минут");
 }
 
 app.Run();
