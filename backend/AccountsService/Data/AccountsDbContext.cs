@@ -1,6 +1,7 @@
 using AccountsService.Entities;
 using AccountsService.Entities.Enums;
 using AccountsService.Helper;
+using AccountsService.Idempotency;
 using Microsoft.EntityFrameworkCore;
 using static AccountsService.Services.AccountService;
 
@@ -12,6 +13,7 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
     public DbSet<UserAccount> UserAccounts => Set<UserAccount>();
     public DbSet<AccountOperation> AccountOperations => Set<AccountOperation>();
     public DbSet<PushSubscription> PushSubscriptions => Set<PushSubscription>();
+    public DbSet<IdempotencyRequest> IdempotencyRequests => Set<IdempotencyRequest>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,6 +35,10 @@ public class AccountsDbContext(DbContextOptions<AccountsDbContext> options) : Db
 
         modelBuilder.Entity<PushSubscription>()
             .HasIndex(x => x.Token)
+            .IsUnique();
+
+        modelBuilder.Entity<IdempotencyRequest>()
+            .HasIndex(x => new { x.UserScope, x.Key })
             .IsUnique();
 
         // GUID пользователей

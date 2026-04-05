@@ -1,4 +1,5 @@
 ﻿using CreditsService.Entities;
+using CreditsService.Idempotency;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Reflection.Emit;
@@ -12,6 +13,7 @@ public class CreditsDbContext(DbContextOptions<CreditsDbContext> options) : DbCo
     public DbSet<Loan> Loans => Set<Loan>();
     public DbSet<LoanOperation> LoanOperations => Set<LoanOperation>();
     public DbSet<AutoPayment> AutoPayments { get; set; }
+    public DbSet<IdempotencyRequest> IdempotencyRequests => Set<IdempotencyRequest>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,6 +56,12 @@ public class CreditsDbContext(DbContextOptions<CreditsDbContext> options) : DbCo
 
             entity.HasIndex(o => o.LoanId);
             entity.HasIndex(o => o.OperationDate);
+        });
+
+        modelBuilder.Entity<IdempotencyRequest>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.UserScope, x.Key }).IsUnique();
         });
 
         static DateTime Utc(int y, int m, int d) => new DateTime(y, m, d, 0, 0, 0, DateTimeKind.Utc);

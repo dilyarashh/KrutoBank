@@ -1,12 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using UsersService.Domain.Entities;
 using UsersService.Domain.Enums;
+using UsersService.Infrastructure.Idempotency;
 
 namespace UsersService.Infrastructure.Repositories;
 
 public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContext(options)
 {
     public DbSet<User> Users => Set<User>();
+    public DbSet<IdempotencyRequest> IdempotencyRequests => Set<IdempotencyRequest>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -16,6 +18,10 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
 
         modelBuilder.Entity<User>()
             .HasIndex(x => x.Phone)
+            .IsUnique();
+
+        modelBuilder.Entity<IdempotencyRequest>()
+            .HasIndex(x => new { x.UserScope, x.Key })
             .IsUnique();
 
         var now = DateTime.UtcNow;

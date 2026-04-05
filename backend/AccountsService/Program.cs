@@ -2,6 +2,7 @@ using AccountsService.Data;
 using AccountsService.Errors.Exceptions;
 using AccountsService.Helper;
 using AccountsService.Hubs;
+using AccountsService.Idempotency;
 using AccountsService.Kafka;
 using AccountsService.Realtime;
 using AccountsService.Repositories;
@@ -151,6 +152,26 @@ using (var scope = app.Services.CreateScope())
             TimeSpan.FromSeconds(5));
 
     retry.Execute(() => db.Database.Migrate());
+    db.Database.ExecuteSqlRaw("""
+        CREATE TABLE IF NOT EXISTS "IdempotencyRequests" (
+            "Id" uuid NOT NULL,
+            "Key" text NOT NULL,
+            "UserScope" text NOT NULL,
+            "Method" text NOT NULL,
+            "RequestPath" text NOT NULL,
+            "QueryString" text NOT NULL,
+            "RequestHash" text NOT NULL,
+            "State" text NOT NULL,
+            "ResponseStatusCode" integer NULL,
+            "ResponseContentType" text NULL,
+            "ResponseBody" text NOT NULL DEFAULT '',
+            "CreatedAt" timestamp with time zone NOT NULL,
+            "CompletedAt" timestamp with time zone NULL,
+            CONSTRAINT "PK_IdempotencyRequests" PRIMARY KEY ("Id")
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS "IX_IdempotencyRequests_UserScope_Key"
+        ON "IdempotencyRequests" ("UserScope", "Key");
+        """);
 }
 
 app.UseSwagger();
@@ -164,7 +185,9 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors("FrontCors");
 
 app.UseAuthentication();
+app.UseMiddleware<IdempotencyMiddleware>();
 app.UseAuthorization();
+app.UseMiddleware<UnstableServiceMiddleware>();
 
 app.MapControllers();
 app.MapHub<AccountOperationsHub>(AccountOperationsHub.HubRoute);
