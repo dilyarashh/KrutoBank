@@ -56,18 +56,24 @@ export class LoanCardComponent implements OnDestroy {
     }
   }
 
-  private loadAccount() {
-    this.loading.set(true);
-    this.error.set(null);
+  private loadAccount(showLoading = true) {
+    if (showLoading) {
+      this.loading.set(true);
+      this.error.set(null);
+    }
 
     this.loansService.getById(this.accountId).subscribe({
       next: (a) => {
         this.account.set(a);
-        this.loading.set(false);
+        if (showLoading) {
+          this.loading.set(false);
+        }
       },
       error: () => {
-        this.error.set('Не удалось загрузить счет');
-        this.loading.set(false);
+        if (showLoading) {
+          this.error.set('Не удалось загрузить счет');
+          this.loading.set(false);
+        }
       },
     });
   }
@@ -83,11 +89,14 @@ export class LoanCardComponent implements OnDestroy {
     this.opsSubscription = this.loansService.watchOperations(this.accountId).subscribe({
       next: (items) => {
         this.ops.set(items);
+        this.loadAccount(false);
         this.opsLoading.set(false);
       },
       error: () => {
         this.opsError.set('Не удалось подключить обновление операций');
         this.opsLoading.set(false);
+        this.opsSubscription?.unsubscribe();
+        this.opsSubscription = undefined;
       },
     });
   }

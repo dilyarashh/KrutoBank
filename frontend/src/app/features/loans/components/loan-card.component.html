@@ -54,7 +54,7 @@
               </div>
 
               <div class="op-amount" [class]="operationTypeTone(op.type)">
-                {{ amountPrefix(op.type) }}{{ formatMoney(op.amount, a.currency) }}
+                {{ amountPrefix(op.type) }}{{ formatMoney(op.amount, op.currency || a.currency) }}
               </div>
             </div>
           </div>

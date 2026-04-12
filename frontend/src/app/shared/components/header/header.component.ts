@@ -5,6 +5,7 @@ import { ThemeService } from '../../../core/theme/theme.service';
 import { MatIconModule } from '@angular/material/icon';
 import { FeedbackService } from '../../feedback/feedback.service';
 import { toErrorMessage } from '../../api/api-error';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -17,6 +18,7 @@ import { toErrorMessage } from '../../api/api-error';
 export class AppHeaderComponent {
   readonly modalOpen = signal(false);
   readonly themeService = inject(ThemeService);
+  private readonly auth = inject(AuthService);
   private readonly feedback = inject(FeedbackService);
 
   openCreateTariff() {
@@ -31,6 +33,14 @@ export class AppHeaderComponent {
       );
     } catch (error: unknown) {
       this.feedback.error(toErrorMessage(error, 'Не удалось сохранить выбранную тему.'));
+    }
+  }
+
+  async logout() {
+    try {
+      await this.auth.logout();
+    } catch (error: unknown) {
+      this.feedback.error(toErrorMessage(error, 'Не удалось выйти из аккаунта.'));
     }
   }
 

@@ -7,13 +7,13 @@ import { authTokenInterceptor } from './core/auth/interceptor/auth-token.interce
 import { idempotencyInterceptor } from './shared/api/idempotency.interceptor';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { GlobalErrorHandlerService } from './shared/errors/global-error-handler.service';
+import { resilienceInterceptor } from './shared/api/resilience.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([idempotencyInterceptor, authTokenInterceptor])),
-    provideHttpClient(withInterceptors([authTokenInterceptor])),
+    provideHttpClient(withInterceptors([idempotencyInterceptor, resilienceInterceptor, authTokenInterceptor])),
     provideNativeDateAdapter(),
     { provide: ErrorHandler, useClass: GlobalErrorHandlerService },
   ],

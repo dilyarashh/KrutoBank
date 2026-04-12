@@ -30,7 +30,8 @@
 }
 
 .right,
-.theme-toggle {
+.theme-toggle,
+.logout {
   border: none;
   background: transparent;
   color: var(--header-text);
@@ -43,6 +44,18 @@
   border-radius: 999px;
 
   transition: background 120ms ease;
+}
+
+.logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logout mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 .theme-toggle {
@@ -63,7 +76,8 @@
 }
 
 .right:hover,
-.theme-toggle:hover {
+.theme-toggle:hover,
+.logout:hover {
   background: var(--header-hover);
 }
 
@@ -81,11 +95,13 @@
   }
 
   .right,
-  .theme-toggle {
+  .theme-toggle,
+  .logout {
     font-size: 12px;
   }
 
-  .right {
+  .right,
+  .logout {
     padding: 8px 10px;
   }
 

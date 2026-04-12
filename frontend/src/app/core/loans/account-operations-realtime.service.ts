@@ -139,6 +139,21 @@ export class AccountOperationsRealtimeService {
       void this.requestOperations(accountId);
     });
 
+    connection.onclose((error) => {
+      this.connection = null;
+      this.connectionStartPromise = null;
+
+      if (!error) {
+        return;
+      }
+
+      for (const [, channel] of this.channels) {
+        channel.subject.error(error);
+      }
+
+      this.channels.clear();
+    });
+
     connection.onreconnected(async () => {
       const accountIds = [...this.channels.entries()]
         .filter(([, channel]) => channel.refs > 0)
@@ -159,12 +174,14 @@ export class AccountOperationsRealtimeService {
   }
 
   private async requestOperations(accountId: string): Promise<void> {
-    if (this.connection?.state !== HubConnectionState.Connected) {
-      return;
-    }
-
     try {
-      await this.connection.invoke('RequestOperations', accountId);
+      await this.ensureConnection();
+      const connection = this.connection;
+      if (!connection) {
+        return;
+      }
+
+      await connection.invoke('RequestOperations', accountId);
     } catch (error) {
       this.channels.get(accountId)?.subject.error(error);
       this.channels.delete(accountId);

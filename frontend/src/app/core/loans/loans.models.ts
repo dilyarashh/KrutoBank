@@ -14,6 +14,7 @@ export interface LoanOperationDto {
   createdAt: string;
   type: string;
   amount: number;
+  currency?: string;
   account?: unknown;
 }
 

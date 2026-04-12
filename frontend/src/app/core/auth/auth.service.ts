@@ -1,6 +1,8 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { firstValueFrom, Observable } from 'rxjs';
 import { API_ENDPOINTS } from '../../shared/api/api-endpoints';
+import { PushAudience } from '../push/push-notifications.models';
+import { PushNotificationsService } from '../push/push-notifications.service';
 import { AuthApi } from './auth.api';
 import { RegisterRequest, RegisterResponse } from './auth.models';
 
@@ -15,6 +17,7 @@ export class AuthService {
   readonly isAuthenticated = computed(() => !!this.token());
 
   private readonly authApi = inject(AuthApi);
+  private readonly pushNotifications = inject(PushNotificationsService);
 
   private readonly authServer = API_ENDPOINTS.auth;
 
@@ -78,10 +81,10 @@ export class AuthService {
   }
 
   async logout() {
-    this.setToken(null);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    await this.pushNotifications.unregisterCurrentToken();
 
     const redirectUri = encodeURIComponent(window.location.origin);
+    this.clearBrowserStorage();
     window.location.href = `${this.authServer}/connect/logout?post_logout_redirect_uri=${redirectUri}`;
   }
 
@@ -91,6 +94,22 @@ export class AuthService {
 
   getToken(): string | null {
     return this.token();
+  }
+
+  getPushAudience(): PushAudience {
+    return this.isEmployeeWebApp() && this.getRole() === 'Employee' ? 'Employee' : 'Client';
+  }
+
+  getRole(): 'Client' | 'Employee' | null {
+    const payload = this.readTokenPayload();
+    const roleValue =
+      payload?.['role'] ??
+      payload?.['roles'] ??
+      payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+
+    const role = Array.isArray(roleValue) ? roleValue[0] : roleValue;
+
+    return role === 'Employee' || role === 'Client' ? role : null;
   }
 
   private setToken(value: string | null) {
@@ -105,6 +124,38 @@ export class AuthService {
 
   private readToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
+  }
+
+  private clearBrowserStorage() {
+    this.token.set(null);
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+
+  private isEmployeeWebApp(): boolean {
+    return window.location.origin.includes('4200');
+  }
+
+  private readTokenPayload(): Record<string, unknown> | null {
+    const rawToken = this.token();
+    if (!rawToken) {
+      return null;
+    }
+
+    const [, payload] = rawToken.split('.');
+    if (!payload) {
+      return null;
+    }
+
+    try {
+      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, '='));
+      const parsed: unknown = JSON.parse(decoded);
+
+      return typeof parsed === 'object' && parsed !== null ? (parsed as Record<string, unknown>) : null;
+    } catch {
+      return null;
+    }
   }
 
   private generateRandomString(length = 64): string {
