@@ -15,6 +15,15 @@ type CircuitState = {
   openUntil: number | null;
 };
 
+export type CircuitBreakerSnapshot = {
+  service: string;
+  total: number;
+  failures: number;
+  errorPercent: number;
+  isOpen: boolean;
+  retryAfterSeconds: number;
+};
+
 @Injectable({ providedIn: 'root' })
 export class ResilienceCircuitBreakerService {
   private readonly states = new Map<string, CircuitState>();
@@ -46,6 +55,25 @@ export class ResilienceCircuitBreakerService {
 
   recordFailure(key: string): void {
     this.record(key, true);
+  }
+
+  getSnapshots(): CircuitBreakerSnapshot[] {
+    return [...this.states.entries()].map(([service, state]) => {
+      this.cleanup(state);
+
+      const failures = state.events.filter((event) => event.failed).length;
+      const total = state.events.length;
+      const isOpen = !!state.openUntil && state.openUntil > Date.now();
+
+      return {
+        service,
+        total,
+        failures,
+        errorPercent: total === 0 ? 0 : Math.round((failures * 1000) / total) / 10,
+        isOpen,
+        retryAfterSeconds: this.retryAfterSeconds(service),
+      };
+    });
   }
 
   private record(key: string, failed: boolean): void {

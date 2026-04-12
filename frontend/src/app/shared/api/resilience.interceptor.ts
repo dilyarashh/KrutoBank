@@ -5,7 +5,7 @@ import { retry } from 'rxjs/operators';
 import { AppError } from './api-error';
 import { ResilienceCircuitBreakerService } from './resilience-circuit-breaker.service';
 
-const RETRY_COUNT = 7;
+const RETRY_COUNT = 2;
 const RETRY_DELAY_MS = 200;
 
 export const resilienceInterceptor: HttpInterceptorFn = (req, next) => {

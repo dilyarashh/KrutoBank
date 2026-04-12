@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CreateTariffDialogComponent } from '../../../features/tariffs/components/create-tariff-dialog.component';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { ThemeService } from '../../../core/theme/theme.service';
 import { MatIconModule } from '@angular/material/icon';
 import { FeedbackService } from '../../feedback/feedback.service';
@@ -10,7 +11,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CreateTariffDialogComponent, CommonModule, MatIconModule],
+  imports: [CreateTariffDialogComponent, CommonModule, MatIconModule, RouterLink],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -6,6 +6,7 @@ import { UserProfilePageComponent } from './features/users/pages/user-profile/us
 import { guestGuard } from './core/auth/guards/guest.guard';
 import { authGuard } from './core/auth/guards/auth.guard';
 import { ErrorPageComponent } from './shared/errors/error-page.component';
+import { FrontendMonitoringPageComponent } from './features/frontend-monitoring/frontend-monitoring-page.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'users' },
@@ -16,6 +17,7 @@ export const routes: Routes = [
 
   { path: 'users', component: UsersPageComponent, canActivate: [authGuard] },
   { path: 'users/:id', component: UserProfilePageComponent, canActivate: [authGuard] },
+  { path: 'frontend-monitoring', component: FrontendMonitoringPageComponent, canActivate: [authGuard] },
 
   { path: '**', component: ErrorPageComponent, data: { kind: 'not-found' } },
 ];

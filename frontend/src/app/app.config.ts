@@ -8,12 +8,18 @@ import { idempotencyInterceptor } from './shared/api/idempotency.interceptor';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { GlobalErrorHandlerService } from './shared/errors/global-error-handler.service';
 import { resilienceInterceptor } from './shared/api/resilience.interceptor';
+import { frontendMonitoringInterceptor } from './core/frontend-monitoring/frontend-monitoring.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([idempotencyInterceptor, resilienceInterceptor, authTokenInterceptor])),
+    provideHttpClient(withInterceptors([
+      idempotencyInterceptor,
+      resilienceInterceptor,
+      frontendMonitoringInterceptor,
+      authTokenInterceptor,
+    ])),
     provideNativeDateAdapter(),
     { provide: ErrorHandler, useClass: GlobalErrorHandlerService },
   ],

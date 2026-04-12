@@ -1,0 +1,81 @@
+<div class="page">
+  <div class="heading">
+    <div>
+      <h1>Мониторинг</h1>
+      <p class="lead">Запросы, ошибки, время ответа</p>
+    </div>
+
+    <button type="button" class="clear" (click)="clear()">
+      <mat-icon>delete_sweep</mat-icon>
+      Очистить
+    </button>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <span class="label">Запросы</span>
+      <strong>{{ totalRequests() }}</strong>
+    </div>
+
+    <div class="metric" [class.warn]="errorPercent() > 30" [class.danger]="errorPercent() > 70">
+      <span class="label">Ошибки</span>
+      <strong>{{ errorPercent() }}%</strong>
+    </div>
+
+    <div class="metric">
+      <span class="label">Среднее время</span>
+      <strong>{{ averageDurationMs() }} мс</strong>
+    </div>
+
+    <div class="metric" [class.danger]="exceptions().length > 0">
+      <span class="label">Исключения</span>
+      <strong>{{ exceptions().length }}</strong>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-title">
+      <h2>Последние запросы</h2>
+      <span>{{ lastRequests().length }}</span>
+    </div>
+
+    <div class="empty" *ngIf="lastRequests().length === 0">Запросов пока нет.</div>
+
+    <div class="table" *ngIf="lastRequests().length > 0">
+      <div class="row head">
+        <span>Время</span>
+        <span>Метод</span>
+        <span>Адрес</span>
+        <span>Статус</span>
+        <span>Длительность</span>
+      </div>
+
+      <div class="row" *ngFor="let request of lastRequests()" [class.error]="request.isError">
+        <span>{{ formatDate(request.createdAt) }}</span>
+        <span>{{ request.method }}</span>
+        <span class="url" [title]="request.url">{{ shortUrl(request.url) }}</span>
+        <span>{{ statusText(request.statusCode) }}</span>
+        <span>{{ request.durationMs }} мс</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <h2>Ошибки приложения</h2>
+      <span>{{ lastExceptions().length }}</span>
+    </div>
+
+    <div class="empty" *ngIf="lastExceptions().length === 0">Исключений пока нет.</div>
+
+    <div class="exceptions" *ngIf="lastExceptions().length > 0">
+      <div class="exception" *ngFor="let item of lastExceptions()">
+        <div class="exception-top">
+          <strong>{{ item.message }}</strong>
+          <span>{{ formatDate(item.createdAt) }}</span>
+        </div>
+        <p>{{ item.route }}</p>
+      </div>
+    </div>
+  </section>
+</div>
