@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - DTO
 
-struct AppSettingsResponse: Decodable {
+struct AppSettingsResponse: Decodable, Sendable {
     let theme: String
     let hiddenAccountIds: [String]
 }

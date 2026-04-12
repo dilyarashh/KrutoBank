@@ -1,4 +1,4 @@
-struct TakeLoanRequest: Encodable {
+struct TakeLoanRequest: Encodable, Sendable {
     let userId: String
     let tariffName: String
     let amount: Double

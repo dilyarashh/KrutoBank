@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - DTO
 
-struct LoanOperationResponse: Decodable {
+struct LoanOperationResponse: Decodable, Sendable {
     let operationId: String
     let amount: Double
     let operationDate: String

@@ -31,7 +31,7 @@ final class NetworkService: NetworkServiceProtocol {
         }
     }
 
-    func requestDecodable<T: Decodable>(_ endpoint: EndPoint, as: T.Type) async throws -> T {
+    func requestDecodable<T: Decodable & Sendable>(_ endpoint: EndPoint, as: T.Type) async throws -> T {
         NetworkLogger.log("➡️ [NetworkService] \(endpoint.method.rawValue) \(endpoint.baseURL)\(endpoint.path) -> decode \(T.self)")
 
         do {

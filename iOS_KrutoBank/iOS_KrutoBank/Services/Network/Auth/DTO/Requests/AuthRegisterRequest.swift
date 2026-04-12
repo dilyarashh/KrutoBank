@@ -1,4 +1,4 @@
-struct AuthRegisterRequest: Encodable {
+struct AuthRegisterRequest: Encodable, Sendable {
     let firstName: String
     let lastName: String
     let middleName: String

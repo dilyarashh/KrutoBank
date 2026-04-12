@@ -5,3 +5,14 @@ enum HTTPMethod: String {
     case patch = "PATCH"
     case delete = "DELETE"
 }
+
+extension HTTPMethod {
+    var isMutation: Bool {
+        switch self {
+        case .post, .put, .patch, .delete:
+            return true
+        case .get:
+            return false
+        }
+    }
+}

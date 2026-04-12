@@ -7,4 +7,15 @@ protocol EndPoint {
     var task: HTTPTask { get }
 
     var authorization: AuthorizationRequirement { get }
+
+    var idempotencyKey: String? { get }
+}
+
+extension EndPoint {
+    var idempotencyKey: String? { nil }
+
+    var requiresIdempotencyKey: Bool {
+        let isMutation = method.isMutation
+        return isMutation
+    }
 }

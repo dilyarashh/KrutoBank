@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - DTO
 
-struct UserResponse: Decodable {
+struct UserResponse: Decodable, Sendable {
     let id: String
     let firstName: String
     let lastName: String

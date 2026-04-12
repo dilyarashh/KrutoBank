@@ -26,6 +26,9 @@ extension CommonError {
         case .decodingFailed:
             return .parsingFailed
 
+        case .circuitBreakerOpen:
+            return .serverUnavailable
+
         case .transportError(let underlying):
             if let urlError = underlying as? URLError, urlError.code == .timedOut {
                 return .timeout

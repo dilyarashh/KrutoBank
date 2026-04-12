@@ -80,6 +80,8 @@
 		88A38F492F6BE1F4004C7E29 /* TextInputValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A38F402F6BE1F4004C7E29 /* TextInputValidator.swift */; };
 		88A38F4A2F6BE1F4004C7E29 /* TextInputFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A38F3C2F6BE1F4004C7E29 /* TextInputFormatter.swift */; };
 		88A38F4B2F6BE1F4004C7E29 /* PasswordValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A38F3E2F6BE1F4004C7E29 /* PasswordValidator.swift */; };
+		88C5CEC32F865926002BA4FC /* RetryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C5CEC22F865926002BA4FC /* RetryPolicy.swift */; };
+		88C5CED22F8BFDB3002BA4FC /* CircuitBreaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C5CED12F8BFDA7002BA4FC /* CircuitBreaker.swift */; };
 		88CEA2A52F6FEDD800515031 /* AppSettingsRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2A42F6FEDD800515031 /* AppSettingsRepositoryProtocol.swift */; };
 		88CEA2A72F6FEE5300515031 /* GetAppSettingsEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2A62F6FEE5300515031 /* GetAppSettingsEndPoint.swift */; };
 		88CEA2AA2F6FF51300515031 /* CreditRatingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEA2A82F6FF51300515031 /* CreditRatingResponse.swift */; };
@@ -264,6 +266,8 @@
 		88A38F3F2F6BE1F4004C7E29 /* PhoneValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneValidator.swift; sourceTree = "<group>"; };
 		88A38F402F6BE1F4004C7E29 /* TextInputValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputValidator.swift; sourceTree = "<group>"; };
 		88A38F422F6BE1F4004C7E29 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		88C5CEC22F865926002BA4FC /* RetryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryPolicy.swift; sourceTree = "<group>"; };
+		88C5CED12F8BFDA7002BA4FC /* CircuitBreaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircuitBreaker.swift; sourceTree = "<group>"; };
 		88CEA2A42F6FEDD800515031 /* AppSettingsRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsRepositoryProtocol.swift; sourceTree = "<group>"; };
 		88CEA2A62F6FEE5300515031 /* GetAppSettingsEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAppSettingsEndPoint.swift; sourceTree = "<group>"; };
 		88CEA2A82F6FF51300515031 /* CreditRatingResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditRatingResponse.swift; sourceTree = "<group>"; };
@@ -1209,6 +1213,8 @@
 		88DCECF12F6FA69400EC380D /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				88C5CED12F8BFDA7002BA4FC /* CircuitBreaker.swift */,
+				88C5CEC22F865926002BA4FC /* RetryPolicy.swift */,
 				88DCECEC2F6FA69400EC380D /* NetworkLogger.swift */,
 				88DCECED2F6FA69400EC380D /* HTTPClient.swift */,
 				88DCECEE2F6FA69400EC380D /* NetworkService.swift */,
@@ -1479,6 +1485,7 @@
 				88A38F3A2F6BE1B6004C7E29 /* CommonButton.swift in Sources */,
 				88DCED212F6FA69400EC380D /* AuthorizationProvider.swift in Sources */,
 				88CEA2AE2F6FF51C00515031 /* GetCreditRatingEndPoint.swift in Sources */,
+				88C5CEC32F865926002BA4FC /* RetryPolicy.swift in Sources */,
 				88CEA2AF2F6FF51C00515031 /* AutoPaymentEndPoint.swift in Sources */,
 				8838CD9E2F546E3300B46A23 /* AccountDetailsSheet.swift in Sources */,
 				8838CD312F542E3700B46A23 /* AppColor.swift in Sources */,
@@ -1562,6 +1569,7 @@
 				8838CC7E2F542DFC00B46A23 /* SceneDelegate.swift in Sources */,
 				99EA1D5718F2BC6FD091DC36 /* AppDependency.swift in Sources */,
 				72E9EAC9BB5A1C7F00EF62EB /* DIInject.swift in Sources */,
+				88C5CED22F8BFDB3002BA4FC /* CircuitBreaker.swift in Sources */,
 				88CEA2C02F701A4800515031 /* AppTheme.swift in Sources */,
 				4B64D85C4A5E5D0059706AD5 /* KeychainStoreFactory.swift in Sources */,
 				3A74CF244DEC91B093A3C9DD /* KeyValueStoreProtocol.swift in Sources */,

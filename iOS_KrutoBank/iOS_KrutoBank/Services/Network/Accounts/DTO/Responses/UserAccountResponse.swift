@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - DTO
 
-struct UserAccountResponse: Decodable {
+struct UserAccountResponse: Decodable, Sendable {
     let userId: String
     let accountId: String
     let accountName: String

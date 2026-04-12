@@ -2,13 +2,13 @@ import Foundation
 
 // MARK: - DTO
 
-struct AccountOperationResponse: Decodable {
+struct AccountOperationResponse: Decodable, Sendable {
     let createdAt: String
     let type: OperationTypeDTO
     let amount: Double
 }
 
-struct AccountInOperationResponse: Decodable {
+struct AccountInOperationResponse: Decodable, Sendable {
     let id: String
     let name: String?
     let balance: Double?

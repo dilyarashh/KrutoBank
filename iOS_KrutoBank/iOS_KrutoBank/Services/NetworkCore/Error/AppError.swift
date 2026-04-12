@@ -35,25 +35,37 @@ enum AppError: LocalizedError {
 
     var isFatal: Bool {
         switch self {
-        case .unauthorized: return true
-        default:            return false
+        case .unauthorized:
+            return true
+        default:
+            return false
         }
     }
 
     // MARK: - Convert from NetworkError
     static func from(_ networkError: NetworkError) -> AppError {
         switch networkError {
-        case .unauthorized:               return .unauthorized
-        case .noResponse:                 return .serverUnavailable
-        case .decodingFailed:             return .decodingFailed
+        case .unauthorized:
+            return .unauthorized
+        case .noResponse:
+            return .serverUnavailable
+        case .decodingFailed:
+            return .decodingFailed
         case .serverError(let code, let m):
             switch code {
-            case 403: return .forbidden
-            case 422: return .insufficientFunds
-            default:  return .serverError(code: code, message: m)
+            case 403:
+                return .forbidden
+            case 422:
+                return .insufficientFunds
+            default:
+                return .serverError(code: code, message: m)
             }
-        case .transportError:             return .networkUnavailable
-        case .invalidURL, .encodingFailed: return .unknown(underlying: networkError)
+        case .circuitBreakerOpen:
+            return .serverUnavailable
+        case .transportError:
+            return .networkUnavailable
+        case .invalidURL, .encodingFailed:
+            return .unknown(underlying: networkError)
         }
     }
 

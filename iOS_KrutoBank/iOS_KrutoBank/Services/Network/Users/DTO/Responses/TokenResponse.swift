@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - DTO
 
-struct TokenResponse: Decodable {
+struct TokenResponse: Decodable, Sendable {
     let token: String
 }
 

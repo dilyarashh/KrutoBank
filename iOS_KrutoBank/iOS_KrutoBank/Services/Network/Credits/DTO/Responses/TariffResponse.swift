@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - DTO
 
-struct TariffResponse: Decodable {
+struct TariffResponse: Decodable, Sendable {
     let id: String
     let name: String
     let interestRate: Double

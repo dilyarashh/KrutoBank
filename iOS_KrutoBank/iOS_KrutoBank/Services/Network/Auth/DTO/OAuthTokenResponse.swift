@@ -1,4 +1,4 @@
-struct OAuthTokenResponse: Decodable {
+struct OAuthTokenResponse: Decodable, Sendable {
     let accessToken: String
     let refreshToken: String?
     let expiresIn: Int

@@ -21,7 +21,6 @@ final class AuthorizationProvider: AuthorizationProvidingProtocol {
             return request
 
         case .accessToken:
-            // Try to get a valid access token, refreshing if needed
             if let token = await validAccessToken(), !token.isEmpty {
                 return requestAddingBearer(token, to: request)
             }

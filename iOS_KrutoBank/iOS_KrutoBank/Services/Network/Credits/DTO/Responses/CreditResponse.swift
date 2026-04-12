@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - DTO
 
-struct CreditResponse: Decodable {
+struct CreditResponse: Decodable, Sendable {
     let loanId: String
     let initialAmount: Double
     let remainingAmount: Double
