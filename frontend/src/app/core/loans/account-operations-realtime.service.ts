@@ -14,6 +14,10 @@ type AccountChannel = {
   subject: ReplaySubject<LoanOperationDto[]>;
 };
 
+const REALTIME_RETRY_COUNT = 5;
+const REALTIME_RETRY_DELAY_MS = 250;
+const RECONNECT_DELAYS_MS = [0, 1_000, 3_000, 7_000, 15_000];
+
 @Injectable({ providedIn: 'root' })
 export class AccountOperationsRealtimeService {
   private readonly auth = inject(AuthService);
@@ -58,9 +62,9 @@ export class AccountOperationsRealtimeService {
       await this.ensureConnection();
 
       if (this.channels.get(accountId)?.refs === 1) {
-        await this.connection?.invoke('SubscribeAccount', accountId);
+        await this.invokeWithRetry('SubscribeAccount', accountId);
       } else {
-        await this.connection?.invoke('RequestOperations', accountId);
+        await this.invokeWithRetry('RequestOperations', accountId);
       }
     } catch (error) {
       this.channels.get(accountId)?.subject.error(error);
@@ -82,7 +86,7 @@ export class AccountOperationsRealtimeService {
 
     try {
       if (this.connection?.state === HubConnectionState.Connected) {
-        await this.connection.invoke('UnsubscribeAccount', accountId);
+        await this.invokeWithRetry('UnsubscribeAccount', accountId);
       }
     } catch {
     }
@@ -102,7 +106,7 @@ export class AccountOperationsRealtimeService {
     }
 
     if (!this.connectionStartPromise) {
-      this.connectionStartPromise = connection.start().finally(() => {
+      this.connectionStartPromise = this.runWithRetry(() => connection.start()).finally(() => {
         this.connectionStartPromise = null;
       });
     }
@@ -119,7 +123,7 @@ export class AccountOperationsRealtimeService {
       .withUrl(this.hubUrl, {
         accessTokenFactory: () => this.auth.getToken() ?? '',
       })
-      .withAutomaticReconnect()
+      .withAutomaticReconnect(RECONNECT_DELAYS_MS)
       .build();
 
     connection.on('OperationsSnapshot', (accountId: string, payload: LoanOperationDto[]) => {
@@ -161,7 +165,7 @@ export class AccountOperationsRealtimeService {
 
       for (const accountId of accountIds) {
         try {
-          await connection.invoke('SubscribeAccount', accountId);
+          await this.invokeWithRetry('SubscribeAccount', accountId);
         } catch (error) {
           this.channels.get(accountId)?.subject.error(error);
           this.channels.delete(accountId);
@@ -181,10 +185,51 @@ export class AccountOperationsRealtimeService {
         return;
       }
 
-      await connection.invoke('RequestOperations', accountId);
+      await this.invokeWithRetry('RequestOperations', accountId);
     } catch (error) {
       this.channels.get(accountId)?.subject.error(error);
       this.channels.delete(accountId);
     }
+  }
+
+  private async invokeWithRetry(methodName: string, ...args: unknown[]): Promise<void> {
+    await this.runWithRetry(async () => {
+      const connection = this.connection;
+      if (!connection || connection.state !== HubConnectionState.Connected) {
+        await this.ensureConnection();
+      }
+
+      const readyConnection = this.connection;
+      if (!readyConnection) {
+        throw new Error('Realtime connection is not available.');
+      }
+
+      await readyConnection.invoke(methodName, ...args);
+    });
+  }
+
+  private async runWithRetry(action: () => Promise<void>): Promise<void> {
+    let lastError: unknown;
+
+    for (let attempt = 1; attempt <= REALTIME_RETRY_COUNT; attempt += 1) {
+      try {
+        await action();
+        return;
+      } catch (error) {
+        lastError = error;
+
+        if (attempt === REALTIME_RETRY_COUNT) {
+          break;
+        }
+
+        await this.delay(REALTIME_RETRY_DELAY_MS * attempt);
+      }
+    }
+
+    throw lastError;
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
   }
 }
